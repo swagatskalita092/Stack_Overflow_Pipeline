@@ -1,0 +1,12 @@
+stackoverflow_survey:
+  target: prod
+  outputs:
+    prod:
+      type: postgres
+      host: "{{ env_var('SURVEY_DB_HOST', 'postgres') }}"
+      port: 5432
+      dbname: survey_db
+      user: "{{ env_var('SURVEY_DB_USER', 'airflow') }}"
+      password: "{{ env_var('SURVEY_DB_PASSWORD', 'airflow') }}"
+      schema: dwh
+      threads: 4
