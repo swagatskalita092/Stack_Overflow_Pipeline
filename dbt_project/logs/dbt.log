@@ -1,0 +1,1475 @@
+[0m00:44:40.989264 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28ad13e3d0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28ab174820>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28ab1749a0>]}
+
+
+============================== 00:44:41.018729 | b97b77f0-790d-414a-99f8-fa26bf346647 ==============================
+[0m00:44:41.018729 [info ] [MainThread]: Running with dbt=1.7.0
+[0m00:44:41.019820 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'log_cache_events': 'False', 'write_json': 'True', 'partial_parse': 'True', 'cache_selected_only': 'False', 'profiles_dir': '/opt/airflow/dbt_project', 'version_check': 'True', 'debug': 'False', 'log_path': '/opt/airflow/dbt_project/logs', 'warn_error': 'None', 'fail_fast': 'False', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'introspect': 'True', 'static_parser': 'True', 'log_format': 'default', 'target_path': 'None', 'invocation_command': 'dbt run --profiles-dir /opt/airflow/dbt_project --target prod', 'send_anonymous_usage_stats': 'True'}
+[0m00:44:41.282833 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': 'b97b77f0-790d-414a-99f8-fa26bf346647', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28ac865130>]}
+[0m00:44:41.379788 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': 'b97b77f0-790d-414a-99f8-fa26bf346647', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28aa6be8b0>]}
+[0m00:44:41.381642 [info ] [MainThread]: Registered adapter: postgres=1.7.0
+[0m00:44:41.391208 [debug] [MainThread]: checksum: e7c10c3b7ba836fc12f686449f7024e68c063dcfea8fea49899b000304185f67, vars: {}, profile: , target: prod, version: 1.7.0
+[0m00:44:41.399679 [info ] [MainThread]: Unable to do partial parsing because saved manifest not found. Starting full parse.
+[0m00:44:41.400511 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'partial_parser', 'label': 'b97b77f0-790d-414a-99f8-fa26bf346647', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28aa7e8160>]}
+[0m00:44:42.667870 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'load_project', 'label': 'b97b77f0-790d-414a-99f8-fa26bf346647', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28a9d13f70>]}
+[0m00:44:42.705107 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'resource_counts', 'label': 'b97b77f0-790d-414a-99f8-fa26bf346647', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28a99f3cd0>]}
+[0m00:44:42.706030 [info ] [MainThread]: Found 6 models, 13 tests, 1 source, 0 exposures, 0 metrics, 401 macros, 0 groups, 0 semantic models
+[0m00:44:42.706878 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': 'b97b77f0-790d-414a-99f8-fa26bf346647', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28aa5caa00>]}
+[0m00:44:42.710428 [info ] [MainThread]: 
+[0m00:44:42.711958 [debug] [MainThread]: Acquiring new postgres connection 'master'
+[0m00:44:42.714257 [debug] [ThreadPool]: Acquiring new postgres connection 'list_survey_db'
+[0m00:44:42.715824 [debug] [ThreadPool]: Acquiring new postgres connection 'list_survey_db'
+[0m00:44:42.722761 [debug] [ThreadPool]: Acquiring new postgres connection 'list_survey_db'
+[0m00:44:42.730462 [debug] [ThreadPool]: Using postgres connection "list_survey_db"
+[0m00:44:42.733254 [debug] [ThreadPool]: Using postgres connection "list_survey_db"
+[0m00:44:42.736724 [debug] [ThreadPool]: Using postgres connection "list_survey_db"
+[0m00:44:42.737842 [debug] [ThreadPool]: On list_survey_db: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "connection_name": "list_survey_db"} */
+
+    select distinct nspname from pg_namespace
+  
+[0m00:44:42.738768 [debug] [ThreadPool]: On list_survey_db: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "connection_name": "list_survey_db"} */
+
+    select distinct nspname from pg_namespace
+  
+[0m00:44:42.739616 [debug] [ThreadPool]: On list_survey_db: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "connection_name": "list_survey_db"} */
+
+    select distinct nspname from pg_namespace
+  
+[0m00:44:42.740643 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m00:44:42.741706 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m00:44:42.743489 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m00:44:42.752120 [debug] [ThreadPool]: SQL status: SELECT 6 in 0.0 seconds
+[0m00:44:42.752850 [debug] [ThreadPool]: SQL status: SELECT 6 in 0.0 seconds
+[0m00:44:42.753356 [debug] [ThreadPool]: SQL status: SELECT 6 in 0.0 seconds
+[0m00:44:42.754770 [debug] [ThreadPool]: On list_survey_db: Close
+[0m00:44:42.756230 [debug] [ThreadPool]: On list_survey_db: Close
+[0m00:44:42.757576 [debug] [ThreadPool]: On list_survey_db: Close
+[0m00:44:42.762699 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly list_survey_db, now create_survey_db_dwh_marts)
+[0m00:44:42.763780 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly list_survey_db, now create_survey_db_dwh_staging)
+[0m00:44:42.764620 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly list_survey_db, now create_survey_db_dwh_intermediate)
+[0m00:44:42.765531 [debug] [ThreadPool]: Creating schema "database: "survey_db"
+schema: "dwh_marts"
+"
+[0m00:44:42.766946 [debug] [ThreadPool]: Creating schema "database: "survey_db"
+schema: "dwh_staging"
+"
+[0m00:44:42.768081 [debug] [ThreadPool]: Creating schema "database: "survey_db"
+schema: "dwh_intermediate"
+"
+[0m00:44:42.829515 [debug] [ThreadPool]: Using postgres connection "create_survey_db_dwh_staging"
+[0m00:44:42.830180 [debug] [ThreadPool]: Using postgres connection "create_survey_db_dwh_marts"
+[0m00:44:42.832919 [debug] [ThreadPool]: Using postgres connection "create_survey_db_dwh_intermediate"
+[0m00:44:42.833972 [debug] [ThreadPool]: On create_survey_db_dwh_staging: BEGIN
+[0m00:44:42.834843 [debug] [ThreadPool]: On create_survey_db_dwh_marts: BEGIN
+[0m00:44:42.835724 [debug] [ThreadPool]: On create_survey_db_dwh_intermediate: BEGIN
+[0m00:44:42.836726 [debug] [ThreadPool]: Opening a new connection, currently in state closed
+[0m00:44:42.837596 [debug] [ThreadPool]: Opening a new connection, currently in state closed
+[0m00:44:42.838450 [debug] [ThreadPool]: Opening a new connection, currently in state closed
+[0m00:44:42.847901 [debug] [ThreadPool]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:42.848588 [debug] [ThreadPool]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:42.849145 [debug] [ThreadPool]: Using postgres connection "create_survey_db_dwh_staging"
+[0m00:44:42.849716 [debug] [ThreadPool]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:42.850722 [debug] [ThreadPool]: Using postgres connection "create_survey_db_dwh_intermediate"
+[0m00:44:42.851658 [debug] [ThreadPool]: On create_survey_db_dwh_staging: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "connection_name": "create_survey_db_dwh_staging"} */
+create schema if not exists "dwh_staging"
+[0m00:44:42.852512 [debug] [ThreadPool]: Using postgres connection "create_survey_db_dwh_marts"
+[0m00:44:42.853431 [debug] [ThreadPool]: On create_survey_db_dwh_intermediate: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "connection_name": "create_survey_db_dwh_intermediate"} */
+create schema if not exists "dwh_intermediate"
+[0m00:44:42.854619 [debug] [ThreadPool]: On create_survey_db_dwh_marts: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "connection_name": "create_survey_db_dwh_marts"} */
+create schema if not exists "dwh_marts"
+[0m00:44:42.855076 [debug] [ThreadPool]: SQL status: CREATE SCHEMA in 0.0 seconds
+[0m00:44:42.856609 [debug] [ThreadPool]: SQL status: CREATE SCHEMA in 0.0 seconds
+[0m00:44:42.857743 [debug] [ThreadPool]: On create_survey_db_dwh_staging: COMMIT
+[0m00:44:42.858329 [debug] [ThreadPool]: SQL status: CREATE SCHEMA in 0.0 seconds
+[0m00:44:42.860772 [debug] [ThreadPool]: On create_survey_db_dwh_intermediate: COMMIT
+[0m00:44:42.861966 [debug] [ThreadPool]: Using postgres connection "create_survey_db_dwh_staging"
+[0m00:44:42.863396 [debug] [ThreadPool]: On create_survey_db_dwh_marts: COMMIT
+[0m00:44:42.864420 [debug] [ThreadPool]: Using postgres connection "create_survey_db_dwh_intermediate"
+[0m00:44:42.865442 [debug] [ThreadPool]: On create_survey_db_dwh_staging: COMMIT
+[0m00:44:42.866297 [debug] [ThreadPool]: Using postgres connection "create_survey_db_dwh_marts"
+[0m00:44:42.867309 [debug] [ThreadPool]: On create_survey_db_dwh_intermediate: COMMIT
+[0m00:44:42.868770 [debug] [ThreadPool]: On create_survey_db_dwh_marts: COMMIT
+[0m00:44:42.871624 [debug] [ThreadPool]: SQL status: COMMIT in 0.0 seconds
+[0m00:44:42.872514 [debug] [ThreadPool]: On create_survey_db_dwh_staging: Close
+[0m00:44:42.874302 [debug] [ThreadPool]: SQL status: COMMIT in 0.0 seconds
+[0m00:44:42.875325 [debug] [ThreadPool]: SQL status: COMMIT in 0.0 seconds
+[0m00:44:42.876650 [debug] [ThreadPool]: On create_survey_db_dwh_marts: Close
+[0m00:44:42.877920 [debug] [ThreadPool]: On create_survey_db_dwh_intermediate: Close
+[0m00:44:42.881864 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly create_survey_db_dwh_marts, now list_survey_db_dwh_marts)
+[0m00:44:42.882920 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly create_survey_db_dwh_staging, now list_survey_db_dwh_staging)
+[0m00:44:42.889500 [debug] [ThreadPool]: Using postgres connection "list_survey_db_dwh_marts"
+[0m00:44:42.893287 [debug] [ThreadPool]: Using postgres connection "list_survey_db_dwh_staging"
+[0m00:44:42.894310 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly create_survey_db_dwh_intermediate, now list_survey_db_dwh_intermediate)
+[0m00:44:42.895444 [debug] [ThreadPool]: On list_survey_db_dwh_marts: BEGIN
+[0m00:44:42.896500 [debug] [ThreadPool]: On list_survey_db_dwh_staging: BEGIN
+[0m00:44:42.899406 [debug] [ThreadPool]: Using postgres connection "list_survey_db_dwh_intermediate"
+[0m00:44:42.900360 [debug] [ThreadPool]: Opening a new connection, currently in state closed
+[0m00:44:42.901309 [debug] [ThreadPool]: Opening a new connection, currently in state closed
+[0m00:44:42.902258 [debug] [ThreadPool]: On list_survey_db_dwh_intermediate: BEGIN
+[0m00:44:42.904269 [debug] [ThreadPool]: Opening a new connection, currently in state closed
+[0m00:44:42.910189 [debug] [ThreadPool]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:42.911323 [debug] [ThreadPool]: Using postgres connection "list_survey_db_dwh_staging"
+[0m00:44:42.911862 [debug] [ThreadPool]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:42.912409 [debug] [ThreadPool]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:42.912923 [debug] [ThreadPool]: On list_survey_db_dwh_staging: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "connection_name": "list_survey_db_dwh_staging"} */
+select
+      'survey_db' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'dwh_staging'
+    union all
+    select
+      'survey_db' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'dwh_staging'
+    union all
+    select
+      'survey_db' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'dwh_staging'
+  
+[0m00:44:42.913724 [debug] [ThreadPool]: Using postgres connection "list_survey_db_dwh_intermediate"
+[0m00:44:42.914665 [debug] [ThreadPool]: Using postgres connection "list_survey_db_dwh_marts"
+[0m00:44:42.915911 [debug] [ThreadPool]: On list_survey_db_dwh_intermediate: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "connection_name": "list_survey_db_dwh_intermediate"} */
+select
+      'survey_db' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'dwh_intermediate'
+    union all
+    select
+      'survey_db' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'dwh_intermediate'
+    union all
+    select
+      'survey_db' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'dwh_intermediate'
+  
+[0m00:44:42.916852 [debug] [ThreadPool]: On list_survey_db_dwh_marts: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "connection_name": "list_survey_db_dwh_marts"} */
+select
+      'survey_db' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'dwh_marts'
+    union all
+    select
+      'survey_db' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'dwh_marts'
+    union all
+    select
+      'survey_db' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'dwh_marts'
+  
+[0m00:44:42.918900 [debug] [ThreadPool]: SQL status: SELECT 0 in 0.0 seconds
+[0m00:44:42.920685 [debug] [ThreadPool]: On list_survey_db_dwh_staging: ROLLBACK
+[0m00:44:42.921328 [debug] [ThreadPool]: SQL status: SELECT 0 in 0.0 seconds
+[0m00:44:42.921823 [debug] [ThreadPool]: SQL status: SELECT 0 in 0.0 seconds
+[0m00:44:42.922640 [debug] [ThreadPool]: On list_survey_db_dwh_staging: Close
+[0m00:44:42.923815 [debug] [ThreadPool]: On list_survey_db_dwh_marts: ROLLBACK
+[0m00:44:42.925569 [debug] [ThreadPool]: On list_survey_db_dwh_intermediate: ROLLBACK
+[0m00:44:42.927912 [debug] [ThreadPool]: On list_survey_db_dwh_marts: Close
+[0m00:44:42.928844 [debug] [ThreadPool]: On list_survey_db_dwh_intermediate: Close
+[0m00:44:42.934753 [debug] [MainThread]: Using postgres connection "master"
+[0m00:44:42.935639 [debug] [MainThread]: On master: BEGIN
+[0m00:44:42.936460 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m00:44:42.944766 [debug] [MainThread]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:42.945814 [debug] [MainThread]: Using postgres connection "master"
+[0m00:44:42.946644 [debug] [MainThread]: On master: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "connection_name": "master"} */
+with relation as (
+        select
+            pg_rewrite.ev_class as class,
+            pg_rewrite.oid as id
+        from pg_rewrite
+    ),
+    class as (
+        select
+            oid as id,
+            relname as name,
+            relnamespace as schema,
+            relkind as kind
+        from pg_class
+    ),
+    dependency as (
+        select distinct
+            pg_depend.objid as id,
+            pg_depend.refobjid as ref
+        from pg_depend
+    ),
+    schema as (
+        select
+            pg_namespace.oid as id,
+            pg_namespace.nspname as name
+        from pg_namespace
+        where nspname != 'information_schema' and nspname not like 'pg\_%'
+    ),
+    referenced as (
+        select
+            relation.id AS id,
+            referenced_class.name ,
+            referenced_class.schema ,
+            referenced_class.kind
+        from relation
+        join class as referenced_class on relation.class=referenced_class.id
+        where referenced_class.kind in ('r', 'v', 'm')
+    ),
+    relationships as (
+        select
+            referenced.name as referenced_name,
+            referenced.schema as referenced_schema_id,
+            dependent_class.name as dependent_name,
+            dependent_class.schema as dependent_schema_id,
+            referenced.kind as kind
+        from referenced
+        join dependency on referenced.id=dependency.id
+        join class as dependent_class on dependency.ref=dependent_class.id
+        where
+            (referenced.name != dependent_class.name or
+             referenced.schema != dependent_class.schema)
+    )
+
+    select
+        referenced_schema.name as referenced_schema,
+        relationships.referenced_name as referenced_name,
+        dependent_schema.name as dependent_schema,
+        relationships.dependent_name as dependent_name
+    from relationships
+    join schema as dependent_schema on relationships.dependent_schema_id=dependent_schema.id
+    join schema as referenced_schema on relationships.referenced_schema_id=referenced_schema.id
+    group by referenced_schema, referenced_name, dependent_schema, dependent_name
+    order by referenced_schema, referenced_name, dependent_schema, dependent_name;
+[0m00:44:42.950812 [debug] [MainThread]: SQL status: SELECT 0 in 0.0 seconds
+[0m00:44:42.952393 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': 'b97b77f0-790d-414a-99f8-fa26bf346647', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28a99b5fd0>]}
+[0m00:44:42.953678 [debug] [MainThread]: On master: ROLLBACK
+[0m00:44:42.954822 [debug] [MainThread]: Using postgres connection "master"
+[0m00:44:42.955613 [debug] [MainThread]: On master: BEGIN
+[0m00:44:42.956894 [debug] [MainThread]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:42.957532 [debug] [MainThread]: On master: COMMIT
+[0m00:44:42.958209 [debug] [MainThread]: Using postgres connection "master"
+[0m00:44:42.959541 [debug] [MainThread]: On master: COMMIT
+[0m00:44:42.961103 [debug] [MainThread]: SQL status: COMMIT in 0.0 seconds
+[0m00:44:42.961900 [debug] [MainThread]: On master: Close
+[0m00:44:42.963065 [info ] [MainThread]: Concurrency: 4 threads (target='prod')
+[0m00:44:42.963959 [info ] [MainThread]: 
+[0m00:44:42.971990 [debug] [Thread-1  ]: Began running node model.stackoverflow_survey.stg_survey_responses
+[0m00:44:42.973096 [info ] [Thread-1  ]: 1 of 6 START sql view model dwh_staging.stg_survey_responses ................... [RUN]
+[0m00:44:42.974238 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly list_survey_db_dwh_intermediate, now model.stackoverflow_survey.stg_survey_responses)
+[0m00:44:42.975106 [debug] [Thread-1  ]: Began compiling node model.stackoverflow_survey.stg_survey_responses
+[0m00:44:42.985276 [debug] [Thread-1  ]: Writing injected SQL for node "model.stackoverflow_survey.stg_survey_responses"
+[0m00:44:43.000911 [debug] [Thread-1  ]: Timing info for model.stackoverflow_survey.stg_survey_responses (compile): 00:44:42.976612 => 00:44:43.000490
+[0m00:44:43.001740 [debug] [Thread-1  ]: Began executing node model.stackoverflow_survey.stg_survey_responses
+[0m00:44:43.036534 [debug] [Thread-1  ]: Writing runtime sql for node "model.stackoverflow_survey.stg_survey_responses"
+[0m00:44:43.052995 [debug] [Thread-1  ]: Using postgres connection "model.stackoverflow_survey.stg_survey_responses"
+[0m00:44:43.054058 [debug] [Thread-1  ]: On model.stackoverflow_survey.stg_survey_responses: BEGIN
+[0m00:44:43.055108 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m00:44:43.062244 [debug] [Thread-1  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:43.063220 [debug] [Thread-1  ]: Using postgres connection "model.stackoverflow_survey.stg_survey_responses"
+[0m00:44:43.064010 [debug] [Thread-1  ]: On model.stackoverflow_survey.stg_survey_responses: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "model.stackoverflow_survey.stg_survey_responses"} */
+
+  create view "survey_db"."dwh_staging"."stg_survey_responses__dbt_tmp"
+    
+    
+  as (
+    WITH deduped AS (
+    SELECT DISTINCT ON (response_id) *
+    FROM "survey_db"."raw"."survey_responses"
+    ORDER BY response_id, loaded_at DESC NULLS LAST
+)
+SELECT
+    response_id,
+    main_branch,
+    age,
+    remote_work,
+    ed_level,
+    CASE
+        WHEN years_code = 'Less than 1 year' THEN 0
+        WHEN years_code = 'More than 50 years' THEN 51
+        ELSE CAST(years_code AS NUMERIC)
+    END AS years_code,
+    CASE
+        WHEN years_code_pro = 'Less than 1 year' THEN 0
+        WHEN years_code_pro = 'More than 50 years' THEN 51
+        ELSE CAST(years_code_pro AS NUMERIC)
+    END AS years_code_pro,
+    country,
+    currency,
+    dev_type,
+    org_size,
+    industry,
+    language_have_worked,
+    language_want_work,
+    database_have_worked,
+    database_want_work,
+    platform_have_worked,
+    platform_want_work,
+    ai_select,
+    ai_sent,
+    ai_threat,
+    job_sat,
+    CAST(NULLIF(REGEXP_REPLACE(comp_total, '[^0-9.]', '', 'g'), '') AS NUMERIC) AS comp_total_usd,
+    loaded_at
+FROM deduped
+WHERE response_id IS NOT NULL
+  );
+[0m00:44:43.068650 [debug] [Thread-1  ]: SQL status: CREATE VIEW in 0.0 seconds
+[0m00:44:43.076644 [debug] [Thread-1  ]: Using postgres connection "model.stackoverflow_survey.stg_survey_responses"
+[0m00:44:43.077785 [debug] [Thread-1  ]: On model.stackoverflow_survey.stg_survey_responses: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "model.stackoverflow_survey.stg_survey_responses"} */
+alter table "survey_db"."dwh_staging"."stg_survey_responses__dbt_tmp" rename to "stg_survey_responses"
+[0m00:44:43.079623 [debug] [Thread-1  ]: SQL status: ALTER TABLE in 0.0 seconds
+[0m00:44:43.096506 [debug] [Thread-1  ]: On model.stackoverflow_survey.stg_survey_responses: COMMIT
+[0m00:44:43.097652 [debug] [Thread-1  ]: Using postgres connection "model.stackoverflow_survey.stg_survey_responses"
+[0m00:44:43.098511 [debug] [Thread-1  ]: On model.stackoverflow_survey.stg_survey_responses: COMMIT
+[0m00:44:43.102835 [debug] [Thread-1  ]: SQL status: COMMIT in 0.0 seconds
+[0m00:44:43.113017 [debug] [Thread-1  ]: Applying DROP to: "survey_db"."dwh_staging"."stg_survey_responses__dbt_backup"
+[0m00:44:43.118737 [debug] [Thread-1  ]: Using postgres connection "model.stackoverflow_survey.stg_survey_responses"
+[0m00:44:43.119775 [debug] [Thread-1  ]: On model.stackoverflow_survey.stg_survey_responses: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "model.stackoverflow_survey.stg_survey_responses"} */
+drop view if exists "survey_db"."dwh_staging"."stg_survey_responses__dbt_backup" cascade
+[0m00:44:43.121476 [debug] [Thread-1  ]: SQL status: DROP VIEW in 0.0 seconds
+[0m00:44:43.123542 [debug] [Thread-1  ]: Timing info for model.stackoverflow_survey.stg_survey_responses (execute): 00:44:43.002650 => 00:44:43.123325
+[0m00:44:43.124394 [debug] [Thread-1  ]: On model.stackoverflow_survey.stg_survey_responses: Close
+[0m00:44:43.126851 [debug] [Thread-1  ]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': 'b97b77f0-790d-414a-99f8-fa26bf346647', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28aa5ca580>]}
+[0m00:44:43.128284 [info ] [Thread-1  ]: 1 of 6 OK created sql view model dwh_staging.stg_survey_responses .............. [[32mCREATE VIEW[0m in 0.15s]
+[0m00:44:43.129492 [debug] [Thread-1  ]: Finished running node model.stackoverflow_survey.stg_survey_responses
+[0m00:44:43.131259 [debug] [Thread-3  ]: Began running node model.stackoverflow_survey.int_databases_exploded
+[0m00:44:43.132116 [debug] [Thread-4  ]: Began running node model.stackoverflow_survey.int_languages_exploded
+[0m00:44:43.132874 [info ] [Thread-3  ]: 2 of 6 START sql view model dwh_intermediate.int_databases_exploded ............ [RUN]
+[0m00:44:43.133686 [debug] [Thread-2  ]: Began running node model.stackoverflow_survey.mart_ai_sentiment
+[0m00:44:43.134478 [debug] [Thread-1  ]: Began running node model.stackoverflow_survey.mart_salary_analytics
+[0m00:44:43.135238 [info ] [Thread-4  ]: 3 of 6 START sql view model dwh_intermediate.int_languages_exploded ............ [RUN]
+[0m00:44:43.136832 [debug] [Thread-3  ]: Re-using an available connection from the pool (formerly list_survey_db_dwh_staging, now model.stackoverflow_survey.int_databases_exploded)
+[0m00:44:43.138397 [info ] [Thread-2  ]: 4 of 6 START sql table model dwh_marts.mart_ai_sentiment ....................... [RUN]
+[0m00:44:43.139784 [info ] [Thread-1  ]: 5 of 6 START sql table model dwh_marts.mart_salary_analytics ................... [RUN]
+[0m00:44:43.141255 [debug] [Thread-4  ]: Acquiring new postgres connection 'model.stackoverflow_survey.int_languages_exploded'
+[0m00:44:43.142916 [debug] [Thread-3  ]: Began compiling node model.stackoverflow_survey.int_databases_exploded
+[0m00:44:43.144384 [debug] [Thread-2  ]: Re-using an available connection from the pool (formerly list_survey_db_dwh_marts, now model.stackoverflow_survey.mart_ai_sentiment)
+[0m00:44:43.145662 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly model.stackoverflow_survey.stg_survey_responses, now model.stackoverflow_survey.mart_salary_analytics)
+[0m00:44:43.146650 [debug] [Thread-4  ]: Began compiling node model.stackoverflow_survey.int_languages_exploded
+[0m00:44:43.150198 [debug] [Thread-3  ]: Writing injected SQL for node "model.stackoverflow_survey.int_databases_exploded"
+[0m00:44:43.151455 [debug] [Thread-2  ]: Began compiling node model.stackoverflow_survey.mart_ai_sentiment
+[0m00:44:43.152426 [debug] [Thread-1  ]: Began compiling node model.stackoverflow_survey.mart_salary_analytics
+[0m00:44:43.155710 [debug] [Thread-4  ]: Writing injected SQL for node "model.stackoverflow_survey.int_languages_exploded"
+[0m00:44:43.163076 [debug] [Thread-2  ]: Writing injected SQL for node "model.stackoverflow_survey.mart_ai_sentiment"
+[0m00:44:43.167167 [debug] [Thread-1  ]: Writing injected SQL for node "model.stackoverflow_survey.mart_salary_analytics"
+[0m00:44:43.172431 [debug] [Thread-3  ]: Timing info for model.stackoverflow_survey.int_databases_exploded (compile): 00:44:43.147537 => 00:44:43.172014
+[0m00:44:43.173418 [debug] [Thread-3  ]: Began executing node model.stackoverflow_survey.int_databases_exploded
+[0m00:44:43.179889 [debug] [Thread-4  ]: Timing info for model.stackoverflow_survey.int_languages_exploded (compile): 00:44:43.153239 => 00:44:43.179495
+[0m00:44:43.180836 [debug] [Thread-4  ]: Began executing node model.stackoverflow_survey.int_languages_exploded
+[0m00:44:43.181901 [debug] [Thread-1  ]: Timing info for model.stackoverflow_survey.mart_salary_analytics (compile): 00:44:43.163701 => 00:44:43.181455
+[0m00:44:43.183964 [debug] [Thread-3  ]: Writing runtime sql for node "model.stackoverflow_survey.int_databases_exploded"
+[0m00:44:43.184710 [debug] [Thread-2  ]: Timing info for model.stackoverflow_survey.mart_ai_sentiment (compile): 00:44:43.157212 => 00:44:43.184403
+[0m00:44:43.189533 [debug] [Thread-4  ]: Writing runtime sql for node "model.stackoverflow_survey.int_languages_exploded"
+[0m00:44:43.191106 [debug] [Thread-1  ]: Began executing node model.stackoverflow_survey.mart_salary_analytics
+[0m00:44:43.194272 [debug] [Thread-2  ]: Began executing node model.stackoverflow_survey.mart_ai_sentiment
+[0m00:44:43.224777 [debug] [Thread-2  ]: Writing runtime sql for node "model.stackoverflow_survey.mart_ai_sentiment"
+[0m00:44:43.228311 [debug] [Thread-1  ]: Writing runtime sql for node "model.stackoverflow_survey.mart_salary_analytics"
+[0m00:44:43.229749 [debug] [Thread-3  ]: Using postgres connection "model.stackoverflow_survey.int_databases_exploded"
+[0m00:44:43.231326 [debug] [Thread-3  ]: On model.stackoverflow_survey.int_databases_exploded: BEGIN
+[0m00:44:43.232399 [debug] [Thread-3  ]: Opening a new connection, currently in state closed
+[0m00:44:43.233173 [debug] [Thread-4  ]: Using postgres connection "model.stackoverflow_survey.int_languages_exploded"
+[0m00:44:43.234824 [debug] [Thread-4  ]: On model.stackoverflow_survey.int_languages_exploded: BEGIN
+[0m00:44:43.236421 [debug] [Thread-4  ]: Opening a new connection, currently in state init
+[0m00:44:43.237452 [debug] [Thread-2  ]: Using postgres connection "model.stackoverflow_survey.mart_ai_sentiment"
+[0m00:44:43.238867 [debug] [Thread-2  ]: On model.stackoverflow_survey.mart_ai_sentiment: BEGIN
+[0m00:44:43.239956 [debug] [Thread-1  ]: Using postgres connection "model.stackoverflow_survey.mart_salary_analytics"
+[0m00:44:43.242918 [debug] [Thread-2  ]: Opening a new connection, currently in state closed
+[0m00:44:43.245113 [debug] [Thread-3  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:43.246287 [debug] [Thread-1  ]: On model.stackoverflow_survey.mart_salary_analytics: BEGIN
+[0m00:44:43.247208 [debug] [Thread-4  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:43.248629 [debug] [Thread-3  ]: Using postgres connection "model.stackoverflow_survey.int_databases_exploded"
+[0m00:44:43.249807 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m00:44:43.251273 [debug] [Thread-4  ]: Using postgres connection "model.stackoverflow_survey.int_languages_exploded"
+[0m00:44:43.252201 [debug] [Thread-3  ]: On model.stackoverflow_survey.int_databases_exploded: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "model.stackoverflow_survey.int_databases_exploded"} */
+
+  create view "survey_db"."dwh_intermediate"."int_databases_exploded__dbt_tmp"
+    
+    
+  as (
+    SELECT
+    s.response_id,
+    s.country,
+    s.dev_type,
+    s.years_code_pro,
+    TRIM(db.elem) AS database_name,
+    (
+        s.database_want_work IS NOT NULL
+        AND s.database_want_work ILIKE '%' || TRIM(db.elem) || '%'
+    ) AS wants_to_continue
+FROM "survey_db"."dwh_staging"."stg_survey_responses" s,
+     LATERAL UNNEST(STRING_TO_ARRAY(s.database_have_worked, ';')) AS db(elem)
+WHERE s.database_have_worked IS NOT NULL
+  AND TRIM(db.elem) IS NOT NULL
+  AND TRIM(db.elem) != ''
+  );
+[0m00:44:43.253923 [debug] [Thread-4  ]: On model.stackoverflow_survey.int_languages_exploded: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "model.stackoverflow_survey.int_languages_exploded"} */
+
+  create view "survey_db"."dwh_intermediate"."int_languages_exploded__dbt_tmp"
+    
+    
+  as (
+    SELECT
+    s.response_id,
+    s.country,
+    s.years_code_pro,
+    s.comp_total_usd,
+    s.dev_type,
+    TRIM(lang.elem) AS language,
+    (
+        s.language_want_work IS NOT NULL
+        AND s.language_want_work ILIKE '%' || TRIM(lang.elem) || '%'
+    ) AS wants_to_continue
+FROM "survey_db"."dwh_staging"."stg_survey_responses" s,
+     LATERAL UNNEST(STRING_TO_ARRAY(s.language_have_worked, ';')) AS lang(elem)
+WHERE s.language_have_worked IS NOT NULL
+  AND TRIM(lang.elem) IS NOT NULL
+  AND TRIM(lang.elem) != ''
+  );
+[0m00:44:43.255202 [debug] [Thread-2  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:43.257788 [debug] [Thread-3  ]: SQL status: CREATE VIEW in 0.0 seconds
+[0m00:44:43.258498 [debug] [Thread-4  ]: SQL status: CREATE VIEW in 0.0 seconds
+[0m00:44:43.260009 [debug] [Thread-2  ]: Using postgres connection "model.stackoverflow_survey.mart_ai_sentiment"
+[0m00:44:43.265712 [debug] [Thread-3  ]: Using postgres connection "model.stackoverflow_survey.int_databases_exploded"
+[0m00:44:43.266508 [debug] [Thread-1  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:43.273694 [debug] [Thread-4  ]: Using postgres connection "model.stackoverflow_survey.int_languages_exploded"
+[0m00:44:43.274760 [debug] [Thread-2  ]: On model.stackoverflow_survey.mart_ai_sentiment: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "model.stackoverflow_survey.mart_ai_sentiment"} */
+
+  
+    
+
+  create  table "survey_db"."dwh_marts"."mart_ai_sentiment__dbt_tmp"
+  
+  
+    as
+  
+  (
+    SELECT
+    country,
+    dev_type,
+    ai_select,
+    ai_sent,
+    ai_threat,
+    COUNT(*) AS respondent_count,
+    ROUND(AVG(CASE WHEN job_sat ~ '^[0-9]+$' THEN job_sat::NUMERIC ELSE NULL END)::NUMERIC, 2) AS avg_job_satisfaction,
+    ROUND(100.0 * SUM(CASE WHEN ai_threat ILIKE '%Yes%' THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0), 1) AS pct_see_ai_as_threat
+FROM "survey_db"."dwh_staging"."stg_survey_responses"
+WHERE (ai_select IS NOT NULL OR ai_sent IS NOT NULL)
+  AND country IS NOT NULL
+GROUP BY country, dev_type, ai_select, ai_sent, ai_threat
+HAVING COUNT(*) >= 3
+ORDER BY respondent_count DESC
+  );
+  
+[0m00:44:43.276847 [debug] [Thread-3  ]: On model.stackoverflow_survey.int_databases_exploded: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "model.stackoverflow_survey.int_databases_exploded"} */
+alter table "survey_db"."dwh_intermediate"."int_databases_exploded__dbt_tmp" rename to "int_databases_exploded"
+[0m00:44:43.278369 [debug] [Thread-1  ]: Using postgres connection "model.stackoverflow_survey.mart_salary_analytics"
+[0m00:44:43.279650 [debug] [Thread-4  ]: On model.stackoverflow_survey.int_languages_exploded: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "model.stackoverflow_survey.int_languages_exploded"} */
+alter table "survey_db"."dwh_intermediate"."int_languages_exploded__dbt_tmp" rename to "int_languages_exploded"
+[0m00:44:43.281960 [debug] [Thread-1  ]: On model.stackoverflow_survey.mart_salary_analytics: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "model.stackoverflow_survey.mart_salary_analytics"} */
+
+  
+    
+
+  create  table "survey_db"."dwh_marts"."mart_salary_analytics__dbt_tmp"
+  
+  
+    as
+  
+  (
+    SELECT
+    country,
+    CASE
+        WHEN years_code_pro IS NULL THEN 'Unknown'
+        WHEN years_code_pro < 2 THEN '0-1 years'
+        WHEN years_code_pro < 5 THEN '2-4 years'
+        WHEN years_code_pro < 10 THEN '5-9 years'
+        WHEN years_code_pro < 20 THEN '10-19 years'
+        ELSE '20+ years'
+    END AS experience_band,
+    dev_type,
+    remote_work,
+    org_size,
+    COUNT(*) AS respondent_count,
+    ROUND(AVG(comp_total_usd)::NUMERIC, 2) AS avg_salary_usd,
+    ROUND((PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY comp_total_usd))::NUMERIC, 2) AS median_salary_usd,
+    ROUND((PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY comp_total_usd))::NUMERIC, 2) AS p25_salary_usd,
+    ROUND((PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY comp_total_usd))::NUMERIC, 2) AS p75_salary_usd,
+    ROUND(MIN(comp_total_usd)::NUMERIC, 2) AS min_salary_usd,
+    ROUND(MAX(comp_total_usd)::NUMERIC, 2) AS max_salary_usd
+FROM "survey_db"."dwh_staging"."stg_survey_responses"
+WHERE comp_total_usd IS NOT NULL
+  AND comp_total_usd >= 10000
+  AND comp_total_usd <= 5000000
+  AND country IS NOT NULL
+GROUP BY
+    country,
+    CASE
+        WHEN years_code_pro IS NULL THEN 'Unknown'
+        WHEN years_code_pro < 2 THEN '0-1 years'
+        WHEN years_code_pro < 5 THEN '2-4 years'
+        WHEN years_code_pro < 10 THEN '5-9 years'
+        WHEN years_code_pro < 20 THEN '10-19 years'
+        ELSE '20+ years'
+    END,
+    dev_type,
+    remote_work,
+    org_size
+HAVING COUNT(*) >= 5
+ORDER BY respondent_count DESC
+  );
+  
+[0m00:44:43.282839 [debug] [Thread-3  ]: SQL status: ALTER TABLE in 0.0 seconds
+[0m00:44:43.284356 [debug] [Thread-4  ]: SQL status: ALTER TABLE in 0.0 seconds
+[0m00:44:43.288442 [debug] [Thread-3  ]: On model.stackoverflow_survey.int_databases_exploded: COMMIT
+[0m00:44:43.291351 [debug] [Thread-4  ]: On model.stackoverflow_survey.int_languages_exploded: COMMIT
+[0m00:44:43.293662 [debug] [Thread-3  ]: Using postgres connection "model.stackoverflow_survey.int_databases_exploded"
+[0m00:44:43.294799 [debug] [Thread-4  ]: Using postgres connection "model.stackoverflow_survey.int_languages_exploded"
+[0m00:44:43.295817 [debug] [Thread-3  ]: On model.stackoverflow_survey.int_databases_exploded: COMMIT
+[0m00:44:43.297068 [debug] [Thread-4  ]: On model.stackoverflow_survey.int_languages_exploded: COMMIT
+[0m00:44:43.301728 [debug] [Thread-3  ]: SQL status: COMMIT in 0.0 seconds
+[0m00:44:43.307822 [debug] [Thread-3  ]: Applying DROP to: "survey_db"."dwh_intermediate"."int_databases_exploded__dbt_backup"
+[0m00:44:43.309418 [debug] [Thread-4  ]: SQL status: COMMIT in 0.0 seconds
+[0m00:44:43.311784 [debug] [Thread-3  ]: Using postgres connection "model.stackoverflow_survey.int_databases_exploded"
+[0m00:44:43.317466 [debug] [Thread-4  ]: Applying DROP to: "survey_db"."dwh_intermediate"."int_languages_exploded__dbt_backup"
+[0m00:44:43.318594 [debug] [Thread-3  ]: On model.stackoverflow_survey.int_databases_exploded: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "model.stackoverflow_survey.int_databases_exploded"} */
+drop view if exists "survey_db"."dwh_intermediate"."int_databases_exploded__dbt_backup" cascade
+[0m00:44:43.320566 [debug] [Thread-4  ]: Using postgres connection "model.stackoverflow_survey.int_languages_exploded"
+[0m00:44:43.322269 [debug] [Thread-4  ]: On model.stackoverflow_survey.int_languages_exploded: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "model.stackoverflow_survey.int_languages_exploded"} */
+drop view if exists "survey_db"."dwh_intermediate"."int_languages_exploded__dbt_backup" cascade
+[0m00:44:43.323562 [debug] [Thread-3  ]: SQL status: DROP VIEW in 0.0 seconds
+[0m00:44:43.324230 [debug] [Thread-4  ]: SQL status: DROP VIEW in 0.0 seconds
+[0m00:44:43.327703 [debug] [Thread-3  ]: Timing info for model.stackoverflow_survey.int_databases_exploded (execute): 00:44:43.174120 => 00:44:43.327432
+[0m00:44:43.329847 [debug] [Thread-4  ]: Timing info for model.stackoverflow_survey.int_languages_exploded (execute): 00:44:43.185076 => 00:44:43.329609
+[0m00:44:43.330647 [debug] [Thread-3  ]: On model.stackoverflow_survey.int_databases_exploded: Close
+[0m00:44:43.331578 [debug] [Thread-4  ]: On model.stackoverflow_survey.int_languages_exploded: Close
+[0m00:44:43.333563 [debug] [Thread-3  ]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': 'b97b77f0-790d-414a-99f8-fa26bf346647', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28a99ca820>]}
+[0m00:44:43.337362 [info ] [Thread-3  ]: 2 of 6 OK created sql view model dwh_intermediate.int_databases_exploded ....... [[32mCREATE VIEW[0m in 0.20s]
+[0m00:44:43.336232 [debug] [Thread-4  ]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': 'b97b77f0-790d-414a-99f8-fa26bf346647', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28aa174c70>]}
+[0m00:44:43.339022 [debug] [Thread-3  ]: Finished running node model.stackoverflow_survey.int_databases_exploded
+[0m00:44:43.340361 [info ] [Thread-4  ]: 3 of 6 OK created sql view model dwh_intermediate.int_languages_exploded ....... [[32mCREATE VIEW[0m in 0.20s]
+[0m00:44:43.344549 [debug] [Thread-4  ]: Finished running node model.stackoverflow_survey.int_languages_exploded
+[0m00:44:43.347914 [debug] [Thread-3  ]: Began running node model.stackoverflow_survey.mart_tech_adoption
+[0m00:44:43.349253 [info ] [Thread-3  ]: 6 of 6 START sql table model dwh_marts.mart_tech_adoption ...................... [RUN]
+[0m00:44:43.351330 [debug] [Thread-3  ]: Re-using an available connection from the pool (formerly model.stackoverflow_survey.int_databases_exploded, now model.stackoverflow_survey.mart_tech_adoption)
+[0m00:44:43.352319 [debug] [Thread-3  ]: Began compiling node model.stackoverflow_survey.mart_tech_adoption
+[0m00:44:43.360442 [debug] [Thread-3  ]: Writing injected SQL for node "model.stackoverflow_survey.mart_tech_adoption"
+[0m00:44:43.368228 [debug] [Thread-3  ]: Timing info for model.stackoverflow_survey.mart_tech_adoption (compile): 00:44:43.352958 => 00:44:43.367565
+[0m00:44:43.369423 [debug] [Thread-3  ]: Began executing node model.stackoverflow_survey.mart_tech_adoption
+[0m00:44:43.377758 [debug] [Thread-3  ]: Writing runtime sql for node "model.stackoverflow_survey.mart_tech_adoption"
+[0m00:44:43.386776 [debug] [Thread-3  ]: Using postgres connection "model.stackoverflow_survey.mart_tech_adoption"
+[0m00:44:43.387883 [debug] [Thread-3  ]: On model.stackoverflow_survey.mart_tech_adoption: BEGIN
+[0m00:44:43.388820 [debug] [Thread-3  ]: Opening a new connection, currently in state closed
+[0m00:44:43.396260 [debug] [Thread-3  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:43.397246 [debug] [Thread-3  ]: Using postgres connection "model.stackoverflow_survey.mart_tech_adoption"
+[0m00:44:43.398009 [debug] [Thread-3  ]: On model.stackoverflow_survey.mart_tech_adoption: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "model.stackoverflow_survey.mart_tech_adoption"} */
+
+  
+    
+
+  create  table "survey_db"."dwh_marts"."mart_tech_adoption__dbt_tmp"
+  
+  
+    as
+  
+  (
+    WITH lang_stats AS (
+    SELECT
+        language AS tech_name,
+        COUNT(DISTINCT response_id) AS total_users,
+        SUM(CASE WHEN wants_to_continue THEN 1 ELSE 0 END) AS want_to_continue_count,
+        ROUND(100.0 * SUM(CASE WHEN wants_to_continue THEN 1 ELSE 0 END) / NULLIF(COUNT(DISTINCT response_id), 0), 1) AS retention_rate_pct,
+        'Language' AS tech_type
+    FROM "survey_db"."dwh_intermediate"."int_languages_exploded"
+    GROUP BY language
+),
+db_stats AS (
+    SELECT
+        database_name AS tech_name,
+        COUNT(DISTINCT response_id) AS total_users,
+        SUM(CASE WHEN wants_to_continue THEN 1 ELSE 0 END) AS want_to_continue_count,
+        ROUND(100.0 * SUM(CASE WHEN wants_to_continue THEN 1 ELSE 0 END) / NULLIF(COUNT(DISTINCT response_id), 0), 1) AS retention_rate_pct,
+        'Database' AS tech_type
+    FROM "survey_db"."dwh_intermediate"."int_databases_exploded"
+    GROUP BY database_name
+),
+combined AS (
+    SELECT tech_name, total_users, want_to_continue_count, retention_rate_pct, tech_type FROM lang_stats
+    UNION ALL
+    SELECT tech_name, total_users, want_to_continue_count, retention_rate_pct, tech_type FROM db_stats
+)
+SELECT
+    tech_name,
+    total_users,
+    want_to_continue_count,
+    retention_rate_pct,
+    tech_type,
+    RANK() OVER (PARTITION BY tech_type ORDER BY total_users DESC) AS usage_rank
+FROM combined
+WHERE total_users >= 100
+ORDER BY tech_type, usage_rank
+  );
+  
+[0m00:44:43.628790 [debug] [Thread-1  ]: SQL status: SELECT 1074 in 0.0 seconds
+[0m00:44:43.632982 [debug] [Thread-1  ]: Using postgres connection "model.stackoverflow_survey.mart_salary_analytics"
+[0m00:44:43.633569 [debug] [Thread-2  ]: SQL status: SELECT 3828 in 0.0 seconds
+[0m00:44:43.634107 [debug] [Thread-1  ]: On model.stackoverflow_survey.mart_salary_analytics: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "model.stackoverflow_survey.mart_salary_analytics"} */
+alter table "survey_db"."dwh_marts"."mart_salary_analytics__dbt_tmp" rename to "mart_salary_analytics"
+[0m00:44:43.638067 [debug] [Thread-2  ]: Using postgres connection "model.stackoverflow_survey.mart_ai_sentiment"
+[0m00:44:43.639212 [debug] [Thread-2  ]: On model.stackoverflow_survey.mart_ai_sentiment: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "model.stackoverflow_survey.mart_ai_sentiment"} */
+alter table "survey_db"."dwh_marts"."mart_ai_sentiment__dbt_tmp" rename to "mart_ai_sentiment"
+[0m00:44:43.639876 [debug] [Thread-1  ]: SQL status: ALTER TABLE in 0.0 seconds
+[0m00:44:43.646103 [debug] [Thread-2  ]: SQL status: ALTER TABLE in 0.0 seconds
+[0m00:44:43.647381 [debug] [Thread-1  ]: On model.stackoverflow_survey.mart_salary_analytics: COMMIT
+[0m00:44:43.649471 [debug] [Thread-2  ]: On model.stackoverflow_survey.mart_ai_sentiment: COMMIT
+[0m00:44:43.650450 [debug] [Thread-1  ]: Using postgres connection "model.stackoverflow_survey.mart_salary_analytics"
+[0m00:44:43.651340 [debug] [Thread-2  ]: Using postgres connection "model.stackoverflow_survey.mart_ai_sentiment"
+[0m00:44:43.652156 [debug] [Thread-1  ]: On model.stackoverflow_survey.mart_salary_analytics: COMMIT
+[0m00:44:43.652977 [debug] [Thread-2  ]: On model.stackoverflow_survey.mart_ai_sentiment: COMMIT
+[0m00:44:43.660427 [debug] [Thread-1  ]: SQL status: COMMIT in 0.0 seconds
+[0m00:44:43.661494 [debug] [Thread-2  ]: SQL status: COMMIT in 0.0 seconds
+[0m00:44:43.664780 [debug] [Thread-1  ]: Applying DROP to: "survey_db"."dwh_marts"."mart_salary_analytics__dbt_backup"
+[0m00:44:43.668251 [debug] [Thread-2  ]: Applying DROP to: "survey_db"."dwh_marts"."mart_ai_sentiment__dbt_backup"
+[0m00:44:43.671937 [debug] [Thread-1  ]: Using postgres connection "model.stackoverflow_survey.mart_salary_analytics"
+[0m00:44:43.673424 [debug] [Thread-2  ]: Using postgres connection "model.stackoverflow_survey.mart_ai_sentiment"
+[0m00:44:43.674178 [debug] [Thread-1  ]: On model.stackoverflow_survey.mart_salary_analytics: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "model.stackoverflow_survey.mart_salary_analytics"} */
+drop table if exists "survey_db"."dwh_marts"."mart_salary_analytics__dbt_backup" cascade
+[0m00:44:43.674922 [debug] [Thread-2  ]: On model.stackoverflow_survey.mart_ai_sentiment: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "model.stackoverflow_survey.mart_ai_sentiment"} */
+drop table if exists "survey_db"."dwh_marts"."mart_ai_sentiment__dbt_backup" cascade
+[0m00:44:43.677144 [debug] [Thread-1  ]: SQL status: DROP TABLE in 0.0 seconds
+[0m00:44:43.679450 [debug] [Thread-1  ]: Timing info for model.stackoverflow_survey.mart_salary_analytics (execute): 00:44:43.195976 => 00:44:43.679144
+[0m00:44:43.679997 [debug] [Thread-2  ]: SQL status: DROP TABLE in 0.0 seconds
+[0m00:44:43.680561 [debug] [Thread-1  ]: On model.stackoverflow_survey.mart_salary_analytics: Close
+[0m00:44:43.682465 [debug] [Thread-2  ]: Timing info for model.stackoverflow_survey.mart_ai_sentiment (execute): 00:44:43.212628 => 00:44:43.682229
+[0m00:44:43.683855 [debug] [Thread-1  ]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': 'b97b77f0-790d-414a-99f8-fa26bf346647', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28aa1d3310>]}
+[0m00:44:43.684522 [debug] [Thread-2  ]: On model.stackoverflow_survey.mart_ai_sentiment: Close
+[0m00:44:43.685754 [info ] [Thread-1  ]: 5 of 6 OK created sql table model dwh_marts.mart_salary_analytics .............. [[32mSELECT 1074[0m in 0.54s]
+[0m00:44:43.687122 [debug] [Thread-2  ]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': 'b97b77f0-790d-414a-99f8-fa26bf346647', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28a99dadc0>]}
+[0m00:44:43.688298 [debug] [Thread-1  ]: Finished running node model.stackoverflow_survey.mart_salary_analytics
+[0m00:44:43.689355 [info ] [Thread-2  ]: 4 of 6 OK created sql table model dwh_marts.mart_ai_sentiment .................. [[32mSELECT 3828[0m in 0.54s]
+[0m00:44:43.690754 [debug] [Thread-2  ]: Finished running node model.stackoverflow_survey.mart_ai_sentiment
+[0m00:44:45.135211 [debug] [Thread-3  ]: SQL status: SELECT 84 in 2.0 seconds
+[0m00:44:45.139136 [debug] [Thread-3  ]: Using postgres connection "model.stackoverflow_survey.mart_tech_adoption"
+[0m00:44:45.140111 [debug] [Thread-3  ]: On model.stackoverflow_survey.mart_tech_adoption: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "model.stackoverflow_survey.mart_tech_adoption"} */
+alter table "survey_db"."dwh_marts"."mart_tech_adoption__dbt_tmp" rename to "mart_tech_adoption"
+[0m00:44:45.141365 [debug] [Thread-3  ]: SQL status: ALTER TABLE in 0.0 seconds
+[0m00:44:45.144606 [debug] [Thread-3  ]: On model.stackoverflow_survey.mart_tech_adoption: COMMIT
+[0m00:44:45.145536 [debug] [Thread-3  ]: Using postgres connection "model.stackoverflow_survey.mart_tech_adoption"
+[0m00:44:45.146425 [debug] [Thread-3  ]: On model.stackoverflow_survey.mart_tech_adoption: COMMIT
+[0m00:44:45.149573 [debug] [Thread-3  ]: SQL status: COMMIT in 0.0 seconds
+[0m00:44:45.152971 [debug] [Thread-3  ]: Applying DROP to: "survey_db"."dwh_marts"."mart_tech_adoption__dbt_backup"
+[0m00:44:45.154213 [debug] [Thread-3  ]: Using postgres connection "model.stackoverflow_survey.mart_tech_adoption"
+[0m00:44:45.155057 [debug] [Thread-3  ]: On model.stackoverflow_survey.mart_tech_adoption: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "model.stackoverflow_survey.mart_tech_adoption"} */
+drop table if exists "survey_db"."dwh_marts"."mart_tech_adoption__dbt_backup" cascade
+[0m00:44:45.156290 [debug] [Thread-3  ]: SQL status: DROP TABLE in 0.0 seconds
+[0m00:44:45.158468 [debug] [Thread-3  ]: Timing info for model.stackoverflow_survey.mart_tech_adoption (execute): 00:44:43.369997 => 00:44:45.158180
+[0m00:44:45.160385 [debug] [Thread-3  ]: On model.stackoverflow_survey.mart_tech_adoption: Close
+[0m00:44:45.161812 [debug] [Thread-3  ]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': 'b97b77f0-790d-414a-99f8-fa26bf346647', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28a99ca820>]}
+[0m00:44:45.162921 [info ] [Thread-3  ]: 6 of 6 OK created sql table model dwh_marts.mart_tech_adoption ................. [[32mSELECT 84[0m in 1.81s]
+[0m00:44:45.164138 [debug] [Thread-3  ]: Finished running node model.stackoverflow_survey.mart_tech_adoption
+[0m00:44:45.166793 [debug] [MainThread]: Using postgres connection "master"
+[0m00:44:45.167579 [debug] [MainThread]: On master: BEGIN
+[0m00:44:45.168195 [debug] [MainThread]: Opening a new connection, currently in state closed
+[0m00:44:45.174392 [debug] [MainThread]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:45.175373 [debug] [MainThread]: On master: COMMIT
+[0m00:44:45.176820 [debug] [MainThread]: Using postgres connection "master"
+[0m00:44:45.177716 [debug] [MainThread]: On master: COMMIT
+[0m00:44:45.178620 [debug] [MainThread]: SQL status: COMMIT in 0.0 seconds
+[0m00:44:45.179195 [debug] [MainThread]: On master: Close
+[0m00:44:45.180100 [debug] [MainThread]: Connection 'master' was properly closed.
+[0m00:44:45.181363 [debug] [MainThread]: Connection 'model.stackoverflow_survey.mart_tech_adoption' was properly closed.
+[0m00:44:45.181916 [debug] [MainThread]: Connection 'model.stackoverflow_survey.mart_ai_sentiment' was properly closed.
+[0m00:44:45.182400 [debug] [MainThread]: Connection 'model.stackoverflow_survey.mart_salary_analytics' was properly closed.
+[0m00:44:45.182866 [debug] [MainThread]: Connection 'model.stackoverflow_survey.int_languages_exploded' was properly closed.
+[0m00:44:45.183645 [info ] [MainThread]: 
+[0m00:44:45.184449 [info ] [MainThread]: Finished running 3 view models, 3 table models in 0 hours 0 minutes and 2.47 seconds (2.47s).
+[0m00:44:45.186033 [debug] [MainThread]: Command end result
+[0m00:44:45.224265 [info ] [MainThread]: 
+[0m00:44:45.226014 [info ] [MainThread]: [32mCompleted successfully[0m
+[0m00:44:45.227910 [info ] [MainThread]: 
+[0m00:44:45.228790 [info ] [MainThread]: Done. PASS=6 WARN=0 ERROR=0 SKIP=0 TOTAL=6
+[0m00:44:45.230210 [debug] [MainThread]: Resource report: {"command_name": "run", "command_success": true, "command_wall_clock_time": 4.3078847, "process_user_time": 4.400928, "process_kernel_time": 0.318674, "process_mem_max_rss": "149680", "process_out_blocks": "3072", "process_in_blocks": "0"}
+[0m00:44:45.231320 [debug] [MainThread]: Command `dbt run` succeeded at 00:44:45.231126 after 4.31 seconds
+[0m00:44:45.232197 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28ad13e3d0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28aa7e8400>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7c28a9991100>]}
+[0m00:44:45.233012 [debug] [MainThread]: Flushing usage events
+[0m00:44:48.951788 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e7d7af8c040>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e7d78ecc460>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e7d78ecc820>]}
+
+
+============================== 00:44:48.958426 | 67a6311b-aaa9-412b-8d69-1c8cd495daa1 ==============================
+[0m00:44:48.958426 [info ] [MainThread]: Running with dbt=1.7.0
+[0m00:44:48.959663 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'log_cache_events': 'False', 'write_json': 'True', 'partial_parse': 'True', 'cache_selected_only': 'False', 'profiles_dir': '/opt/airflow/dbt_project', 'fail_fast': 'False', 'version_check': 'True', 'log_path': '/opt/airflow/dbt_project/logs', 'warn_error': 'None', 'debug': 'False', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'introspect': 'True', 'log_format': 'default', 'invocation_command': 'dbt test --profiles-dir /opt/airflow/dbt_project --target prod', 'target_path': 'None', 'static_parser': 'True', 'send_anonymous_usage_stats': 'True'}
+[0m00:44:49.170510 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': '67a6311b-aaa9-412b-8d69-1c8cd495daa1', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e7d7a731e50>]}
+[0m00:44:49.271447 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': '67a6311b-aaa9-412b-8d69-1c8cd495daa1', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e7d78dd95e0>]}
+[0m00:44:49.272782 [info ] [MainThread]: Registered adapter: postgres=1.7.0
+[0m00:44:49.292721 [debug] [MainThread]: checksum: e7c10c3b7ba836fc12f686449f7024e68c063dcfea8fea49899b000304185f67, vars: {}, profile: , target: prod, version: 1.7.0
+[0m00:44:49.479200 [debug] [MainThread]: Partial parsing enabled: 0 files deleted, 0 files added, 0 files changed.
+[0m00:44:49.480122 [debug] [MainThread]: Partial parsing enabled, no changes found, skipping parsing
+[0m00:44:49.486525 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'load_project', 'label': '67a6311b-aaa9-412b-8d69-1c8cd495daa1', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e7d77ef8580>]}
+[0m00:44:49.525661 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'resource_counts', 'label': '67a6311b-aaa9-412b-8d69-1c8cd495daa1', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e7d77fae310>]}
+[0m00:44:49.527243 [info ] [MainThread]: Found 6 models, 13 tests, 1 source, 0 exposures, 0 metrics, 401 macros, 0 groups, 0 semantic models
+[0m00:44:49.528254 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '67a6311b-aaa9-412b-8d69-1c8cd495daa1', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e7d77fae220>]}
+[0m00:44:49.530957 [info ] [MainThread]: 
+[0m00:44:49.532365 [debug] [MainThread]: Acquiring new postgres connection 'master'
+[0m00:44:49.535721 [debug] [ThreadPool]: Acquiring new postgres connection 'list_survey_db_dwh_marts'
+[0m00:44:49.537138 [debug] [ThreadPool]: Acquiring new postgres connection 'list_survey_db_dwh_staging'
+[0m00:44:49.549367 [debug] [ThreadPool]: Acquiring new postgres connection 'list_survey_db_dwh_intermediate'
+[0m00:44:49.550768 [debug] [ThreadPool]: Using postgres connection "list_survey_db_dwh_marts"
+[0m00:44:49.553327 [debug] [ThreadPool]: Using postgres connection "list_survey_db_dwh_staging"
+[0m00:44:49.556072 [debug] [ThreadPool]: Using postgres connection "list_survey_db_dwh_intermediate"
+[0m00:44:49.557124 [debug] [ThreadPool]: On list_survey_db_dwh_marts: BEGIN
+[0m00:44:49.558812 [debug] [ThreadPool]: On list_survey_db_dwh_staging: BEGIN
+[0m00:44:49.559911 [debug] [ThreadPool]: On list_survey_db_dwh_intermediate: BEGIN
+[0m00:44:49.560796 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m00:44:49.561884 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m00:44:49.562864 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m00:44:49.571338 [debug] [ThreadPool]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:49.572006 [debug] [ThreadPool]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:49.572619 [debug] [ThreadPool]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:49.573231 [debug] [ThreadPool]: Using postgres connection "list_survey_db_dwh_marts"
+[0m00:44:49.574540 [debug] [ThreadPool]: Using postgres connection "list_survey_db_dwh_staging"
+[0m00:44:49.575445 [debug] [ThreadPool]: Using postgres connection "list_survey_db_dwh_intermediate"
+[0m00:44:49.576469 [debug] [ThreadPool]: On list_survey_db_dwh_marts: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "connection_name": "list_survey_db_dwh_marts"} */
+select
+      'survey_db' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'dwh_marts'
+    union all
+    select
+      'survey_db' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'dwh_marts'
+    union all
+    select
+      'survey_db' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'dwh_marts'
+  
+[0m00:44:49.577278 [debug] [ThreadPool]: On list_survey_db_dwh_staging: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "connection_name": "list_survey_db_dwh_staging"} */
+select
+      'survey_db' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'dwh_staging'
+    union all
+    select
+      'survey_db' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'dwh_staging'
+    union all
+    select
+      'survey_db' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'dwh_staging'
+  
+[0m00:44:49.578236 [debug] [ThreadPool]: On list_survey_db_dwh_intermediate: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "connection_name": "list_survey_db_dwh_intermediate"} */
+select
+      'survey_db' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'dwh_intermediate'
+    union all
+    select
+      'survey_db' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'dwh_intermediate'
+    union all
+    select
+      'survey_db' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'dwh_intermediate'
+  
+[0m00:44:49.582895 [debug] [ThreadPool]: SQL status: SELECT 3 in 0.0 seconds
+[0m00:44:49.583512 [debug] [ThreadPool]: SQL status: SELECT 1 in 0.0 seconds
+[0m00:44:49.584093 [debug] [ThreadPool]: SQL status: SELECT 2 in 0.0 seconds
+[0m00:44:49.585566 [debug] [ThreadPool]: On list_survey_db_dwh_marts: ROLLBACK
+[0m00:44:49.587139 [debug] [ThreadPool]: On list_survey_db_dwh_staging: ROLLBACK
+[0m00:44:49.588821 [debug] [ThreadPool]: On list_survey_db_dwh_intermediate: ROLLBACK
+[0m00:44:49.590125 [debug] [ThreadPool]: On list_survey_db_dwh_marts: Close
+[0m00:44:49.591520 [debug] [ThreadPool]: On list_survey_db_dwh_staging: Close
+[0m00:44:49.592512 [debug] [ThreadPool]: On list_survey_db_dwh_intermediate: Close
+[0m00:44:49.602234 [debug] [MainThread]: Using postgres connection "master"
+[0m00:44:49.603153 [debug] [MainThread]: On master: BEGIN
+[0m00:44:49.603981 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m00:44:49.611068 [debug] [MainThread]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:49.612003 [debug] [MainThread]: Using postgres connection "master"
+[0m00:44:49.612845 [debug] [MainThread]: On master: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "connection_name": "master"} */
+with relation as (
+        select
+            pg_rewrite.ev_class as class,
+            pg_rewrite.oid as id
+        from pg_rewrite
+    ),
+    class as (
+        select
+            oid as id,
+            relname as name,
+            relnamespace as schema,
+            relkind as kind
+        from pg_class
+    ),
+    dependency as (
+        select distinct
+            pg_depend.objid as id,
+            pg_depend.refobjid as ref
+        from pg_depend
+    ),
+    schema as (
+        select
+            pg_namespace.oid as id,
+            pg_namespace.nspname as name
+        from pg_namespace
+        where nspname != 'information_schema' and nspname not like 'pg\_%'
+    ),
+    referenced as (
+        select
+            relation.id AS id,
+            referenced_class.name ,
+            referenced_class.schema ,
+            referenced_class.kind
+        from relation
+        join class as referenced_class on relation.class=referenced_class.id
+        where referenced_class.kind in ('r', 'v', 'm')
+    ),
+    relationships as (
+        select
+            referenced.name as referenced_name,
+            referenced.schema as referenced_schema_id,
+            dependent_class.name as dependent_name,
+            dependent_class.schema as dependent_schema_id,
+            referenced.kind as kind
+        from referenced
+        join dependency on referenced.id=dependency.id
+        join class as dependent_class on dependency.ref=dependent_class.id
+        where
+            (referenced.name != dependent_class.name or
+             referenced.schema != dependent_class.schema)
+    )
+
+    select
+        referenced_schema.name as referenced_schema,
+        relationships.referenced_name as referenced_name,
+        dependent_schema.name as dependent_schema,
+        relationships.dependent_name as dependent_name
+    from relationships
+    join schema as dependent_schema on relationships.dependent_schema_id=dependent_schema.id
+    join schema as referenced_schema on relationships.referenced_schema_id=referenced_schema.id
+    group by referenced_schema, referenced_name, dependent_schema, dependent_name
+    order by referenced_schema, referenced_name, dependent_schema, dependent_name;
+[0m00:44:49.616945 [debug] [MainThread]: SQL status: SELECT 3 in 0.0 seconds
+[0m00:44:49.619193 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '67a6311b-aaa9-412b-8d69-1c8cd495daa1', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e7d78749220>]}
+[0m00:44:49.620195 [debug] [MainThread]: On master: ROLLBACK
+[0m00:44:49.621274 [debug] [MainThread]: Using postgres connection "master"
+[0m00:44:49.622071 [debug] [MainThread]: On master: BEGIN
+[0m00:44:49.623365 [debug] [MainThread]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:49.625057 [debug] [MainThread]: On master: COMMIT
+[0m00:44:49.626102 [debug] [MainThread]: Using postgres connection "master"
+[0m00:44:49.627025 [debug] [MainThread]: On master: COMMIT
+[0m00:44:49.628193 [debug] [MainThread]: SQL status: COMMIT in 0.0 seconds
+[0m00:44:49.629186 [debug] [MainThread]: On master: Close
+[0m00:44:49.630393 [info ] [MainThread]: Concurrency: 4 threads (target='prod')
+[0m00:44:49.631303 [info ] [MainThread]: 
+[0m00:44:49.639487 [debug] [Thread-1  ]: Began running node test.stackoverflow_survey.accepted_values_int_languages_exploded_wants_to_continue__True__False.025e64ba3f
+[0m00:44:49.640307 [debug] [Thread-2  ]: Began running node test.stackoverflow_survey.accepted_values_mart_tech_adoption_tech_type__Language__Database.6aa3285ef8
+[0m00:44:49.641802 [debug] [Thread-3  ]: Began running node test.stackoverflow_survey.not_null_int_databases_exploded_database_name.88f0d65aab
+[0m00:44:49.642631 [info ] [Thread-1  ]: 1 of 13 START test accepted_values_int_languages_exploded_wants_to_continue__True__False  [RUN]
+[0m00:44:49.643431 [debug] [Thread-4  ]: Began running node test.stackoverflow_survey.not_null_int_databases_exploded_response_id.cac0975253
+[0m00:44:49.643985 [info ] [Thread-2  ]: 2 of 13 START test accepted_values_mart_tech_adoption_tech_type__Language__Database  [RUN]
+[0m00:44:49.645014 [info ] [Thread-3  ]: 3 of 13 START test not_null_int_databases_exploded_database_name ............... [RUN]
+[0m00:44:49.646254 [debug] [Thread-1  ]: Re-using an available connection from the pool (formerly list_survey_db_dwh_intermediate, now test.stackoverflow_survey.accepted_values_int_languages_exploded_wants_to_continue__True__False.025e64ba3f)
+[0m00:44:49.647236 [info ] [Thread-4  ]: 4 of 13 START test not_null_int_databases_exploded_response_id ................. [RUN]
+[0m00:44:49.648399 [debug] [Thread-2  ]: Re-using an available connection from the pool (formerly list_survey_db_dwh_staging, now test.stackoverflow_survey.accepted_values_mart_tech_adoption_tech_type__Language__Database.6aa3285ef8)
+[0m00:44:49.649656 [debug] [Thread-3  ]: Re-using an available connection from the pool (formerly list_survey_db_dwh_marts, now test.stackoverflow_survey.not_null_int_databases_exploded_database_name.88f0d65aab)
+[0m00:44:49.650626 [debug] [Thread-1  ]: Began compiling node test.stackoverflow_survey.accepted_values_int_languages_exploded_wants_to_continue__True__False.025e64ba3f
+[0m00:44:49.651832 [debug] [Thread-4  ]: Acquiring new postgres connection 'test.stackoverflow_survey.not_null_int_databases_exploded_response_id.cac0975253'
+[0m00:44:49.652786 [debug] [Thread-2  ]: Began compiling node test.stackoverflow_survey.accepted_values_mart_tech_adoption_tech_type__Language__Database.6aa3285ef8
+[0m00:44:49.653761 [debug] [Thread-3  ]: Began compiling node test.stackoverflow_survey.not_null_int_databases_exploded_database_name.88f0d65aab
+[0m00:44:49.665949 [debug] [Thread-4  ]: Began compiling node test.stackoverflow_survey.not_null_int_databases_exploded_response_id.cac0975253
+[0m00:44:49.670689 [debug] [Thread-1  ]: Writing injected SQL for node "test.stackoverflow_survey.accepted_values_int_languages_exploded_wants_to_continue__True__False.025e64ba3f"
+[0m00:44:49.679520 [debug] [Thread-2  ]: Writing injected SQL for node "test.stackoverflow_survey.accepted_values_mart_tech_adoption_tech_type__Language__Database.6aa3285ef8"
+[0m00:44:49.687999 [debug] [Thread-3  ]: Writing injected SQL for node "test.stackoverflow_survey.not_null_int_databases_exploded_database_name.88f0d65aab"
+[0m00:44:49.693727 [debug] [Thread-4  ]: Writing injected SQL for node "test.stackoverflow_survey.not_null_int_databases_exploded_response_id.cac0975253"
+[0m00:44:49.703866 [debug] [Thread-3  ]: Timing info for test.stackoverflow_survey.not_null_int_databases_exploded_database_name.88f0d65aab (compile): 00:44:49.680079 => 00:44:49.703437
+[0m00:44:49.704874 [debug] [Thread-3  ]: Began executing node test.stackoverflow_survey.not_null_int_databases_exploded_database_name.88f0d65aab
+[0m00:44:49.722145 [debug] [Thread-4  ]: Timing info for test.stackoverflow_survey.not_null_int_databases_exploded_response_id.cac0975253 (compile): 00:44:49.688479 => 00:44:49.721795
+[0m00:44:49.722818 [debug] [Thread-3  ]: Writing runtime sql for node "test.stackoverflow_survey.not_null_int_databases_exploded_database_name.88f0d65aab"
+[0m00:44:49.723933 [debug] [Thread-4  ]: Began executing node test.stackoverflow_survey.not_null_int_databases_exploded_response_id.cac0975253
+[0m00:44:49.725702 [debug] [Thread-1  ]: Timing info for test.stackoverflow_survey.accepted_values_int_languages_exploded_wants_to_continue__True__False.025e64ba3f (compile): 00:44:49.654450 => 00:44:49.725156
+[0m00:44:49.729658 [debug] [Thread-4  ]: Writing runtime sql for node "test.stackoverflow_survey.not_null_int_databases_exploded_response_id.cac0975253"
+[0m00:44:49.730752 [debug] [Thread-2  ]: Timing info for test.stackoverflow_survey.accepted_values_mart_tech_adoption_tech_type__Language__Database.6aa3285ef8 (compile): 00:44:49.671560 => 00:44:49.730424
+[0m00:44:49.731557 [debug] [Thread-1  ]: Began executing node test.stackoverflow_survey.accepted_values_int_languages_exploded_wants_to_continue__True__False.025e64ba3f
+[0m00:44:49.732960 [debug] [Thread-2  ]: Began executing node test.stackoverflow_survey.accepted_values_mart_tech_adoption_tech_type__Language__Database.6aa3285ef8
+[0m00:44:49.738290 [debug] [Thread-1  ]: Writing runtime sql for node "test.stackoverflow_survey.accepted_values_int_languages_exploded_wants_to_continue__True__False.025e64ba3f"
+[0m00:44:49.744157 [debug] [Thread-2  ]: Writing runtime sql for node "test.stackoverflow_survey.accepted_values_mart_tech_adoption_tech_type__Language__Database.6aa3285ef8"
+[0m00:44:49.750467 [debug] [Thread-3  ]: Using postgres connection "test.stackoverflow_survey.not_null_int_databases_exploded_database_name.88f0d65aab"
+[0m00:44:49.751299 [debug] [Thread-3  ]: On test.stackoverflow_survey.not_null_int_databases_exploded_database_name.88f0d65aab: BEGIN
+[0m00:44:49.752135 [debug] [Thread-3  ]: Opening a new connection, currently in state closed
+[0m00:44:49.753504 [debug] [Thread-4  ]: Using postgres connection "test.stackoverflow_survey.not_null_int_databases_exploded_response_id.cac0975253"
+[0m00:44:49.754504 [debug] [Thread-2  ]: Using postgres connection "test.stackoverflow_survey.accepted_values_mart_tech_adoption_tech_type__Language__Database.6aa3285ef8"
+[0m00:44:49.755630 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_int_databases_exploded_response_id.cac0975253: BEGIN
+[0m00:44:49.756787 [debug] [Thread-1  ]: Using postgres connection "test.stackoverflow_survey.accepted_values_int_languages_exploded_wants_to_continue__True__False.025e64ba3f"
+[0m00:44:49.758514 [debug] [Thread-2  ]: On test.stackoverflow_survey.accepted_values_mart_tech_adoption_tech_type__Language__Database.6aa3285ef8: BEGIN
+[0m00:44:49.760070 [debug] [Thread-4  ]: Opening a new connection, currently in state init
+[0m00:44:49.761417 [debug] [Thread-1  ]: On test.stackoverflow_survey.accepted_values_int_languages_exploded_wants_to_continue__True__False.025e64ba3f: BEGIN
+[0m00:44:49.762495 [debug] [Thread-3  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:49.763417 [debug] [Thread-2  ]: Opening a new connection, currently in state closed
+[0m00:44:49.765275 [debug] [Thread-1  ]: Opening a new connection, currently in state closed
+[0m00:44:49.766542 [debug] [Thread-3  ]: Using postgres connection "test.stackoverflow_survey.not_null_int_databases_exploded_database_name.88f0d65aab"
+[0m00:44:49.770665 [debug] [Thread-3  ]: On test.stackoverflow_survey.not_null_int_databases_exploded_database_name.88f0d65aab: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "test.stackoverflow_survey.not_null_int_databases_exploded_database_name.88f0d65aab"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+    
+
+
+
+select database_name
+from "survey_db"."dwh_intermediate"."int_databases_exploded"
+where database_name is null
+
+
+
+      
+    ) dbt_internal_test
+[0m00:44:49.772030 [debug] [Thread-4  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:49.775342 [debug] [Thread-2  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:49.777566 [debug] [Thread-1  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:49.778320 [debug] [Thread-4  ]: Using postgres connection "test.stackoverflow_survey.not_null_int_databases_exploded_response_id.cac0975253"
+[0m00:44:49.779278 [debug] [Thread-2  ]: Using postgres connection "test.stackoverflow_survey.accepted_values_mart_tech_adoption_tech_type__Language__Database.6aa3285ef8"
+[0m00:44:49.780320 [debug] [Thread-1  ]: Using postgres connection "test.stackoverflow_survey.accepted_values_int_languages_exploded_wants_to_continue__True__False.025e64ba3f"
+[0m00:44:49.781239 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_int_databases_exploded_response_id.cac0975253: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "test.stackoverflow_survey.not_null_int_databases_exploded_response_id.cac0975253"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+    
+
+
+
+select response_id
+from "survey_db"."dwh_intermediate"."int_databases_exploded"
+where response_id is null
+
+
+
+      
+    ) dbt_internal_test
+[0m00:44:49.782145 [debug] [Thread-2  ]: On test.stackoverflow_survey.accepted_values_mart_tech_adoption_tech_type__Language__Database.6aa3285ef8: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "test.stackoverflow_survey.accepted_values_mart_tech_adoption_tech_type__Language__Database.6aa3285ef8"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+    
+
+with all_values as (
+
+    select
+        tech_type as value_field,
+        count(*) as n_records
+
+    from "survey_db"."dwh_marts"."mart_tech_adoption"
+    group by tech_type
+
+)
+
+select *
+from all_values
+where value_field not in (
+    'Language','Database'
+)
+
+
+
+      
+    ) dbt_internal_test
+[0m00:44:49.783135 [debug] [Thread-1  ]: On test.stackoverflow_survey.accepted_values_int_languages_exploded_wants_to_continue__True__False.025e64ba3f: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "test.stackoverflow_survey.accepted_values_int_languages_exploded_wants_to_continue__True__False.025e64ba3f"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+    
+
+with all_values as (
+
+    select
+        wants_to_continue as value_field,
+        count(*) as n_records
+
+    from "survey_db"."dwh_intermediate"."int_languages_exploded"
+    group by wants_to_continue
+
+)
+
+select *
+from all_values
+where value_field not in (
+    'True','False'
+)
+
+
+
+      
+    ) dbt_internal_test
+[0m00:44:49.786175 [debug] [Thread-2  ]: SQL status: SELECT 1 in 0.0 seconds
+[0m00:44:49.790359 [debug] [Thread-2  ]: Timing info for test.stackoverflow_survey.accepted_values_mart_tech_adoption_tech_type__Language__Database.6aa3285ef8 (execute): 00:44:49.739854 => 00:44:49.789795
+[0m00:44:49.794831 [debug] [Thread-2  ]: On test.stackoverflow_survey.accepted_values_mart_tech_adoption_tech_type__Language__Database.6aa3285ef8: ROLLBACK
+[0m00:44:49.796288 [debug] [Thread-2  ]: On test.stackoverflow_survey.accepted_values_mart_tech_adoption_tech_type__Language__Database.6aa3285ef8: Close
+[0m00:44:49.798160 [info ] [Thread-2  ]: 2 of 13 PASS accepted_values_mart_tech_adoption_tech_type__Language__Database .. [[32mPASS[0m in 0.15s]
+[0m00:44:49.800019 [debug] [Thread-2  ]: Finished running node test.stackoverflow_survey.accepted_values_mart_tech_adoption_tech_type__Language__Database.6aa3285ef8
+[0m00:44:49.800987 [debug] [Thread-4  ]: SQL status: SELECT 1 in 0.0 seconds
+[0m00:44:49.802147 [debug] [Thread-2  ]: Began running node test.stackoverflow_survey.not_null_int_languages_exploded_language.b47348cd03
+[0m00:44:49.805007 [debug] [Thread-4  ]: Timing info for test.stackoverflow_survey.not_null_int_databases_exploded_response_id.cac0975253 (execute): 00:44:49.726783 => 00:44:49.804551
+[0m00:44:49.809108 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_int_databases_exploded_response_id.cac0975253: ROLLBACK
+[0m00:44:49.806145 [info ] [Thread-2  ]: 5 of 13 START test not_null_int_languages_exploded_language .................... [RUN]
+[0m00:44:49.811337 [debug] [Thread-2  ]: Re-using an available connection from the pool (formerly test.stackoverflow_survey.accepted_values_mart_tech_adoption_tech_type__Language__Database.6aa3285ef8, now test.stackoverflow_survey.not_null_int_languages_exploded_language.b47348cd03)
+[0m00:44:49.812611 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_int_databases_exploded_response_id.cac0975253: Close
+[0m00:44:49.813527 [debug] [Thread-2  ]: Began compiling node test.stackoverflow_survey.not_null_int_languages_exploded_language.b47348cd03
+[0m00:44:49.816429 [info ] [Thread-4  ]: 4 of 13 PASS not_null_int_databases_exploded_response_id ....................... [[32mPASS[0m in 0.16s]
+[0m00:44:49.826362 [debug] [Thread-2  ]: Writing injected SQL for node "test.stackoverflow_survey.not_null_int_languages_exploded_language.b47348cd03"
+[0m00:44:49.827190 [debug] [Thread-4  ]: Finished running node test.stackoverflow_survey.not_null_int_databases_exploded_response_id.cac0975253
+[0m00:44:49.828571 [debug] [Thread-4  ]: Began running node test.stackoverflow_survey.not_null_int_languages_exploded_response_id.50f457bd95
+[0m00:44:49.829477 [info ] [Thread-4  ]: 6 of 13 START test not_null_int_languages_exploded_response_id ................. [RUN]
+[0m00:44:49.831435 [debug] [Thread-4  ]: Re-using an available connection from the pool (formerly test.stackoverflow_survey.not_null_int_databases_exploded_response_id.cac0975253, now test.stackoverflow_survey.not_null_int_languages_exploded_response_id.50f457bd95)
+[0m00:44:49.832440 [debug] [Thread-4  ]: Began compiling node test.stackoverflow_survey.not_null_int_languages_exploded_response_id.50f457bd95
+[0m00:44:49.839527 [debug] [Thread-4  ]: Writing injected SQL for node "test.stackoverflow_survey.not_null_int_languages_exploded_response_id.50f457bd95"
+[0m00:44:49.842345 [debug] [Thread-2  ]: Timing info for test.stackoverflow_survey.not_null_int_languages_exploded_language.b47348cd03 (compile): 00:44:49.817535 => 00:44:49.841765
+[0m00:44:49.843530 [debug] [Thread-2  ]: Began executing node test.stackoverflow_survey.not_null_int_languages_exploded_language.b47348cd03
+[0m00:44:49.848514 [debug] [Thread-2  ]: Writing runtime sql for node "test.stackoverflow_survey.not_null_int_languages_exploded_language.b47348cd03"
+[0m00:44:49.851894 [debug] [Thread-4  ]: Timing info for test.stackoverflow_survey.not_null_int_languages_exploded_response_id.50f457bd95 (compile): 00:44:49.833211 => 00:44:49.851268
+[0m00:44:49.853041 [debug] [Thread-4  ]: Began executing node test.stackoverflow_survey.not_null_int_languages_exploded_response_id.50f457bd95
+[0m00:44:49.857090 [debug] [Thread-4  ]: Writing runtime sql for node "test.stackoverflow_survey.not_null_int_languages_exploded_response_id.50f457bd95"
+[0m00:44:49.861670 [debug] [Thread-2  ]: Using postgres connection "test.stackoverflow_survey.not_null_int_languages_exploded_language.b47348cd03"
+[0m00:44:49.863022 [debug] [Thread-2  ]: On test.stackoverflow_survey.not_null_int_languages_exploded_language.b47348cd03: BEGIN
+[0m00:44:49.864151 [debug] [Thread-2  ]: Opening a new connection, currently in state closed
+[0m00:44:49.866614 [debug] [Thread-4  ]: Using postgres connection "test.stackoverflow_survey.not_null_int_languages_exploded_response_id.50f457bd95"
+[0m00:44:49.867862 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_int_languages_exploded_response_id.50f457bd95: BEGIN
+[0m00:44:49.868996 [debug] [Thread-4  ]: Opening a new connection, currently in state closed
+[0m00:44:49.873372 [debug] [Thread-2  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:49.875643 [debug] [Thread-2  ]: Using postgres connection "test.stackoverflow_survey.not_null_int_languages_exploded_language.b47348cd03"
+[0m00:44:49.876685 [debug] [Thread-2  ]: On test.stackoverflow_survey.not_null_int_languages_exploded_language.b47348cd03: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "test.stackoverflow_survey.not_null_int_languages_exploded_language.b47348cd03"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+    
+
+
+
+select language
+from "survey_db"."dwh_intermediate"."int_languages_exploded"
+where language is null
+
+
+
+      
+    ) dbt_internal_test
+[0m00:44:49.878016 [debug] [Thread-4  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:49.879083 [debug] [Thread-4  ]: Using postgres connection "test.stackoverflow_survey.not_null_int_languages_exploded_response_id.50f457bd95"
+[0m00:44:49.879781 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_int_languages_exploded_response_id.50f457bd95: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "test.stackoverflow_survey.not_null_int_languages_exploded_response_id.50f457bd95"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+    
+
+
+
+select response_id
+from "survey_db"."dwh_intermediate"."int_languages_exploded"
+where response_id is null
+
+
+
+      
+    ) dbt_internal_test
+[0m00:44:49.895491 [debug] [Thread-4  ]: SQL status: SELECT 1 in 0.0 seconds
+[0m00:44:49.900000 [debug] [Thread-4  ]: Timing info for test.stackoverflow_survey.not_null_int_languages_exploded_response_id.50f457bd95 (execute): 00:44:49.853733 => 00:44:49.899475
+[0m00:44:49.901027 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_int_languages_exploded_response_id.50f457bd95: ROLLBACK
+[0m00:44:49.902020 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_int_languages_exploded_response_id.50f457bd95: Close
+[0m00:44:49.903936 [info ] [Thread-4  ]: 6 of 13 PASS not_null_int_languages_exploded_response_id ....................... [[32mPASS[0m in 0.07s]
+[0m00:44:49.905330 [debug] [Thread-4  ]: Finished running node test.stackoverflow_survey.not_null_int_languages_exploded_response_id.50f457bd95
+[0m00:44:49.906419 [debug] [Thread-4  ]: Began running node test.stackoverflow_survey.not_null_mart_ai_sentiment_respondent_count.b8809f77d6
+[0m00:44:49.908801 [info ] [Thread-4  ]: 7 of 13 START test not_null_mart_ai_sentiment_respondent_count ................. [RUN]
+[0m00:44:49.910686 [debug] [Thread-4  ]: Re-using an available connection from the pool (formerly test.stackoverflow_survey.not_null_int_languages_exploded_response_id.50f457bd95, now test.stackoverflow_survey.not_null_mart_ai_sentiment_respondent_count.b8809f77d6)
+[0m00:44:49.912039 [debug] [Thread-4  ]: Began compiling node test.stackoverflow_survey.not_null_mart_ai_sentiment_respondent_count.b8809f77d6
+[0m00:44:49.920798 [debug] [Thread-4  ]: Writing injected SQL for node "test.stackoverflow_survey.not_null_mart_ai_sentiment_respondent_count.b8809f77d6"
+[0m00:44:49.930217 [debug] [Thread-4  ]: Timing info for test.stackoverflow_survey.not_null_mart_ai_sentiment_respondent_count.b8809f77d6 (compile): 00:44:49.912738 => 00:44:49.929520
+[0m00:44:49.931471 [debug] [Thread-4  ]: Began executing node test.stackoverflow_survey.not_null_mart_ai_sentiment_respondent_count.b8809f77d6
+[0m00:44:49.937505 [debug] [Thread-4  ]: Writing runtime sql for node "test.stackoverflow_survey.not_null_mart_ai_sentiment_respondent_count.b8809f77d6"
+[0m00:44:49.946961 [debug] [Thread-4  ]: Using postgres connection "test.stackoverflow_survey.not_null_mart_ai_sentiment_respondent_count.b8809f77d6"
+[0m00:44:49.947803 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_mart_ai_sentiment_respondent_count.b8809f77d6: BEGIN
+[0m00:44:49.948534 [debug] [Thread-4  ]: Opening a new connection, currently in state closed
+[0m00:44:49.956965 [debug] [Thread-4  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:49.959078 [debug] [Thread-4  ]: Using postgres connection "test.stackoverflow_survey.not_null_mart_ai_sentiment_respondent_count.b8809f77d6"
+[0m00:44:49.959842 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_mart_ai_sentiment_respondent_count.b8809f77d6: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "test.stackoverflow_survey.not_null_mart_ai_sentiment_respondent_count.b8809f77d6"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+    
+
+
+
+select respondent_count
+from "survey_db"."dwh_marts"."mart_ai_sentiment"
+where respondent_count is null
+
+
+
+      
+    ) dbt_internal_test
+[0m00:44:49.961849 [debug] [Thread-4  ]: SQL status: SELECT 1 in 0.0 seconds
+[0m00:44:49.964129 [debug] [Thread-4  ]: Timing info for test.stackoverflow_survey.not_null_mart_ai_sentiment_respondent_count.b8809f77d6 (execute): 00:44:49.932310 => 00:44:49.963789
+[0m00:44:49.964931 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_mart_ai_sentiment_respondent_count.b8809f77d6: ROLLBACK
+[0m00:44:49.965798 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_mart_ai_sentiment_respondent_count.b8809f77d6: Close
+[0m00:44:49.966943 [info ] [Thread-4  ]: 7 of 13 PASS not_null_mart_ai_sentiment_respondent_count ....................... [[32mPASS[0m in 0.06s]
+[0m00:44:49.967939 [debug] [Thread-4  ]: Finished running node test.stackoverflow_survey.not_null_mart_ai_sentiment_respondent_count.b8809f77d6
+[0m00:44:49.968675 [debug] [Thread-4  ]: Began running node test.stackoverflow_survey.not_null_mart_salary_analytics_respondent_count.59fe428da5
+[0m00:44:49.969445 [info ] [Thread-4  ]: 8 of 13 START test not_null_mart_salary_analytics_respondent_count ............. [RUN]
+[0m00:44:49.970564 [debug] [Thread-4  ]: Re-using an available connection from the pool (formerly test.stackoverflow_survey.not_null_mart_ai_sentiment_respondent_count.b8809f77d6, now test.stackoverflow_survey.not_null_mart_salary_analytics_respondent_count.59fe428da5)
+[0m00:44:49.971256 [debug] [Thread-4  ]: Began compiling node test.stackoverflow_survey.not_null_mart_salary_analytics_respondent_count.59fe428da5
+[0m00:44:49.978222 [debug] [Thread-4  ]: Writing injected SQL for node "test.stackoverflow_survey.not_null_mart_salary_analytics_respondent_count.59fe428da5"
+[0m00:44:49.985238 [debug] [Thread-4  ]: Timing info for test.stackoverflow_survey.not_null_mart_salary_analytics_respondent_count.59fe428da5 (compile): 00:44:49.971680 => 00:44:49.984824
+[0m00:44:49.986157 [debug] [Thread-4  ]: Began executing node test.stackoverflow_survey.not_null_mart_salary_analytics_respondent_count.59fe428da5
+[0m00:44:49.989635 [debug] [Thread-4  ]: Writing runtime sql for node "test.stackoverflow_survey.not_null_mart_salary_analytics_respondent_count.59fe428da5"
+[0m00:44:49.999056 [debug] [Thread-4  ]: Using postgres connection "test.stackoverflow_survey.not_null_mart_salary_analytics_respondent_count.59fe428da5"
+[0m00:44:50.000100 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_mart_salary_analytics_respondent_count.59fe428da5: BEGIN
+[0m00:44:50.000898 [debug] [Thread-4  ]: Opening a new connection, currently in state closed
+[0m00:44:50.011122 [debug] [Thread-4  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:50.012067 [debug] [Thread-4  ]: Using postgres connection "test.stackoverflow_survey.not_null_mart_salary_analytics_respondent_count.59fe428da5"
+[0m00:44:50.012749 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_mart_salary_analytics_respondent_count.59fe428da5: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "test.stackoverflow_survey.not_null_mart_salary_analytics_respondent_count.59fe428da5"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+    
+
+
+
+select respondent_count
+from "survey_db"."dwh_marts"."mart_salary_analytics"
+where respondent_count is null
+
+
+
+      
+    ) dbt_internal_test
+[0m00:44:50.014661 [debug] [Thread-4  ]: SQL status: SELECT 1 in 0.0 seconds
+[0m00:44:50.016797 [debug] [Thread-4  ]: Timing info for test.stackoverflow_survey.not_null_mart_salary_analytics_respondent_count.59fe428da5 (execute): 00:44:49.986854 => 00:44:50.016515
+[0m00:44:50.017541 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_mart_salary_analytics_respondent_count.59fe428da5: ROLLBACK
+[0m00:44:50.018391 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_mart_salary_analytics_respondent_count.59fe428da5: Close
+[0m00:44:50.019560 [info ] [Thread-4  ]: 8 of 13 PASS not_null_mart_salary_analytics_respondent_count ................... [[32mPASS[0m in 0.05s]
+[0m00:44:50.020462 [debug] [Thread-4  ]: Finished running node test.stackoverflow_survey.not_null_mart_salary_analytics_respondent_count.59fe428da5
+[0m00:44:50.021194 [debug] [Thread-4  ]: Began running node test.stackoverflow_survey.not_null_mart_tech_adoption_tech_name.0dea28e223
+[0m00:44:50.022026 [info ] [Thread-4  ]: 9 of 13 START test not_null_mart_tech_adoption_tech_name ....................... [RUN]
+[0m00:44:50.023523 [debug] [Thread-4  ]: Re-using an available connection from the pool (formerly test.stackoverflow_survey.not_null_mart_salary_analytics_respondent_count.59fe428da5, now test.stackoverflow_survey.not_null_mart_tech_adoption_tech_name.0dea28e223)
+[0m00:44:50.025758 [debug] [Thread-4  ]: Began compiling node test.stackoverflow_survey.not_null_mart_tech_adoption_tech_name.0dea28e223
+[0m00:44:50.034335 [debug] [Thread-4  ]: Writing injected SQL for node "test.stackoverflow_survey.not_null_mart_tech_adoption_tech_name.0dea28e223"
+[0m00:44:50.044489 [debug] [Thread-4  ]: Timing info for test.stackoverflow_survey.not_null_mart_tech_adoption_tech_name.0dea28e223 (compile): 00:44:50.026629 => 00:44:50.044046
+[0m00:44:50.045423 [debug] [Thread-4  ]: Began executing node test.stackoverflow_survey.not_null_mart_tech_adoption_tech_name.0dea28e223
+[0m00:44:50.049616 [debug] [Thread-4  ]: Writing runtime sql for node "test.stackoverflow_survey.not_null_mart_tech_adoption_tech_name.0dea28e223"
+[0m00:44:50.054469 [debug] [Thread-3  ]: SQL status: SELECT 1 in 0.0 seconds
+[0m00:44:50.056502 [debug] [Thread-3  ]: Timing info for test.stackoverflow_survey.not_null_int_databases_exploded_database_name.88f0d65aab (execute): 00:44:49.705549 => 00:44:50.056183
+[0m00:44:50.058212 [debug] [Thread-3  ]: On test.stackoverflow_survey.not_null_int_databases_exploded_database_name.88f0d65aab: ROLLBACK
+[0m00:44:50.059748 [debug] [Thread-3  ]: On test.stackoverflow_survey.not_null_int_databases_exploded_database_name.88f0d65aab: Close
+[0m00:44:50.060519 [debug] [Thread-4  ]: Using postgres connection "test.stackoverflow_survey.not_null_mart_tech_adoption_tech_name.0dea28e223"
+[0m00:44:50.062312 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_mart_tech_adoption_tech_name.0dea28e223: BEGIN
+[0m00:44:50.061689 [info ] [Thread-3  ]: 3 of 13 PASS not_null_int_databases_exploded_database_name ..................... [[32mPASS[0m in 0.41s]
+[0m00:44:50.063456 [debug] [Thread-4  ]: Opening a new connection, currently in state closed
+[0m00:44:50.064874 [debug] [Thread-3  ]: Finished running node test.stackoverflow_survey.not_null_int_databases_exploded_database_name.88f0d65aab
+[0m00:44:50.066735 [debug] [Thread-3  ]: Began running node test.stackoverflow_survey.not_null_mart_tech_adoption_tech_type.506cf474e2
+[0m00:44:50.067859 [info ] [Thread-3  ]: 10 of 13 START test not_null_mart_tech_adoption_tech_type ...................... [RUN]
+[0m00:44:50.069439 [debug] [Thread-3  ]: Re-using an available connection from the pool (formerly test.stackoverflow_survey.not_null_int_databases_exploded_database_name.88f0d65aab, now test.stackoverflow_survey.not_null_mart_tech_adoption_tech_type.506cf474e2)
+[0m00:44:50.070388 [debug] [Thread-3  ]: Began compiling node test.stackoverflow_survey.not_null_mart_tech_adoption_tech_type.506cf474e2
+[0m00:44:50.076753 [debug] [Thread-3  ]: Writing injected SQL for node "test.stackoverflow_survey.not_null_mart_tech_adoption_tech_type.506cf474e2"
+[0m00:44:50.078266 [debug] [Thread-4  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:50.079345 [debug] [Thread-4  ]: Using postgres connection "test.stackoverflow_survey.not_null_mart_tech_adoption_tech_name.0dea28e223"
+[0m00:44:50.080147 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_mart_tech_adoption_tech_name.0dea28e223: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "test.stackoverflow_survey.not_null_mart_tech_adoption_tech_name.0dea28e223"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+    
+
+
+
+select tech_name
+from "survey_db"."dwh_marts"."mart_tech_adoption"
+where tech_name is null
+
+
+
+      
+    ) dbt_internal_test
+[0m00:44:50.081783 [debug] [Thread-4  ]: SQL status: SELECT 1 in 0.0 seconds
+[0m00:44:50.083809 [debug] [Thread-4  ]: Timing info for test.stackoverflow_survey.not_null_mart_tech_adoption_tech_name.0dea28e223 (execute): 00:44:50.046044 => 00:44:50.083524
+[0m00:44:50.084515 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_mart_tech_adoption_tech_name.0dea28e223: ROLLBACK
+[0m00:44:50.085339 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_mart_tech_adoption_tech_name.0dea28e223: Close
+[0m00:44:50.087128 [debug] [Thread-3  ]: Timing info for test.stackoverflow_survey.not_null_mart_tech_adoption_tech_type.506cf474e2 (compile): 00:44:50.070836 => 00:44:50.086859
+[0m00:44:50.086573 [info ] [Thread-4  ]: 9 of 13 PASS not_null_mart_tech_adoption_tech_name ............................. [[32mPASS[0m in 0.06s]
+[0m00:44:50.087853 [debug] [Thread-3  ]: Began executing node test.stackoverflow_survey.not_null_mart_tech_adoption_tech_type.506cf474e2
+[0m00:44:50.089221 [debug] [Thread-4  ]: Finished running node test.stackoverflow_survey.not_null_mart_tech_adoption_tech_name.0dea28e223
+[0m00:44:50.095267 [debug] [Thread-3  ]: Writing runtime sql for node "test.stackoverflow_survey.not_null_mart_tech_adoption_tech_type.506cf474e2"
+[0m00:44:50.096085 [debug] [Thread-4  ]: Began running node test.stackoverflow_survey.not_null_stg_survey_responses_response_id.7cba1630ea
+[0m00:44:50.097419 [info ] [Thread-4  ]: 11 of 13 START test not_null_stg_survey_responses_response_id .................. [RUN]
+[0m00:44:50.098588 [debug] [Thread-4  ]: Re-using an available connection from the pool (formerly test.stackoverflow_survey.not_null_mart_tech_adoption_tech_name.0dea28e223, now test.stackoverflow_survey.not_null_stg_survey_responses_response_id.7cba1630ea)
+[0m00:44:50.099358 [debug] [Thread-4  ]: Began compiling node test.stackoverflow_survey.not_null_stg_survey_responses_response_id.7cba1630ea
+[0m00:44:50.105726 [debug] [Thread-4  ]: Writing injected SQL for node "test.stackoverflow_survey.not_null_stg_survey_responses_response_id.7cba1630ea"
+[0m00:44:50.110034 [debug] [Thread-3  ]: Using postgres connection "test.stackoverflow_survey.not_null_mart_tech_adoption_tech_type.506cf474e2"
+[0m00:44:50.111211 [debug] [Thread-3  ]: On test.stackoverflow_survey.not_null_mart_tech_adoption_tech_type.506cf474e2: BEGIN
+[0m00:44:50.111984 [debug] [Thread-3  ]: Opening a new connection, currently in state closed
+[0m00:44:50.116271 [debug] [Thread-4  ]: Timing info for test.stackoverflow_survey.not_null_stg_survey_responses_response_id.7cba1630ea (compile): 00:44:50.099820 => 00:44:50.115749
+[0m00:44:50.117114 [debug] [Thread-4  ]: Began executing node test.stackoverflow_survey.not_null_stg_survey_responses_response_id.7cba1630ea
+[0m00:44:50.121051 [debug] [Thread-4  ]: Writing runtime sql for node "test.stackoverflow_survey.not_null_stg_survey_responses_response_id.7cba1630ea"
+[0m00:44:50.122555 [debug] [Thread-3  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:50.123709 [debug] [Thread-3  ]: Using postgres connection "test.stackoverflow_survey.not_null_mart_tech_adoption_tech_type.506cf474e2"
+[0m00:44:50.126172 [debug] [Thread-3  ]: On test.stackoverflow_survey.not_null_mart_tech_adoption_tech_type.506cf474e2: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "test.stackoverflow_survey.not_null_mart_tech_adoption_tech_type.506cf474e2"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+    
+
+
+
+select tech_type
+from "survey_db"."dwh_marts"."mart_tech_adoption"
+where tech_type is null
+
+
+
+      
+    ) dbt_internal_test
+[0m00:44:50.128677 [debug] [Thread-3  ]: SQL status: SELECT 1 in 0.0 seconds
+[0m00:44:50.131002 [debug] [Thread-3  ]: Timing info for test.stackoverflow_survey.not_null_mart_tech_adoption_tech_type.506cf474e2 (execute): 00:44:50.089972 => 00:44:50.130677
+[0m00:44:50.131940 [debug] [Thread-3  ]: On test.stackoverflow_survey.not_null_mart_tech_adoption_tech_type.506cf474e2: ROLLBACK
+[0m00:44:50.133331 [debug] [Thread-3  ]: On test.stackoverflow_survey.not_null_mart_tech_adoption_tech_type.506cf474e2: Close
+[0m00:44:50.134464 [debug] [Thread-4  ]: Using postgres connection "test.stackoverflow_survey.not_null_stg_survey_responses_response_id.7cba1630ea"
+[0m00:44:50.136343 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_stg_survey_responses_response_id.7cba1630ea: BEGIN
+[0m00:44:50.135708 [info ] [Thread-3  ]: 10 of 13 PASS not_null_mart_tech_adoption_tech_type ............................ [[32mPASS[0m in 0.07s]
+[0m00:44:50.137480 [debug] [Thread-4  ]: Opening a new connection, currently in state closed
+[0m00:44:50.138701 [debug] [Thread-3  ]: Finished running node test.stackoverflow_survey.not_null_mart_tech_adoption_tech_type.506cf474e2
+[0m00:44:50.140137 [debug] [Thread-3  ]: Began running node test.stackoverflow_survey.source_not_null_raw_survey_responses_response_id.6d2393e29a
+[0m00:44:50.142637 [info ] [Thread-3  ]: 12 of 13 START test source_not_null_raw_survey_responses_response_id ........... [RUN]
+[0m00:44:50.144287 [debug] [Thread-3  ]: Re-using an available connection from the pool (formerly test.stackoverflow_survey.not_null_mart_tech_adoption_tech_type.506cf474e2, now test.stackoverflow_survey.source_not_null_raw_survey_responses_response_id.6d2393e29a)
+[0m00:44:50.145240 [debug] [Thread-3  ]: Began compiling node test.stackoverflow_survey.source_not_null_raw_survey_responses_response_id.6d2393e29a
+[0m00:44:50.150197 [debug] [Thread-3  ]: Writing injected SQL for node "test.stackoverflow_survey.source_not_null_raw_survey_responses_response_id.6d2393e29a"
+[0m00:44:50.151297 [debug] [Thread-4  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:50.152085 [debug] [Thread-4  ]: Using postgres connection "test.stackoverflow_survey.not_null_stg_survey_responses_response_id.7cba1630ea"
+[0m00:44:50.152766 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_stg_survey_responses_response_id.7cba1630ea: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "test.stackoverflow_survey.not_null_stg_survey_responses_response_id.7cba1630ea"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+    
+
+
+
+select response_id
+from "survey_db"."dwh_staging"."stg_survey_responses"
+where response_id is null
+
+
+
+      
+    ) dbt_internal_test
+[0m00:44:50.162658 [debug] [Thread-3  ]: Timing info for test.stackoverflow_survey.source_not_null_raw_survey_responses_response_id.6d2393e29a (compile): 00:44:50.145783 => 00:44:50.162043
+[0m00:44:50.163837 [debug] [Thread-3  ]: Began executing node test.stackoverflow_survey.source_not_null_raw_survey_responses_response_id.6d2393e29a
+[0m00:44:50.167282 [debug] [Thread-3  ]: Writing runtime sql for node "test.stackoverflow_survey.source_not_null_raw_survey_responses_response_id.6d2393e29a"
+[0m00:44:50.167946 [debug] [Thread-4  ]: SQL status: SELECT 1 in 0.0 seconds
+[0m00:44:50.170425 [debug] [Thread-4  ]: Timing info for test.stackoverflow_survey.not_null_stg_survey_responses_response_id.7cba1630ea (execute): 00:44:50.117786 => 00:44:50.170014
+[0m00:44:50.171251 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_stg_survey_responses_response_id.7cba1630ea: ROLLBACK
+[0m00:44:50.172242 [debug] [Thread-4  ]: On test.stackoverflow_survey.not_null_stg_survey_responses_response_id.7cba1630ea: Close
+[0m00:44:50.173706 [info ] [Thread-4  ]: 11 of 13 PASS not_null_stg_survey_responses_response_id ........................ [[32mPASS[0m in 0.08s]
+[0m00:44:50.176054 [debug] [Thread-4  ]: Finished running node test.stackoverflow_survey.not_null_stg_survey_responses_response_id.7cba1630ea
+[0m00:44:50.177270 [debug] [Thread-4  ]: Began running node test.stackoverflow_survey.unique_stg_survey_responses_response_id.33b8143b82
+[0m00:44:50.178188 [info ] [Thread-4  ]: 13 of 13 START test unique_stg_survey_responses_response_id .................... [RUN]
+[0m00:44:50.179513 [debug] [Thread-4  ]: Re-using an available connection from the pool (formerly test.stackoverflow_survey.not_null_stg_survey_responses_response_id.7cba1630ea, now test.stackoverflow_survey.unique_stg_survey_responses_response_id.33b8143b82)
+[0m00:44:50.180446 [debug] [Thread-4  ]: Began compiling node test.stackoverflow_survey.unique_stg_survey_responses_response_id.33b8143b82
+[0m00:44:50.192870 [debug] [Thread-3  ]: Using postgres connection "test.stackoverflow_survey.source_not_null_raw_survey_responses_response_id.6d2393e29a"
+[0m00:44:50.193387 [debug] [Thread-4  ]: Writing injected SQL for node "test.stackoverflow_survey.unique_stg_survey_responses_response_id.33b8143b82"
+[0m00:44:50.194766 [debug] [Thread-3  ]: On test.stackoverflow_survey.source_not_null_raw_survey_responses_response_id.6d2393e29a: BEGIN
+[0m00:44:50.196400 [debug] [Thread-3  ]: Opening a new connection, currently in state closed
+[0m00:44:50.203418 [debug] [Thread-4  ]: Timing info for test.stackoverflow_survey.unique_stg_survey_responses_response_id.33b8143b82 (compile): 00:44:50.180941 => 00:44:50.202770
+[0m00:44:50.204851 [debug] [Thread-4  ]: Began executing node test.stackoverflow_survey.unique_stg_survey_responses_response_id.33b8143b82
+[0m00:44:50.205687 [debug] [Thread-3  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:50.210550 [debug] [Thread-4  ]: Writing runtime sql for node "test.stackoverflow_survey.unique_stg_survey_responses_response_id.33b8143b82"
+[0m00:44:50.211576 [debug] [Thread-3  ]: Using postgres connection "test.stackoverflow_survey.source_not_null_raw_survey_responses_response_id.6d2393e29a"
+[0m00:44:50.212793 [debug] [Thread-3  ]: On test.stackoverflow_survey.source_not_null_raw_survey_responses_response_id.6d2393e29a: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "test.stackoverflow_survey.source_not_null_raw_survey_responses_response_id.6d2393e29a"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+    
+
+
+
+select response_id
+from "survey_db"."raw"."survey_responses"
+where response_id is null
+
+
+
+      
+    ) dbt_internal_test
+[0m00:44:50.219163 [debug] [Thread-4  ]: Using postgres connection "test.stackoverflow_survey.unique_stg_survey_responses_response_id.33b8143b82"
+[0m00:44:50.220385 [debug] [Thread-4  ]: On test.stackoverflow_survey.unique_stg_survey_responses_response_id.33b8143b82: BEGIN
+[0m00:44:50.221439 [debug] [Thread-4  ]: Opening a new connection, currently in state closed
+[0m00:44:50.223792 [debug] [Thread-3  ]: SQL status: SELECT 1 in 0.0 seconds
+[0m00:44:50.227700 [debug] [Thread-3  ]: Timing info for test.stackoverflow_survey.source_not_null_raw_survey_responses_response_id.6d2393e29a (execute): 00:44:50.164613 => 00:44:50.227176
+[0m00:44:50.228773 [debug] [Thread-3  ]: On test.stackoverflow_survey.source_not_null_raw_survey_responses_response_id.6d2393e29a: ROLLBACK
+[0m00:44:50.230060 [debug] [Thread-3  ]: On test.stackoverflow_survey.source_not_null_raw_survey_responses_response_id.6d2393e29a: Close
+[0m00:44:50.230774 [debug] [Thread-4  ]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:50.232119 [info ] [Thread-3  ]: 12 of 13 PASS source_not_null_raw_survey_responses_response_id ................. [[32mPASS[0m in 0.09s]
+[0m00:44:50.232749 [debug] [Thread-4  ]: Using postgres connection "test.stackoverflow_survey.unique_stg_survey_responses_response_id.33b8143b82"
+[0m00:44:50.233779 [debug] [Thread-3  ]: Finished running node test.stackoverflow_survey.source_not_null_raw_survey_responses_response_id.6d2393e29a
+[0m00:44:50.234512 [debug] [Thread-4  ]: On test.stackoverflow_survey.unique_stg_survey_responses_response_id.33b8143b82: /* {"app": "dbt", "dbt_version": "1.7.0", "profile_name": "stackoverflow_survey", "target_name": "prod", "node_id": "test.stackoverflow_survey.unique_stg_survey_responses_response_id.33b8143b82"} */
+select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+    
+
+select
+    response_id as unique_field,
+    count(*) as n_records
+
+from "survey_db"."dwh_staging"."stg_survey_responses"
+where response_id is not null
+group by response_id
+having count(*) > 1
+
+
+
+      
+    ) dbt_internal_test
+[0m00:44:50.238759 [debug] [Thread-2  ]: SQL status: SELECT 1 in 0.0 seconds
+[0m00:44:50.242891 [debug] [Thread-2  ]: Timing info for test.stackoverflow_survey.not_null_int_languages_exploded_language.b47348cd03 (execute): 00:44:49.844259 => 00:44:50.242275
+[0m00:44:50.244122 [debug] [Thread-2  ]: On test.stackoverflow_survey.not_null_int_languages_exploded_language.b47348cd03: ROLLBACK
+[0m00:44:50.245432 [debug] [Thread-2  ]: On test.stackoverflow_survey.not_null_int_languages_exploded_language.b47348cd03: Close
+[0m00:44:50.247200 [info ] [Thread-2  ]: 5 of 13 PASS not_null_int_languages_exploded_language .......................... [[32mPASS[0m in 0.44s]
+[0m00:44:50.248654 [debug] [Thread-2  ]: Finished running node test.stackoverflow_survey.not_null_int_languages_exploded_language.b47348cd03
+[0m00:44:50.362565 [debug] [Thread-4  ]: SQL status: SELECT 1 in 0.0 seconds
+[0m00:44:50.364914 [debug] [Thread-4  ]: Timing info for test.stackoverflow_survey.unique_stg_survey_responses_response_id.33b8143b82 (execute): 00:44:50.206272 => 00:44:50.364507
+[0m00:44:50.365743 [debug] [Thread-4  ]: On test.stackoverflow_survey.unique_stg_survey_responses_response_id.33b8143b82: ROLLBACK
+[0m00:44:50.366700 [debug] [Thread-4  ]: On test.stackoverflow_survey.unique_stg_survey_responses_response_id.33b8143b82: Close
+[0m00:44:50.367768 [info ] [Thread-4  ]: 13 of 13 PASS unique_stg_survey_responses_response_id .......................... [[32mPASS[0m in 0.19s]
+[0m00:44:50.368661 [debug] [Thread-4  ]: Finished running node test.stackoverflow_survey.unique_stg_survey_responses_response_id.33b8143b82
+[0m00:44:50.477293 [debug] [Thread-1  ]: SQL status: SELECT 1 in 1.0 seconds
+[0m00:44:50.479875 [debug] [Thread-1  ]: Timing info for test.stackoverflow_survey.accepted_values_int_languages_exploded_wants_to_continue__True__False.025e64ba3f (execute): 00:44:49.733712 => 00:44:50.479463
+[0m00:44:50.480915 [debug] [Thread-1  ]: On test.stackoverflow_survey.accepted_values_int_languages_exploded_wants_to_continue__True__False.025e64ba3f: ROLLBACK
+[0m00:44:50.482362 [debug] [Thread-1  ]: On test.stackoverflow_survey.accepted_values_int_languages_exploded_wants_to_continue__True__False.025e64ba3f: Close
+[0m00:44:50.484164 [info ] [Thread-1  ]: 1 of 13 PASS accepted_values_int_languages_exploded_wants_to_continue__True__False  [[32mPASS[0m in 0.84s]
+[0m00:44:50.485795 [debug] [Thread-1  ]: Finished running node test.stackoverflow_survey.accepted_values_int_languages_exploded_wants_to_continue__True__False.025e64ba3f
+[0m00:44:50.489166 [debug] [MainThread]: Using postgres connection "master"
+[0m00:44:50.490561 [debug] [MainThread]: On master: BEGIN
+[0m00:44:50.492670 [debug] [MainThread]: Opening a new connection, currently in state closed
+[0m00:44:50.501217 [debug] [MainThread]: SQL status: BEGIN in 0.0 seconds
+[0m00:44:50.502173 [debug] [MainThread]: On master: COMMIT
+[0m00:44:50.503022 [debug] [MainThread]: Using postgres connection "master"
+[0m00:44:50.503822 [debug] [MainThread]: On master: COMMIT
+[0m00:44:50.504898 [debug] [MainThread]: SQL status: COMMIT in 0.0 seconds
+[0m00:44:50.505966 [debug] [MainThread]: On master: Close
+[0m00:44:50.507726 [debug] [MainThread]: Connection 'master' was properly closed.
+[0m00:44:50.509488 [debug] [MainThread]: Connection 'test.stackoverflow_survey.source_not_null_raw_survey_responses_response_id.6d2393e29a' was properly closed.
+[0m00:44:50.510476 [debug] [MainThread]: Connection 'test.stackoverflow_survey.not_null_int_languages_exploded_language.b47348cd03' was properly closed.
+[0m00:44:50.511282 [debug] [MainThread]: Connection 'test.stackoverflow_survey.accepted_values_int_languages_exploded_wants_to_continue__True__False.025e64ba3f' was properly closed.
+[0m00:44:50.512031 [debug] [MainThread]: Connection 'test.stackoverflow_survey.unique_stg_survey_responses_response_id.33b8143b82' was properly closed.
+[0m00:44:50.512829 [info ] [MainThread]: 
+[0m00:44:50.513579 [info ] [MainThread]: Finished running 13 tests in 0 hours 0 minutes and 0.98 seconds (0.98s).
+[0m00:44:50.516319 [debug] [MainThread]: Command end result
+[0m00:44:50.542736 [info ] [MainThread]: 
+[0m00:44:50.544008 [info ] [MainThread]: [32mCompleted successfully[0m
+[0m00:44:50.545048 [info ] [MainThread]: 
+[0m00:44:50.546330 [info ] [MainThread]: Done. PASS=13 WARN=0 ERROR=0 SKIP=0 TOTAL=13
+[0m00:44:50.547817 [debug] [MainThread]: Resource report: {"command_name": "test", "command_success": true, "command_wall_clock_time": 1.6579549, "process_user_time": 3.034896, "process_kernel_time": 0.284646, "process_mem_max_rss": "149680", "process_in_blocks": "0", "process_out_blocks": "0"}
+[0m00:44:50.549028 [debug] [MainThread]: Command `dbt test` succeeded at 00:44:50.548860 after 1.66 seconds
+[0m00:44:50.549947 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e7d7af8c040>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e7d78749cd0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e7d78dd95e0>]}
+[0m00:44:50.551055 [debug] [MainThread]: Flushing usage events
