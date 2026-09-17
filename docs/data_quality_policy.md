@@ -1,11 +1,11 @@
 # Data quality policy (raw.survey_responses)
 
-Phase A writes **policy only**. `scripts/dq_checks.py` still logs every check
-to `dwh.dq_issues` and never fails the DAG. Phase B is where this file becomes
-code.
+Phase B enforces this file in `scripts/dq_checks.py`. Blocking checks raise
+`PublicationBlocked` so Airflow never reaches `publish_release`. Log-only
+checks still write `dwh.dq_issues` and continue.
 
 "Block publication" means: the check is a hard stop. Marts from that run must
-not be treated as publishable (Phase B will fail the Airflow task / CI job).
+not be treated as publishable (the DAG fails before `publish_release`).
 "Log" means: write the row to `dwh.dq_issues`, emit the existing warning/info
 line, and **continue**. Downstream models may still filter the same condition.
 

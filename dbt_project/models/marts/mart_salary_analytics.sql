@@ -1,23 +1,34 @@
--- Salary cell: country × experience band × role × remote × org size.
+-- Salary cell: country × experience band × role × remote × org size,
+-- plus release_id so many runs can coexist in this table.
 --
--- Grain is that five-way group, not a person and not a language. COUNT(*),
--- AVG, and PERCENTILE_CONT therefore count people.
+-- Grain of one run: those five attributes. Physical grain is
+-- (release_id, country, experience_band, dev_type, remote_work, org_size).
+-- Readers use marts.v_salary_analytics, which keeps a single release.
+--
+-- Append-only: dbt incremental INSERT. Never DROP this table on a run;
+-- a half-finished run would otherwise become the official answer.
 --
 -- FROM is stg_survey_responses only. We do **not** join
 -- int_languages_exploded or int_databases_exploded. Those models fan out to
 -- one row per tech token; joining them here would repeat the same salary
 -- (see tests/fixtures/fanout_counterfactual.md and docs/data_contracts.md).
 --
--- Filters: non-null country, compensation between 10k and 5M inclusive.
--- Those bounds are undocumented heuristics (not Stack Overflow's) and are
--- applied to mixed local currencies, not USD.
--- HAVING COUNT(*) >= 5 hides cells smaller than five people — also
--- undocumented. Semantics: docs/data_contracts.md.
---
 -- Aggregates are of comp_total_raw (self-reported CompTotal in the
 -- respondent's own currency). USD conversion is not implemented.
 
+{% if var('release_id', none) is none %}
+  {{ exceptions.raise_compiler_error('release_id var is required; the DAG must pass --vars') }}
+{% endif %}
+
+{{ config(
+    materialized='incremental',
+    incremental_strategy='append',
+    full_refresh=false,
+    pre_hook="{% if is_incremental() %}DELETE FROM {{ this }} WHERE release_id = '{{ var('release_id') }}'::uuid{% endif %}"
+) }}
+
 SELECT
+    '{{ var("release_id") }}'::uuid AS release_id,
     country,
     CASE
         WHEN years_code_pro IS NULL THEN 'Unknown'
@@ -56,4 +67,3 @@ GROUP BY
     remote_work,
     org_size
 HAVING COUNT(*) >= 5
-ORDER BY respondent_count DESC

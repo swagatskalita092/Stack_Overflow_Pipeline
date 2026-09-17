@@ -40,29 +40,52 @@ models:
           - not_null
 
   - name: mart_salary_analytics
-    description: "Salary analytics aggregated by country, experience band, developer type, remote work, and org size."
+    description: "Salary analytics by cell, append-only per release_id. Readers must use marts.v_salary_analytics."
     columns:
+      - name: release_id
+        tests:
+          - not_null:
+              config:
+                where: "release_id = '{{ var('release_id') }}'"
       - name: respondent_count
         tests:
-          - not_null
+          - not_null:
+              config:
+                where: "release_id = '{{ var('release_id') }}'"
       - name: median_salary
         description: "Median of comp_total_raw for this segment (mixed local currencies, not USD)"
 
   - name: mart_tech_adoption
-    description: "Technology adoption and retention rates for programming languages and databases."
+    description: "Technology adoption per release_id. Readers must use marts.v_tech_adoption."
     columns:
       - name: tech_name
         tests:
-          - not_null
+          - not_null:
+              config:
+                where: "release_id = '{{ var('release_id') }}'"
+      - name: release_id
+        tests:
+          - not_null:
+              config:
+                where: "release_id = '{{ var('release_id') }}'"
       - name: tech_type
         tests:
-          - not_null
+          - not_null:
+              config:
+                where: "release_id = '{{ var('release_id') }}'"
           - accepted_values:
               values: ['Language', 'Database']
 
   - name: mart_ai_sentiment
-    description: "Developer sentiment toward AI tools by country and role."
+    description: "AI sentiment per release_id. Readers must use marts.v_ai_sentiment."
     columns:
+      - name: release_id
+        tests:
+          - not_null:
+              config:
+                where: "release_id = '{{ var('release_id') }}'"
       - name: respondent_count
         tests:
-          - not_null
+          - not_null:
+              config:
+                where: "release_id = '{{ var('release_id') }}'"

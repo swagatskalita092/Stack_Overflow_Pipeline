@@ -1,17 +1,22 @@
--- Tech adoption: one row per language or database that at least 100 people listed.
+-- Tech adoption: one row per language or database that at least 100 people listed,
+-- tagged with this run's release_id (append-only).
 --
--- Grain: (tech_type, tech_name). Languages and databases are aggregated in
--- separate CTEs, then UNION ALL, so a language never shares a rank list with
--- a database.
---
--- total_users is COUNT(DISTINCT response_id): one person, one vote per tech.
--- want_to_continue_count is a SUM of booleans, not distinct — a duplicated
--- token in one semicolon list would inflate the numerator.
--- retention_rate_pct denominator is users of *that* tech, not all respondents.
+-- Readers use marts.v_tech_adoption. Physical table keeps every release.
 --
 -- The >= 100 cutoff is an undocumented heuristic. On the Phase A ~12-person
 -- fixture this mart is empty; pre-threshold expected counts live in
 -- tests/fixtures/expected_mart_tech_adoption_pre_threshold.csv.
+
+{% if var('release_id', none) is none %}
+  {{ exceptions.raise_compiler_error('release_id var is required; the DAG must pass --vars') }}
+{% endif %}
+
+{{ config(
+    materialized='incremental',
+    incremental_strategy='append',
+    full_refresh=false,
+    pre_hook="{% if is_incremental() %}DELETE FROM {{ this }} WHERE release_id = '{{ var('release_id') }}'::uuid{% endif %}"
+) }}
 
 WITH lang_stats AS (
     SELECT
@@ -39,6 +44,7 @@ combined AS (
     SELECT tech_name, total_users, want_to_continue_count, retention_rate_pct, tech_type FROM db_stats
 )
 SELECT
+    '{{ var("release_id") }}'::uuid AS release_id,
     tech_name,
     total_users,
     want_to_continue_count,
@@ -47,4 +53,3 @@ SELECT
     RANK() OVER (PARTITION BY tech_type ORDER BY total_users DESC) AS usage_rank
 FROM combined
 WHERE total_users >= 100
-ORDER BY tech_type, usage_rank

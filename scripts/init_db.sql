@@ -49,3 +49,7 @@ CREATE TABLE raw.survey_responses (
     industry TEXT,
     loaded_at TIMESTAMP DEFAULT NOW()
 );
+
+-- Publication-safety tables/views: scripts/migrate_release_safety.sql
+-- (also mounted as 02_migrate_release_safety.sql for a first Compose boot).
+

@@ -6,16 +6,22 @@ dbt tests the models. This script tests the *landing table* before dbt runs,
 so a bad load shows up as a named check (null keys, dupes, empty table)
 instead of a mysterious CAST error three tasks later.
 
-Phase A policy (block vs log) lives in docs/data_quality_policy.md.
-This file still only logs. Phase B will read that policy and fail the task
-when a blocking check fires. Do not treat "we wrote a row to dq_issues" as
-"we blocked publication."
+Phase B: docs/data_quality_policy.md is now enforced. Blocking checks raise
+PublicationBlocked so Airflow never reaches dbt/publish. Log-only checks
+still write dwh.dq_issues and continue.
 """
 
-import logging
-import os
+from __future__ import annotations
 
-import psycopg2
+import logging
+import sys
+from pathlib import Path
+
+_SCRIPTS = Path(__file__).resolve().parent
+if str(_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS))
+
+from db import get_connection
 
 logging.basicConfig(
     level=logging.INFO,
@@ -26,12 +32,14 @@ logger = logging.getLogger(__name__)
 
 # Each dict is one check. `sql` must return a single integer (a COUNT).
 # `issue_type` AUDIT is "how many rows did we load?", not "how many are bad."
+# `blocks_when` is a callable(row_count) -> bool from the Phase A policy.
 DQ_CHECKS = [
     {
         "name": "null_response_id",
         "issue_type": "NULL_PRIMARY_KEY",
         "sql": "SELECT COUNT(*) FROM raw.survey_responses WHERE response_id IS NULL",
         "details": "Rows with null response_id",
+        "blocks_when": lambda n: n > 0,
     },
     {
         "name": "duplicate_response_id",
@@ -43,18 +51,21 @@ DQ_CHECKS = [
             ) dup
         """,
         "details": "Distinct response_ids appearing more than once",
+        "blocks_when": lambda n: False,
     },
     {
         "name": "null_country",
         "issue_type": "MISSING_DIMENSION",
         "sql": "SELECT COUNT(*) FROM raw.survey_responses WHERE country IS NULL",
         "details": "Rows with null country",
+        "blocks_when": lambda n: False,
     },
     {
         "name": "null_comp_total",
         "issue_type": "MISSING_METRIC",
         "sql": "SELECT COUNT(*) FROM raw.survey_responses WHERE comp_total IS NULL",
         "details": "Rows with null comp_total",
+        "blocks_when": lambda n: False,
     },
     {
         "name": "invalid_years_code_pro",
@@ -66,47 +77,36 @@ DQ_CHECKS = [
               AND years_code_pro ~ '[^0-9]'
         """,
         "details": "years_code_pro not null, not special literals, contains non-numeric characters",
+        "blocks_when": lambda n: n > 0,
     },
     {
         "name": "total_rows_loaded",
         "issue_type": "AUDIT",
         "sql": "SELECT COUNT(*) FROM raw.survey_responses",
         "details": "Total rows in raw.survey_responses",
+        "blocks_when": lambda n: n == 0,
     },
 ]
 
 
-def _get_db_connection():
-    """Open Postgres with the same env defaults ingest_survey.py uses.
-
-    If ingest can see the table and this script cannot, the pipeline is
-    misconfigured — keep the connection story identical on purpose.
-    """
-    host = os.getenv("SURVEY_DB_HOST", "postgres")
-    port = int(os.getenv("SURVEY_DB_PORT", "5432"))
-    dbname = os.getenv("SURVEY_DB_NAME", "survey_db")
-    user = os.getenv("SURVEY_DB_USER", "airflow")
-    password = os.getenv("SURVEY_DB_PASSWORD", "airflow")
-    return psycopg2.connect(
-        host=host,
-        port=port,
-        dbname=dbname,
-        user=user,
-        password=password,
-    )
+class PublicationBlocked(Exception):
+    """A DQ check that the policy says must not reach publish_release."""
 
 
-def run_checks() -> None:
+def run_checks() -> dict:
     """Wipe last run's dq_issues, run every check, insert one row per check.
 
-    We delete previous issues first so the table is "this run only." A
-    dashboard that needs history would need a different table.
+    Returns {check_name: row_count} for pipeline_releases.dq_summary.
 
-    `row_count > 0` on a non-AUDIT check logs a warning. That is not a
-    publish block — see docs/data_quality_policy.md. AUDIT is always info
-    because the count is the table size, not a defect tally.
+    We delete previous issues first so the table is "this run only." AUDIT
+    is always info because the count is the table size, not a defect tally.
+
+    After logging, any blocking check raises PublicationBlocked. The release
+    row must be marked failed by the caller / on_failure_callback.
     """
-    conn = _get_db_connection()
+    conn = get_connection()
+    summary = {}
+    blockers = []
     try:
         with conn.cursor() as cur:
             cur.execute("DELETE FROM dwh.dq_issues")
@@ -123,6 +123,8 @@ def run_checks() -> None:
                 cur.execute(sql)
                 row_count = cur.fetchone()[0]
 
+            summary[name] = row_count
+
             with conn.cursor() as cur:
                 cur.execute(
                     """
@@ -133,12 +135,20 @@ def run_checks() -> None:
                 )
             conn.commit()
 
-            if row_count > 0 and issue_type != "AUDIT":
+            if check["blocks_when"](row_count):
+                blockers.append(f"{name}={row_count}")
+                logger.warning("BLOCK %s: %s (count=%d)", name, issue_type, row_count)
+            elif row_count > 0 and issue_type != "AUDIT":
                 logger.warning("⚠️ %s: %s (count=%d)", name, issue_type, row_count)
             else:
                 logger.info("✓ %s: %s (count=%d)", name, issue_type, row_count)
 
         logger.info("Data quality checks completed")
+        if blockers:
+            raise PublicationBlocked(
+                "DQ policy blocked publication: " + ", ".join(blockers)
+            )
+        return summary
     finally:
         conn.close()
 

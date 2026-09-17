@@ -103,8 +103,13 @@ regression net: three languages × two databases, still one salary.
 
 ## `mart_salary_analytics`
 
-**Grain:** one row per
+**Grain (one published answer):** one row per
 `(country, experience_band, dev_type, remote_work, org_size)`.
+
+**Physical table grain:** the same keys plus `release_id`. Every pipeline run
+appends a new copy. Analysts must query `marts.v_salary_analytics`, which
+keeps `WHERE release_id = (SELECT release_id FROM dwh.active_release)`.
+Querying the table directly will mix history.
 
 That is a **cell of people who share those five attributes**, not one row per
 person and not one row per language/database.
@@ -247,3 +252,6 @@ permission to aggregate salary from this table.
 **`int_databases_exploded`:** one row per `(response_id, database token)`.
 Does **not** carry `comp_total_raw` (inconsistent with languages; unused by
 salary).
+
+Raw ingest (`raw.survey_responses`) is still truncate-and-reload. That is
+outside mart publication safety — see [known_limitations.md](known_limitations.md).

@@ -91,12 +91,18 @@ stackoverflow-pipeline/
 
 ## Pipeline Tasks
 
-| Task                 | Description |
-|----------------------|-------------|
-| **ingest_raw_survey** | Downloads the 2024 survey ZIP from the Stack Overflow CDN, extracts `survey_results_public.csv`, selects/renames columns, cleans sentinel values, and bulk-inserts into `raw.survey_responses`. |
-| **run_dq_checks**     | Runs six checks (null/duplicate `response_id`, null country/comp, invalid `years_code_pro`, row count) and logs results to `dwh.dq_issues`. |
-| **dbt_run_models**    | Builds staging → intermediate → marts (salary, tech adoption, AI sentiment). |
-| **dbt_test_models**   | Runs dbt schema tests (unique, not_null, accepted_values) on the models. |
+| Task | Description |
+| --- | --- |
+| **open_release** | Inserts `dwh.pipeline_releases` (`building`) and pushes `release_id` to XCom. |
+| **ingest_raw_survey** | Downloads the 2024 survey ZIP, cleans it, replaces `raw.survey_responses`. |
+| **record_source_checksum** | Hashes the raw table; flags identical-to-published source (still builds). |
+| **run_dq_checks** | Six checks → `dwh.dq_issues`. Blocking checks fail the DAG (see `docs/data_quality_policy.md`). |
+| **dbt_run_models** | Staging → intermediate → append mart rows tagged with `release_id`. |
+| **dbt_test_models** | dbt tests, scoped to this `release_id` for mart not_null checks. |
+| **mark_candidate** | `candidate_ready` or `candidate_ready_unchanged_source`. Does **not** move the live pointer. |
+| **publish_release** | One locked transaction: `dwh.active_release` := this candidate. |
+
+Readers query `marts.v_salary_analytics`, `marts.v_tech_adoption`, `marts.v_ai_sentiment` (filter to the active release). Do not query `marts.mart_*` for official numbers.
 
 ---
 
@@ -105,7 +111,7 @@ stackoverflow-pipeline/
 - Staging: `stg_survey_responses` — One row per unique `response_id`; numeric casting for `years_code`, `years_code_pro`, `comp_total_raw` (local currency as entered; USD conversion is not implemented).
 - **Intermediate:** `int_languages_exploded`, `int_databases_exploded` — One row per (response, language) or (response, database); includes `wants_to_continue` from “want to work with” fields.
 - **Marts:**
-  - **mart_salary_analytics** — Aggregations by country, experience band, dev type, remote work, org size; respondent count, avg/median/p25/p75/min/max of `comp_total_raw` (not USD); filters e.g. 10k–5M, ≥5 respondents.
+  - **mart_salary_analytics** — Append-only per `release_id`. Official read is `marts.v_salary_analytics`. Aggregations by country, experience band, dev type, remote work, org size; filters e.g. 10k–5M, ≥5 respondents.
   - **mart_tech_adoption** — Languages and databases: total users, want-to-continue count, retention %; usage rank by tech type; filters e.g. ≥100 users.
   - **mart_ai_sentiment** — By country and dev type: AI tool usage/sentiment; respondent count, optional job satisfaction and % seeing AI as threat; minimum 3 respondents.
 

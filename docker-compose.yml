@@ -27,7 +27,8 @@ services:
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
     volumes:
-      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/01_init_db.sql
+      - ./scripts/migrate_release_safety.sql:/docker-entrypoint-initdb.d/02_migrate_release_safety.sql
     ports:
       - "5432:5432"
     healthcheck:
