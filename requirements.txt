@@ -1,0 +1,6 @@
+# Runtime libraries the DAG callables / laptop scripts import.
+# CI installs these plus pytest/ruff via requirements-ci.txt.
+pandas>=2.0,<3
+psycopg2-binary>=2.9,<3
+requests>=2.31,<3
+dbt-postgres==1.7.0
