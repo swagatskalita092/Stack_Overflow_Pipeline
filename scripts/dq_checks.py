@@ -1,5 +1,15 @@
-"""
-Data quality checks for raw.survey_responses. Runs 6 checks and logs results to dwh.dq_issues.
+"""Six quality checks on raw.survey_responses, logged to dwh.dq_issues.
+
+Why this script exists
+----------------------
+dbt tests the models. This script tests the *landing table* before dbt runs,
+so a bad load shows up as a named check (null keys, dupes, empty table)
+instead of a mysterious CAST error three tasks later.
+
+Phase A policy (block vs log) lives in docs/data_quality_policy.md.
+This file still only logs. Phase B will read that policy and fail the task
+when a blocking check fires. Do not treat "we wrote a row to dq_issues" as
+"we blocked publication."
 """
 
 import logging
@@ -14,6 +24,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Each dict is one check. `sql` must return a single integer (a COUNT).
+# `issue_type` AUDIT is "how many rows did we load?", not "how many are bad."
 DQ_CHECKS = [
     {
         "name": "null_response_id",
@@ -65,7 +77,11 @@ DQ_CHECKS = [
 
 
 def _get_db_connection():
-    """Build connection from env with same defaults as ingest_survey.py."""
+    """Open Postgres with the same env defaults ingest_survey.py uses.
+
+    If ingest can see the table and this script cannot, the pipeline is
+    misconfigured — keep the connection story identical on purpose.
+    """
     host = os.getenv("SURVEY_DB_HOST", "postgres")
     port = int(os.getenv("SURVEY_DB_PORT", "5432"))
     dbname = os.getenv("SURVEY_DB_NAME", "survey_db")
@@ -81,7 +97,15 @@ def _get_db_connection():
 
 
 def run_checks() -> None:
-    """Clear dwh.dq_issues, run all checks, insert results, and log with ⚠️ or ✓."""
+    """Wipe last run's dq_issues, run every check, insert one row per check.
+
+    We delete previous issues first so the table is "this run only." A
+    dashboard that needs history would need a different table.
+
+    `row_count > 0` on a non-AUDIT check logs a warning. That is not a
+    publish block — see docs/data_quality_policy.md. AUDIT is always info
+    because the count is the table size, not a defect tally.
+    """
     conn = _get_db_connection()
     try:
         with conn.cursor() as cur:

@@ -1,3 +1,22 @@
+-- Salary cell: country × experience band × role × remote × org size.
+--
+-- Grain is that five-way group, not a person and not a language. COUNT(*),
+-- AVG, and PERCENTILE_CONT therefore count people.
+--
+-- FROM is stg_survey_responses only. We do **not** join
+-- int_languages_exploded or int_databases_exploded. Those models fan out to
+-- one row per tech token; joining them here would repeat the same salary
+-- (see tests/fixtures/fanout_counterfactual.md and docs/data_contracts.md).
+--
+-- Filters: non-null country, compensation between 10k and 5M inclusive.
+-- Those bounds are undocumented heuristics (not Stack Overflow's) and are
+-- applied to mixed local currencies, not USD.
+-- HAVING COUNT(*) >= 5 hides cells smaller than five people — also
+-- undocumented. Semantics: docs/data_contracts.md.
+--
+-- Aggregates are of comp_total_raw (self-reported CompTotal in the
+-- respondent's own currency). USD conversion is not implemented.
+
 SELECT
     country,
     CASE
@@ -12,16 +31,16 @@ SELECT
     remote_work,
     org_size,
     COUNT(*) AS respondent_count,
-    ROUND(AVG(comp_total_usd)::NUMERIC, 2) AS avg_salary_usd,
-    ROUND((PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY comp_total_usd))::NUMERIC, 2) AS median_salary_usd,
-    ROUND((PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY comp_total_usd))::NUMERIC, 2) AS p25_salary_usd,
-    ROUND((PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY comp_total_usd))::NUMERIC, 2) AS p75_salary_usd,
-    ROUND(MIN(comp_total_usd)::NUMERIC, 2) AS min_salary_usd,
-    ROUND(MAX(comp_total_usd)::NUMERIC, 2) AS max_salary_usd
+    ROUND(AVG(comp_total_raw)::NUMERIC, 2) AS avg_salary,
+    ROUND((PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY comp_total_raw))::NUMERIC, 2) AS median_salary,
+    ROUND((PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY comp_total_raw))::NUMERIC, 2) AS p25_salary,
+    ROUND((PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY comp_total_raw))::NUMERIC, 2) AS p75_salary,
+    ROUND(MIN(comp_total_raw)::NUMERIC, 2) AS min_salary,
+    ROUND(MAX(comp_total_raw)::NUMERIC, 2) AS max_salary
 FROM {{ ref('stg_survey_responses') }}
-WHERE comp_total_usd IS NOT NULL
-  AND comp_total_usd >= 10000
-  AND comp_total_usd <= 5000000
+WHERE comp_total_raw IS NOT NULL
+  AND comp_total_raw >= 10000
+  AND comp_total_raw <= 5000000
   AND country IS NOT NULL
 GROUP BY
     country,

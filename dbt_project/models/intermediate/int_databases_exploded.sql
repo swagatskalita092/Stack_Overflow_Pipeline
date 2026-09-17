@@ -1,3 +1,12 @@
+-- One row per (respondent, database they have worked with).
+--
+-- Same idea as int_languages_exploded, for DatabaseHaveWorkedWith. Used only
+-- by mart_tech_adoption. Not joined into salary.
+--
+-- Grain: (response_id, database_name). Unlike the language model this one
+-- does not select comp_total_raw. That inconsistency is harmless today
+-- because salary does not read either exploded table.
+
 SELECT
     s.response_id,
     s.country,

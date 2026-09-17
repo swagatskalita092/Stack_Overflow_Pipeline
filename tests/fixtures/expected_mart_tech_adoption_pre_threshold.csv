@@ -1,0 +1,11 @@
+tech_name,total_users,want_to_continue_count,retention_rate_pct,tech_type,usage_rank
+PostgreSQL,6,5,83.3,Database,1
+MySQL,2,1,50.0,Database,2
+MongoDB,1,0,0.0,Database,3
+Redis,1,1,100.0,Database,3
+Python,7,5,71.4,Language,1
+JavaScript,3,1,33.3,Language,2
+Java,2,2,100.0,Language,3
+C,1,0,0.0,Language,4
+Go,1,1,100.0,Language,4
+SQL,1,1,100.0,Language,4

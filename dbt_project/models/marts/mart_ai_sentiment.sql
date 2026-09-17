@@ -1,3 +1,19 @@
+-- AI sentiment cell: country × role × three AI answers.
+--
+-- Grain is that combination, not "developers in France." A person who skipped
+-- every AI question is out (fixture R012). A person who said "No, and I don't
+-- plan to" is in if their cell reaches three people (fixtures R009–R011).
+-- Skipping the question and answering No are not the same.
+--
+-- WHERE requires ai_select or ai_sent. ai_threat alone is not enough — that
+-- drop is undocumented. HAVING COUNT(*) >= 3 is an undocumented small-cell
+-- rule (different from salary's five).
+--
+-- pct_see_ai_as_threat denominator is the cell headcount, including people
+-- whose ai_threat is null. Numerator is ILIKE '%Yes%'. Explicit "No" is a
+-- zero, not a missing row. avg_job_satisfaction ignores non-numeric job_sat
+-- but still counts those people in respondent_count.
+
 SELECT
     country,
     dev_type,

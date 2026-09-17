@@ -1,0 +1,16 @@
+response_id,country,years_code_pro,comp_total_raw,dev_type,language,wants_to_continue
+R001,United States,7,100000,"Developer, full-stack",Python,true
+R002,United States,7,110000,"Developer, full-stack",Python,true
+R002,United States,7,110000,"Developer, full-stack",JavaScript,false
+R003,United States,7,120000,"Developer, full-stack",Python,true
+R003,United States,7,120000,"Developer, full-stack",SQL,true
+R004,United States,7,130000,"Developer, full-stack",JavaScript,true
+R005,United States,7,140000,"Developer, full-stack",Python,false
+R005,United States,7,140000,"Developer, full-stack",Java,true
+R006,United States,7,150000,"Developer, full-stack",Python,true
+R006,United States,7,150000,"Developer, full-stack",JavaScript,false
+R006,United States,7,150000,"Developer, full-stack",Go,true
+R007,United States,7,,"Developer, full-stack",Python,false
+R008,India,12,180000,"Developer, back-end",Java,true
+R009,Canada,0,50000,"Developer, back-end",Python,true
+R010,Canada,51,6000000,"Developer, back-end",C,false

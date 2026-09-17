@@ -10,8 +10,8 @@ models:
           - not_null
       - name: country
         description: "Developer country of residence"
-      - name: comp_total_usd
-        description: "Total annual compensation in USD, cleaned numeric"
+      - name: comp_total_raw
+        description: "Numeric CompTotal as entered, in the respondent's own currency. USD conversion is not implemented."
       - name: years_code_pro
         description: "Professional coding experience in years"
 
@@ -45,8 +45,8 @@ models:
       - name: respondent_count
         tests:
           - not_null
-      - name: median_salary_usd
-        description: "Median annual salary in USD for this segment"
+      - name: median_salary
+        description: "Median of comp_total_raw for this segment (mixed local currencies, not USD)"
 
   - name: mart_tech_adoption
     description: "Technology adoption and retention rates for programming languages and databases."

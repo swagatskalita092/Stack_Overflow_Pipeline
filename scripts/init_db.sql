@@ -1,3 +1,9 @@
+-- Warehouse bootstrap: database, schemas, landing table, DQ log.
+--
+-- raw.survey_responses is the ingest target (truncate + reload each run).
+-- dwh.dq_issues is the DQ script's "this run only" log (the script deletes
+-- prior rows). dbt creates staging / intermediate / marts schemas on run.
+
 -- Create survey database and set context
 CREATE DATABASE survey_db;
 \connect survey_db;

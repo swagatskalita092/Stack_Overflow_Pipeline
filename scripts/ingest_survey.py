@@ -1,6 +1,12 @@
-"""
-Stack Overflow Developer Survey 2024 ingestion script.
-Downloads survey ZIP, extracts CSV in memory, cleans data, and loads into raw.survey_responses.
+"""Download the Stack Overflow Developer Survey ZIP, clean it, load Postgres.
+
+Why this script exists
+----------------------
+Airflow should not scrape a 65k-row CSV by hand. One function (`run`) does
+download → unzip in memory → keep the columns we model → replace survey
+sentinels with SQL NULL → replace the raw table. The rest of the pipeline
+(DQ, dbt) assumes `raw.survey_responses` looks like this extract, not like
+the 114-column public file.
 """
 
 import io
@@ -20,8 +26,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Public 2024 ZIP. A later year is a new URL, not a silent overwrite of this one.
 SURVEY_ZIP_URL = "https://survey.stackoverflow.co/datasets/stack-overflow-developer-survey-2024.zip"
 
+# PascalCase names in the CSV → snake_case names in raw.survey_responses.
+# Anything not in this map is dropped on purpose (we do not load all 114 columns).
 COLUMN_RENAME = {
     "ResponseId": "response_id",
     "MainBranch": "main_branch",
@@ -48,11 +57,18 @@ COLUMN_RENAME = {
     "Industry": "industry",
 }
 
+# Strings the survey uses for "no answer". They must become SQL NULL, not the
+# text "NA", or staging's CAST(comp_total AS NUMERIC) will fail.
 SENTINEL_VALUES = {"NA", "N/A", "nan", "NaN", "None", ""}
 
 
 def _download_zip() -> bytes:
-    """Download the survey ZIP from the CDN."""
+    """Pull the ZIP bytes from the CDN.
+
+    We keep the file in memory so the container does not need a writable data
+    directory. timeout=60 is a network guard, not a size guess — a hung CDN
+    should fail the task so Airflow retries rather than sit forever.
+    """
     logger.info("Downloading survey ZIP from %s", SURVEY_ZIP_URL)
     resp = requests.get(SURVEY_ZIP_URL, timeout=60)
     resp.raise_for_status()
@@ -61,7 +77,11 @@ def _download_zip() -> bytes:
 
 
 def _extract_csv_from_zip(zip_bytes: bytes) -> pd.DataFrame:
-    """Extract survey_results_public.csv from ZIP in memory."""
+    """Open survey_results_public.csv inside the ZIP without writing to disk.
+
+    The public ZIP also contains schema and README files. We only want the
+    respondent CSV; anything else is ignored.
+    """
     logger.info("Extracting survey_results_public.csv from ZIP")
     with zipfile.ZipFile(io.BytesIO(zip_bytes), "r") as zf:
         with zf.open("survey_results_public.csv") as f:
@@ -71,7 +91,12 @@ def _extract_csv_from_zip(zip_bytes: bytes) -> pd.DataFrame:
 
 
 def _select_and_rename(df: pd.DataFrame) -> pd.DataFrame:
-    """Keep only required columns and rename to target names."""
+    """Keep COLUMN_RENAME keys that exist and rename them to warehouse names.
+
+    A missing source column is a warning, not a crash: a future survey year
+    might drop a field. Better to load the rest and let DQ / dbt tests say
+    which mart broke than to fail ingest on one rename.
+    """
     missing = [c for c in COLUMN_RENAME if c not in df.columns]
     if missing:
         logger.warning("Missing columns in CSV: %s", missing)
@@ -82,7 +107,12 @@ def _select_and_rename(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _clean(df: pd.DataFrame) -> pd.DataFrame:
-    """Strip whitespace and replace sentinel values with None."""
+    """Trim whitespace and turn survey sentinels into None (SQL NULL).
+
+    Only object (string) columns are touched. Numeric pandas dtypes are left
+    alone so we do not stringify real numbers. In-place on purpose: this frame
+    is throwaway after the load.
+    """
     for col in df.columns:
         if df[col].dtype == object:
             df[col] = df[col].astype(str).str.strip()
@@ -94,7 +124,11 @@ def _clean(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _get_db_connection():
-    """Build connection from env with defaults."""
+    """Open Postgres with the same env defaults the Airflow containers use.
+
+    Defaults match docker-compose (host `postgres`, db `survey_db`). Override
+    with SURVEY_DB_* when running the script on a laptop against localhost.
+    """
     host = os.getenv("SURVEY_DB_HOST", "postgres")
     port = int(os.getenv("SURVEY_DB_PORT", "5432"))
     dbname = os.getenv("SURVEY_DB_NAME", "survey_db")
@@ -110,7 +144,12 @@ def _get_db_connection():
 
 
 def _load_to_postgres(df: pd.DataFrame) -> None:
-    """Truncate raw.survey_responses and bulk insert with execute_values."""
+    """Replace raw.survey_responses with this frame (truncate, then bulk insert).
+
+    Truncate first so a rerun cannot append a second copy of the same survey.
+    execute_values batches 1000 rows so we are not one INSERT per respondent.
+    pandas NA/NaN become None so psycopg2 writes SQL NULL.
+    """
     conn = _get_db_connection()
     try:
         with conn.cursor() as cur:
@@ -135,7 +174,7 @@ def _load_to_postgres(df: pd.DataFrame) -> None:
 
 
 def run() -> None:
-    """Entry point: download, extract, clean, and load survey data."""
+    """Airflow entry point: download, extract, clean, load. No DQ, no dbt."""
     logger.info("Starting survey ingestion")
     zip_bytes = _download_zip()
     df = _extract_csv_from_zip(zip_bytes)

@@ -1,3 +1,18 @@
+-- Staging: one clean row per survey respondent.
+--
+-- Grain: response_id. Raw can contain duplicates (see fixture R008); we keep
+-- the latest loaded_at so a re-ingest or a repeated ResponseId does not
+-- double-count that person downstream.
+--
+-- Experience sentinels become numbers here because the salary mart bands on
+-- numeric years_code_pro. "Less than 1 year" → 0 (band 0-1). "More than 50
+-- years" → 51 (band 20+).
+--
+-- comp_total_raw is the survey CompTotal stripped to a number. currency is
+-- stored but not applied. USD conversion is not implemented (Stack Overflow
+-- uses the 11 Jun 2024 FX rate; we do not). Null response_id is dropped
+-- because nothing downstream can join on it.
+
 WITH deduped AS (
     SELECT DISTINCT ON (response_id) *
     FROM {{ source('raw', 'survey_responses') }}
@@ -34,7 +49,7 @@ SELECT
     ai_sent,
     ai_threat,
     job_sat,
-    CAST(NULLIF(REGEXP_REPLACE(comp_total, '[^0-9.]', '', 'g'), '') AS NUMERIC) AS comp_total_usd,
+    CAST(NULLIF(REGEXP_REPLACE(comp_total, '[^0-9.]', '', 'g'), '') AS NUMERIC) AS comp_total_raw,
     loaded_at
 FROM deduped
 WHERE response_id IS NOT NULL

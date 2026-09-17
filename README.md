@@ -102,10 +102,10 @@ stackoverflow-pipeline/
 
 ## Data Model (dbt)
 
-- **Staging:** `stg_survey_responses` — One row per unique `response_id`; numeric casting for `years_code`, `years_code_pro`, `comp_total_usd`.
+- Staging: `stg_survey_responses` — One row per unique `response_id`; numeric casting for `years_code`, `years_code_pro`, `comp_total_raw` (local currency as entered; USD conversion is not implemented).
 - **Intermediate:** `int_languages_exploded`, `int_databases_exploded` — One row per (response, language) or (response, database); includes `wants_to_continue` from “want to work with” fields.
 - **Marts:**
-  - **mart_salary_analytics** — Aggregations by country, experience band, dev type, remote work, org size; respondent count, avg/median/p25/p75/min/max salary (USD); filters e.g. salary 10k–5M, ≥5 respondents.
+  - **mart_salary_analytics** — Aggregations by country, experience band, dev type, remote work, org size; respondent count, avg/median/p25/p75/min/max of `comp_total_raw` (not USD); filters e.g. 10k–5M, ≥5 respondents.
   - **mart_tech_adoption** — Languages and databases: total users, want-to-continue count, retention %; usage rank by tech type; filters e.g. ≥100 users.
   - **mart_ai_sentiment** — By country and dev type: AI tool usage/sentiment; respondent count, optional job satisfaction and % seeing AI as threat; minimum 3 respondents.
 

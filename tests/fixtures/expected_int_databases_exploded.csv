@@ -1,0 +1,11 @@
+response_id,country,dev_type,years_code_pro,database_name,wants_to_continue
+R001,United States,"Developer, full-stack",7,PostgreSQL,true
+R002,United States,"Developer, full-stack",7,PostgreSQL,true
+R003,United States,"Developer, full-stack",7,PostgreSQL,true
+R003,United States,"Developer, full-stack",7,MySQL,false
+R004,United States,"Developer, full-stack",7,MySQL,true
+R005,United States,"Developer, full-stack",7,PostgreSQL,false
+R005,United States,"Developer, full-stack",7,Redis,true
+R006,United States,"Developer, full-stack",7,PostgreSQL,true
+R006,United States,"Developer, full-stack",7,MongoDB,false
+R007,United States,"Developer, full-stack",7,PostgreSQL,true

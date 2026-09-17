@@ -43,7 +43,7 @@ The pipeline is orchestrated by **Apache Airflow** on a weekly schedule and is d
 ### 3.3 Data Model (Layers)
 
 - **Raw** — `raw.survey_responses`: one row per survey response; columns aligned with a subset of the survey (e.g. `response_id`, demographics, comp, languages, databases, AI fields).  
-- **Staging** — `stg_survey_responses`: deduplicated by `response_id`, numeric casting for `years_code` / `years_code_pro` and `comp_total` → `comp_total_usd`.  
+- **Staging** — `stg_survey_responses`: deduplicated by `response_id`, numeric casting for `years_code` / `years_code_pro` and `comp_total` → `comp_total_raw` (USD conversion is not implemented).  
 - **Intermediate** — `int_languages_exploded`, `int_databases_exploded`: one row per response–language or response–database; “wants to continue” derived from the “want to work with” fields.  
 - **Marts** — `mart_salary_analytics`, `mart_tech_adoption`, `mart_ai_sentiment`: aggregations with filters (e.g. salary band, minimum respondents) and dbt tests on key columns.
 
@@ -86,7 +86,7 @@ Multi-select fields are semicolon-separated in the CSV; the pipeline keeps them 
 
 - **Renames:** PascalCase source columns are renamed to snake_case (e.g. `CompTotal` → `comp_total`).  
 - **Sentinels:** Values such as `"NA"`, `"N/A"`, `"nan"`, empty string are normalized to NULL before load.  
-- **Numeric fields:** In dbt staging, `years_code` and `years_code_pro` special values (“Less than 1 year”, “More than 50 years”) are mapped to 0 and 51; `comp_total` is stripped of non-numeric characters and cast to numeric as `comp_total_usd`.  
+- **Numeric fields:** In dbt staging, `years_code` and `years_code_pro` special values (“Less than 1 year”, “More than 50 years”) are mapped to 0 and 51; `comp_total` is stripped of non-numeric characters and cast to numeric as `comp_total_raw`. USD conversion is not implemented.  
 - **Deduplication:** Staging uses `DISTINCT ON (response_id)` so each response appears once.
 
 ### 4.4 Data Quality Checks (Pre-dbt)
