@@ -164,7 +164,7 @@ def record_source_checksum(release_id: str) -> str:
 
 
 def attach_dq_summary(release_id: str, summary: dict[str, Any]) -> None:
-    """Store the six DQ counts on the release row (JSONB)."""
+    """Store the DQ counts on the release row (JSONB)."""
     conn = get_connection()
     try:
         with conn.cursor() as cur:

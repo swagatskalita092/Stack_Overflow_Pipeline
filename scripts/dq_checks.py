@@ -1,12 +1,13 @@
-"""Six quality checks on raw.survey_responses, logged to dwh.dq_issues.
+"""Landing-table checks on raw.survey_responses, logged to dwh.dq_issues.
 
 Why this script exists
 ----------------------
 dbt tests the models. This script tests the *landing table* before dbt runs,
-so a bad load shows up as a named check (null keys, dupes, empty table)
-instead of a mysterious CAST error three tasks later.
+so a bad load shows up as a named check (null keys, dupes, empty table,
+catastrophic row-count drop) instead of a mysterious CAST error three
+tasks later.
 
-Phase B: docs/data_quality_policy.md is now enforced. Blocking checks raise
+docs/data_quality_policy.md is enforced. Blocking checks raise
 PublicationBlocked so Airflow never reaches dbt/publish. Log-only checks
 still write dwh.dq_issues and continue.
 """
@@ -85,6 +86,35 @@ DQ_CHECKS = [
         "sql": "SELECT COUNT(*) FROM raw.survey_responses",
         "details": "Total rows in raw.survey_responses",
         "blocks_when": lambda n: n == 0,
+    },
+    {
+        # 1 = current raw count is under half of the last published
+        # total_rows_loaded. 0 = no baseline, or the drop is within the
+        # documented 50% band. See data_quality_policy.md (row_count_drop).
+        "name": "row_count_drop",
+        "issue_type": "VOLUME_DROP",
+        "sql": """
+            WITH cur AS (
+                SELECT COUNT(*)::numeric AS n FROM raw.survey_responses
+            ),
+            pub AS (
+                SELECT NULLIF(r.dq_summary->>'total_rows_loaded', '')::numeric AS n
+                FROM dwh.active_release a
+                JOIN dwh.pipeline_releases r ON r.release_id = a.release_id
+            )
+            SELECT CASE
+                WHEN NOT EXISTS (SELECT 1 FROM pub) THEN 0
+                WHEN (SELECT n FROM pub) IS NULL THEN 0
+                WHEN (SELECT n FROM pub) <= 0 THEN 0
+                WHEN (SELECT n FROM cur) * 2 < (SELECT n FROM pub) THEN 1
+                ELSE 0
+            END
+        """,
+        "details": (
+            "Current raw row count is under 50% of the last published "
+            "total_rows_loaded (truncated / partial download)"
+        ),
+        "blocks_when": lambda n: n > 0,
     },
 ]
 

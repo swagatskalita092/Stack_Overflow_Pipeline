@@ -26,8 +26,16 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Public 2024 ZIP. A later year is a new URL, not a silent overwrite of this one.
-SURVEY_ZIP_URL = "https://survey.stackoverflow.co/datasets/stack-overflow-developer-survey-2024.zip"
+# Official 2024 extract. survey.stackoverflow.co/datasets/...zip is HTTP 404
+# (confirmed Phase D). The survey site's "Data & files" list now points at
+# StackExchange/Survey on GitHub (results.csv, Git LFS). A later year is a
+# new URL, not a silent overwrite of this one.
+SURVEY_DATA_URL = (
+    "https://github.com/StackExchange/Survey/raw/refs/heads/main/"
+    "packages/archive/2024/results.csv"
+)
+# Kept so older comments / chaos patches that say SURVEY_ZIP_URL still resolve.
+SURVEY_ZIP_URL = SURVEY_DATA_URL
 
 # PascalCase names in the CSV → snake_case names in raw.survey_responses.
 # Anything not in this map is dropped on purpose (we do not load all 114 columns).
@@ -62,30 +70,30 @@ COLUMN_RENAME = {
 SENTINEL_VALUES = {"NA", "N/A", "nan", "NaN", "None", ""}
 
 
-def _download_zip() -> bytes:
-    """Pull the ZIP bytes from the CDN.
+def _download_source() -> bytes:
+    """Pull the official extract (CSV today; ZIP still accepted).
 
     We keep the file in memory so the container does not need a writable data
-    directory. timeout=60 is a network guard, not a size guess — a hung CDN
-    should fail the task so Airflow retries rather than sit forever.
+    directory. timeout=180 covers the ~160 MB Git LFS CSV; a hung host should
+    fail the task so Airflow retries rather than sit forever.
     """
-    logger.info("Downloading survey ZIP from %s", SURVEY_ZIP_URL)
-    resp = requests.get(SURVEY_ZIP_URL, timeout=60)
+    logger.info("Downloading survey data from %s", SURVEY_DATA_URL)
+    resp = requests.get(SURVEY_DATA_URL, timeout=180, allow_redirects=True)
     resp.raise_for_status()
     logger.info("Downloaded %s bytes", len(resp.content))
     return resp.content
 
 
-def _extract_csv_from_zip(zip_bytes: bytes) -> pd.DataFrame:
-    """Open survey_results_public.csv inside the ZIP without writing to disk.
-
-    The public ZIP also contains schema and README files. We only want the
-    respondent CSV; anything else is ignored.
-    """
-    logger.info("Extracting survey_results_public.csv from ZIP")
-    with zipfile.ZipFile(io.BytesIO(zip_bytes), "r") as zf:
-        with zf.open("survey_results_public.csv") as f:
-            df = pd.read_csv(f, low_memory=False)
+def _frame_from_download(blob: bytes) -> pd.DataFrame:
+    """ZIP (legacy CDN) or bare CSV (current GitHub archive)."""
+    if blob[:2] == b"PK":
+        logger.info("Extracting survey_results_public.csv from ZIP")
+        with zipfile.ZipFile(io.BytesIO(blob), "r") as zf:
+            with zf.open("survey_results_public.csv") as f:
+                df = pd.read_csv(f, low_memory=False)
+    else:
+        logger.info("Parsing downloaded CSV (not a ZIP)")
+        df = pd.read_csv(io.BytesIO(blob), low_memory=False)
     logger.info("Read %d rows, %d columns", len(df), len(df.columns))
     return df
 
@@ -176,8 +184,8 @@ def _load_to_postgres(df: pd.DataFrame) -> None:
 def run() -> None:
     """Airflow entry point: download, extract, clean, load. No DQ, no dbt."""
     logger.info("Starting survey ingestion")
-    zip_bytes = _download_zip()
-    df = _extract_csv_from_zip(zip_bytes)
+    blob = _download_source()
+    df = _frame_from_download(blob)
     df = _select_and_rename(df)
     df = _clean(df)
     _load_to_postgres(df)

@@ -1,0 +1,134 @@
+{
+  "configured_url": {
+    "url": "https://survey.stackoverflow.co/datasets/stack-overflow-developer-survey-2024.zip",
+    "status": 404,
+    "ok": false,
+    "bytes": 0
+  },
+  "archive": {
+    "url": "https://media.githubusercontent.com/media/StackExchange/Survey/main/packages/archive/2024/results.csv",
+    "cached": true,
+    "zip_bytes": 17047972,
+    "download_s": 0.0,
+    "note": "reused cached zip"
+  },
+  "specs": {
+    "os": "Windows-10-10.0.26200-SP0",
+    "python": "3.11.9",
+    "processor": "Intel64 Family 6 Model 140 Stepping 1, GenuineIntel",
+    "machine": "AMD64",
+    "cpu": "Name : 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz NumberOfCores : 4 NumberOfLogicalProcessors : 8",
+    "ram_bytes": "16917712896",
+    "computer": "Manufacturer : HP Model : HP ENVY Laptop 14-eb0xxx"
+  },
+  "runs": [
+    {
+      "ingest_s": 10.42,
+      "dq_s": 0.97,
+      "dbt_run_s": 17.06,
+      "dbt_test_s": 9.89,
+      "total_s": 38.53,
+      "run": 1,
+      "release_id": "0219829a-eb4b-4abb-a1ee-5c231af7f809"
+    },
+    {
+      "ingest_s": 11.21,
+      "dq_s": 0.87,
+      "dbt_run_s": 14.6,
+      "dbt_test_s": 8.95,
+      "total_s": 35.79,
+      "run": 2,
+      "release_id": "c66ce059-fc0b-4c07-9ab2-9c7d180e12f6"
+    },
+    {
+      "ingest_s": 10.91,
+      "dq_s": 0.97,
+      "dbt_run_s": 14.41,
+      "dbt_test_s": 9.17,
+      "total_s": 35.62,
+      "run": 3,
+      "release_id": "7cb63eda-d215-4f26-a77f-160ee3eca97d"
+    },
+    {
+      "ingest_s": 11.11,
+      "dq_s": 1.04,
+      "dbt_run_s": 15.05,
+      "dbt_test_s": 9.33,
+      "total_s": 36.69,
+      "run": 4,
+      "release_id": "44b04bd7-b1c4-4608-9e10-274412f69874"
+    },
+    {
+      "ingest_s": 10.56,
+      "dq_s": 0.86,
+      "dbt_run_s": 13.2,
+      "dbt_test_s": 8.82,
+      "total_s": 33.6,
+      "run": 5,
+      "release_id": "7e6f383b-55d1-41bc-8faf-2fea83c0be7c"
+    }
+  ],
+  "summary": {
+    "ingest_s": {
+      "runs": [
+        10.42,
+        11.21,
+        10.91,
+        11.11,
+        10.56
+      ],
+      "median": 10.91,
+      "min": 10.42,
+      "max": 11.21
+    },
+    "dq_s": {
+      "runs": [
+        0.97,
+        0.87,
+        0.97,
+        1.04,
+        0.86
+      ],
+      "median": 0.97,
+      "min": 0.86,
+      "max": 1.04
+    },
+    "dbt_run_s": {
+      "runs": [
+        17.06,
+        14.6,
+        14.41,
+        15.05,
+        13.2
+      ],
+      "median": 14.6,
+      "min": 13.2,
+      "max": 17.06
+    },
+    "dbt_test_s": {
+      "runs": [
+        9.89,
+        8.95,
+        9.17,
+        9.33,
+        8.82
+      ],
+      "median": 9.17,
+      "min": 8.82,
+      "max": 9.89
+    },
+    "total_s": {
+      "runs": [
+        38.53,
+        35.79,
+        35.62,
+        36.69,
+        33.6
+      ],
+      "median": 35.79,
+      "min": 33.6,
+      "max": 38.53
+    }
+  },
+  "note": "ingest_survey.SURVEY_ZIP_URL 404s; timings used the official StackExchange/Survey 2024 Git LFS CSV wrapped as a ZIP. ingest_survey.py was not modified."
+}

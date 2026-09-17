@@ -9,8 +9,9 @@ not be treated as publishable (the DAG fails before `publish_release`).
 "Log" means: write the row to `dwh.dq_issues`, emit the existing warning/info
 line, and **continue**. Downstream models may still filter the same condition.
 
-The six checks below are the six that already exist. This file does not add
-new checks.
+The first six checks are the Phase A/B set. `row_count_drop` was added after
+Phase D injection 1 (a truncated file published because `total_rows_loaded`
+only blocked `n = 0`).
 
 ---
 
@@ -102,7 +103,35 @@ Phase A fixture illegal.
 Zero rows means ingest wrote nothing. There is nothing to publish.
 
 A non-zero count is information (did this week's load shrink?). It is not a
-fail.
+fail. Catastrophic shrink is `row_count_drop`, not this check.
+
+---
+
+## `row_count_drop`
+
+**Block publication** when the current `COUNT(*)` of `raw.survey_responses`
+is **strictly less than half** of `total_rows_loaded` on the last
+**published** release (`dwh.active_release` → `pipeline_releases.dq_summary`).
+
+**Do not block** when there is no active release, or the published row has
+no `total_rows_loaded` (first publish, or a test that never ran DQ).
+
+**Why 50%, not an absolute floor.** A healthy production load is tens of
+thousands of rows; a healthy Phase A fixture load is a dozen. A floor of
+"must be ≥ 10,000" would make the fixture illegal and break CI. Comparing
+to the last published count keeps both worlds: 13 → 13 is fine, 65,437 →
+65,437 is fine, 65,437 → 2,000 (truncated download) is not.
+
+50% is a *catastrophe* bar, not a sampling bar. 2023→2024 published
+headcount dropped about 27%; that would still pass. A half-downloaded ZIP
+or a file cut after a handful of rows will not. Cutting only the last
+byte of an otherwise complete CSV does **not** change the row count —
+pandas still emits one junk row — and this check will not see it. That
+remaining hole is documented; this check is the one that stops a
+collapsed load from publishing.
+
+The stored comparison is the previous run's `total_rows_loaded` (the raw
+table size at DQ time), not the mart cell count.
 
 ---
 
@@ -116,3 +145,4 @@ fail.
 | `null_comp_total` | No; log only |
 | `invalid_years_code_pro` | Yes, if count > 0 |
 | `total_rows_loaded` | Only if count = 0; otherwise log the audit total |
+| `row_count_drop` | Yes, if current count < 50% of last published `total_rows_loaded` |

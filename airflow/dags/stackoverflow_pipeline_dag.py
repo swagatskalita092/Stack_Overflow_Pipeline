@@ -53,7 +53,7 @@ def _record_checksum(**context):
 
 
 def _run_dq_checks(**context):
-    """Six landing-table checks. Blocking failures raise PublicationBlocked."""
+    """Landing-table checks. Blocking failures raise PublicationBlocked."""
     from dq_checks import run_checks
     from release import attach_dq_summary
 
