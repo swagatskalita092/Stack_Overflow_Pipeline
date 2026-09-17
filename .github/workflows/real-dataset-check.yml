@@ -1,0 +1,65 @@
+# Weekly (and manual) run against the real 2024 survey ZIP on the CDN.
+#
+# This workflow is intentionally NOT on pull_request. A flaky or down CDN
+# must not block merging. Pass/fail shows up on the Actions tab only.
+#
+# Cadence is weekly to match the DAG's schedule_interval="@weekly".
+#
+# What "end to end" means here: docker compose up postgres (same image and
+# init SQL as local), then the same callables the DAG runs — ingest from the
+# real CDN, DQ, dbt run/test, mark_candidate, publish_release — and a smoke
+# query that marts.v_* are non-empty. We do not boot airflow-webserver /
+# airflow-scheduler: those images pip-install on every start and would make
+# this job slow and brittle without testing extra data-path code.
+
+name: Real dataset check
+
+on:
+  schedule:
+    - cron: "0 6 * * 0"
+  workflow_dispatch:
+
+jobs:
+  real-dataset:
+    name: compose postgres + CDN ingest + dbt + publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    env:
+      SURVEY_DB_HOST: localhost
+      SURVEY_DB_PORT: "5432"
+      SURVEY_DB_NAME: survey_db
+      SURVEY_DB_USER: airflow
+      SURVEY_DB_PASSWORD: airflow
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Start Compose Postgres
+        run: docker compose up -d postgres
+
+      - name: Wait until Postgres is healthy
+        run: |
+          for i in $(seq 1 30); do
+            if docker compose exec -T postgres pg_isready -U airflow; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "postgres did not become ready"
+          docker compose logs postgres
+          exit 1
+
+      - name: Install Python deps
+        run: pip install -r requirements.txt
+
+      - name: Ingest from CDN, dbt, publish
+        run: python scripts/run_cdn_e2e.py

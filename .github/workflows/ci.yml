@@ -1,0 +1,80 @@
+# Required PR CI: fixture pipeline + publication-safety tests. No survey CDN.
+#
+# "Required" here means this workflow runs on every pull_request. Turning the
+# check into a GitHub required status check is a branch-protection setting on
+# the repo (Settings → Branches); this file cannot flip that checkbox.
+#
+# Warehouse is a postgres:16 *service container*, not docker-compose. Compose
+# would also boot Airflow images that pip-install on start and would make a PR
+# wait on unrelated services. Tests talk to localhost:5432.
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  pipeline-ci:
+    name: lint + publication safety + mart correctness
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: airflow
+          POSTGRES_PASSWORD: airflow
+          POSTGRES_DB: airflow
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U airflow -d airflow"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      SURVEY_DB_HOST: localhost
+      SURVEY_DB_PORT: "5432"
+      SURVEY_DB_NAME: survey_db
+      SURVEY_DB_USER: airflow
+      SURVEY_DB_PASSWORD: airflow
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          # 3.11 matches dbt-postgres==1.7.0 (the compose pin). 3.12+ is not
+          # supported by that dbt release; ubuntu-latest's default would fail.
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-ci.txt
+
+      - name: Install psql
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Apply init_db.sql and migrate_release_safety.sql
+        env:
+          PGPASSWORD: airflow
+        run: |
+          psql -h localhost -U airflow -d airflow -v ON_ERROR_STOP=1 -f scripts/init_db.sql
+          psql -h localhost -U airflow -d airflow -v ON_ERROR_STOP=1 -f scripts/migrate_release_safety.sql
+
+      - name: Install Python deps
+        run: pip install -r requirements-ci.txt
+
+      - name: Lint scripts/ and airflow/dags/
+        run: ruff check scripts/ airflow/dags/
+
+      - name: Run publication-safety, mart-correctness, and DAG-structure tests
+        run: |
+          pytest -v \
+            tests/test_publication_safety.py \
+            tests/test_mart_correctness.py \
+            tests/test_dag_structure.py

@@ -1,0 +1,15 @@
+# Lint target for .github/workflows/ci.yml: scripts/ and airflow/dags/.
+# tests/ is not linted (conftest inserts sys.path before imports on purpose).
+#
+# Select E/F/W only (pycodestyle errors + pyflakes + warnings). Default ruff
+# 0.16 also turns on isort/pyupgrade/simplify; those would rewrite Phase B
+# files for style, which is not what this CI job is for.
+
+[lint]
+select = ["E", "F", "W"]
+# E731: scripts/dq_checks.py stores each policy as lambda n: n > 0 next to
+# the SQL. Named defs would be noisier, not safer.
+# E501: DAG bash_command strings are long on purpose (one dbt invocation).
+# E402: scripts insert sys.path then `from db import ...` so Airflow and
+# laptop runs share the same local module without installing a package.
+ignore = ["E731", "E501", "E402"]
