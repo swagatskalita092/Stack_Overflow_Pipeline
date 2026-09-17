@@ -4,3 +4,7 @@ pandas>=2.0,<3
 psycopg2-binary>=2.9,<3
 requests>=2.31,<3
 dbt-postgres==1.7.0
+# dbt-core 1.7.0 calls protobuf MessageToJson(including_default_value_fields=...).
+# That kwarg was removed in protobuf 5, so an otherwise successful `dbt run`
+# exits 1 during the resource-report teardown (seen on the first GitHub CI run).
+protobuf>=4.21.0,<5
