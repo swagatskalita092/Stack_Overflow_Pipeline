@@ -1,5 +1,7 @@
 # Stack Overflow Developer Survey: Analytics Pipeline
 
+[![CI](https://github.com/swagatskalita092/Stack_Overflow_Pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/swagatskalita092/Stack_Overflow_Pipeline/actions/workflows/ci.yml)
+
 An end-to-end data engineering pipeline that ingests the Stack Overflow Developer Survey (**2023 and 2024**), applies structured data quality checks, transforms the data through a layered dbt model architecture, and publishes three analytical marts covering **salary benchmarks**, **technology adoption**, and **AI sentiment**. Every publish goes through a candidate/publish safety pattern so readers never see a half-built or rolled-back result, and a static dashboard is regenerated from the published views after each run.
 
 This isn't just a pipeline that moves data from A to B. The engineering effort went into three things most portfolio pipelines skip: proving a bad run can never silently become the official published answer (release safety, six real failure injections against a live stack), proving the pipeline survives its data source actually changing shape (a second real survey year, with a genuine schema drift handled and tested, not simulated), and catching a real correctness bug that had been silently wrong since the first version (found by a dashboard forcing a look at real per-cell coverage, not by a passing test suite). See [`PROJECT_SUMMARY_REPORT.md`](PROJECT_SUMMARY_REPORT.md) for the full account.
