@@ -34,13 +34,13 @@ Eligible for `WHERE`: R001–R006 (US, 100k–150k, country present).
 
 Out:
 
-- R007 — null compensation
-- R008 old — discarded at staging
-- R008 new — India, cell size 1 (`HAVING >= 5`)
-- R009 — Canada, `0-1 years`, cell size 1
-- R010 — `6000000` > 5M
-- R011 — Canada / Unknown, cell size 1
-- R012 — France / 2-4 years, cell size 1
+- R007: null compensation
+- R008 old: discarded at staging
+- R008 new: India, cell size 1 (`HAVING >= 5`)
+- R009: Canada, `0-1 years`, cell size 1
+- R010: `6000000` > 5M
+- R011: Canada / Unknown, cell size 1
+- R012: France / 2-4 years, cell size 1
 
 If R008's **old** row survived, the US cell would have 7 people and `max_salary = 999999`. Expected max is **150000**.
 
@@ -131,20 +131,20 @@ humans; Phase C should compare those rows as a set.
 
 `WHERE (ai_select IS NOT NULL OR ai_sent IS NOT NULL)` and `HAVING COUNT(*) >= 3`.
 
-**Cell A** — United States / Developer, full-stack / Yes / Favorable / No
+**Cell A**: United States / Developer, full-stack / Yes / Favorable / No
 People: R001–R007 (R007 has no salary; still answered AI). Count = **7**.
 `job_sat`: 8,7,8,9,8,8,8. Average = 56/7 = **8.00**.
 `ai_threat` is `"No"` for all → `ILIKE '%Yes%'` hits 0 → **0.0**.
 
-**Cell B** — Canada / Developer, back-end / `No, and I don't plan to` / Unfavorable / No
+**Cell B**: Canada / Developer, back-end / `No, and I don't plan to` / Unfavorable / No
 People: R009, R010, R011. Count = **3**.
 `job_sat`: 6, 5, 4. Average = **5.00**.
 Threat `"No"` → **0.0**.
 
 Out:
 
-- R008 newest — India cell of 1
-- R012 — all AI fields empty (non-response). This is the pair against Cell B: skipping the question is not an explicit `"No"`.
+- R008 newest: India cell of 1
+- R012: all AI fields empty (non-response). This is the pair against Cell B: skipping the question is not an explicit `"No"`.
 
 Order in the mart: `ORDER BY respondent_count DESC` → Cell A then Cell B.
 

@@ -6,7 +6,7 @@
 --
 -- Grain: (response_id, language). R006 (three languages) becomes three rows.
 -- comp_total_raw is copied onto each row as a convenience. Do **not** SUM or
--- AVG that column from this table — that is the fan-out bug
+-- AVG that column from this table: that is the fan-out bug
 -- mart_salary_analytics avoids by reading stg_survey_responses instead.
 --
 -- wants_to_continue: true when language_want_work contains the token as an

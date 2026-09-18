@@ -133,8 +133,8 @@ to the last published count keeps both worlds: 13 → 13 is fine, 65,437 →
 50% is a *catastrophe* bar, not a sampling bar. 2023→2024 published
 headcount dropped about 27%; that would still pass. A half-downloaded ZIP
 or a file cut after a handful of rows will not. Cutting only the last
-byte of an otherwise complete CSV does **not** change the row count —
-pandas still emits one junk row — and this check will not see it. That
+byte of an otherwise complete CSV does **not** change the row count;
+pandas still emits one junk row, and this check will not see it. That
 remaining hole is documented; this check is the one that stops a
 collapsed load from publishing.
 

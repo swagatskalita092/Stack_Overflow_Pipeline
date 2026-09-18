@@ -4,7 +4,7 @@ This is the weekly / manual job, not PR CI. It downloads one public survey
 year (default 2024), runs DQ + dbt + publish, and checks that marts.v_*
 are non-empty for that year.
 
-Do not call this from the required PR workflow — a down CDN must not block
+Do not call this from the required PR workflow: a down CDN must not block
 a merge.
 
 Pass --year 2023 to load the 2023 extract instead. 2023 AI views may have

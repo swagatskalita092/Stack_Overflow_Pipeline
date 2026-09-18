@@ -5,7 +5,7 @@
 --
 -- 2023 has no AIThreat / JobSat columns in the public extract. Those land
 -- as NULL. pct_see_ai_as_threat is NULL when the cell has zero non-null
--- ai_threat answers — we do not report 0.0 as if nobody saw AI as a threat.
+-- ai_threat answers: we do not report 0.0 as if nobody saw AI as a threat.
 -- avg_job_satisfaction is NULL when job_sat is missing or not a number.
 -- 2024 JobSat is stored as '8.0' (a trailing .0), not '8'. The old gate
 -- job_sat ~ '^[0-9]+$' rejected every real 2024 answer (Phase F, 2024-09-18).

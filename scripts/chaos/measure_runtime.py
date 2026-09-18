@@ -1,7 +1,7 @@
 """Part 2: time 5 real-dataset pipeline runs (same callables as weekly CI).
 
 Records ingest / DQ / dbt run / dbt test / total. Prints JSON rows for
-docs/reproducibility.md. Does not go through Airflow — the weekly workflow
+docs/reproducibility.md. Does not go through Airflow: the weekly workflow
 does not either; Part 1 is the Airflow coverage.
 
 The URL hard-coded in ingest_survey.py currently 404s. This script records
@@ -101,7 +101,7 @@ def _cim(query: str) -> str:
             timeout=20,
         )
         return " ".join(out.split())
-    except Exception as exc:  # noqa: BLE001 — specs are best-effort
+    except Exception as exc:  # noqa: BLE001; specs are best-effort
         return str(exc)
 
 

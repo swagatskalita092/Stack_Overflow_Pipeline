@@ -137,7 +137,7 @@ def test_dag_module_does_not_import_ingest_at_parse_time():
     ingest_survey is imported inside `_run_ingest`, so `from airflow import
     DAG` (or this AST check) cannot download the survey ZIP. A top-level
     `import ingest_survey` would make DagBag / `python dag.py` need the
-    network — that is the PR-blocking failure this assertion guards.
+    network: that is the PR-blocking failure this assertion guards.
     """
     source = DAG_PATH.read_text(encoding="utf-8")
     tree = ast.parse(source, filename=str(DAG_PATH))

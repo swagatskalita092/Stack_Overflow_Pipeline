@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Stack Overflow Developer Survey — published marts</title>
+  <title>Stack Overflow Developer Survey: published marts</title>
   <style>
     :root { --ink: #1a1a1a; --muted: #555; --line: #d8d8d8; --bar: #2c5f8a; --bg: #fafafa; --card: #fff; }
     * { box-sizing: border-box; }
@@ -32,9 +32,9 @@
 </head>
 <body data-published-years="{{ year_list | join(',') }}">
   <header>
-    <h1>Stack Overflow Developer Survey — published results</h1>
+    <h1>Stack Overflow Developer Survey: published results</h1>
     <p class="as-of" data-as-of="{{ data_as_of }}">Data as of {{ data_as_of }}. This page is regenerated from the warehouse after each successful publish. It is not a live query.</p>
-    <p class="lede">Numbers below come from <code>marts.v_salary_analytics</code>, <code>marts.v_tech_adoption</code>, and <code>marts.v_ai_sentiment</code> — the same views that filter to <code>dwh.active_release</code>. They are not read from the historical <code>marts.mart_*</code> tables.</p>
+    <p class="lede">Numbers below come from <code>marts.v_salary_analytics</code>, <code>marts.v_tech_adoption</code>, and <code>marts.v_ai_sentiment</code>: the same views that filter to <code>dwh.active_release</code>. They are not read from the historical <code>marts.mart_*</code> tables.</p>
   </header>
   <main>
     {% if nothing_published %}
@@ -50,7 +50,7 @@
         <dt>published_at</dt>
         <dd>{{ y.published_at_label }}</dd>
         <dt>salary-cell respondents</dt>
-        <dd data-salary-respondents="{{ y.salary_cell_respondents }}">{{ y.salary_cell_respondents }} people in published salary cells ({{ y.salary_n_cells }} {{ 'cell' if y.salary_n_cells == 1 else 'cells' }}). This is <em>not</em> the raw survey headcount — salary filters and HAVING ≥ 5 apply. See the contract excerpt below.</dd>
+        <dd data-salary-respondents="{{ y.salary_cell_respondents }}">{{ y.salary_cell_respondents }} people in published salary cells ({{ y.salary_n_cells }} {{ 'cell' if y.salary_n_cells == 1 else 'cells' }}). This is <em>not</em> the raw survey headcount; salary filters and HAVING ≥ 5 apply. See the contract excerpt below.</dd>
         <dt>AI-cell respondents</dt>
         <dd data-ai-respondents="{{ y.ai_cell_respondents }}">{{ y.ai_cell_respondents }} people in published AI cells ({{ y.ai_n_cells }} {{ 'cell' if y.ai_n_cells == 1 else 'cells' }}).</dd>
         <dt>tech rows</dt>
@@ -58,16 +58,16 @@
       </dl>
     </section>
 
-    <h3>{{ y.survey_year }} — salary (median, mixed local currencies)</h3>
+    <h3>{{ y.survey_year }}: salary (median, mixed local currencies)</h3>
     {{ y.salary_svg | safe }}
 
-    <h3>{{ y.survey_year }} — technology adoption (languages, top 10)</h3>
+    <h3>{{ y.survey_year }}: technology adoption (languages, top 10)</h3>
     {{ y.tech_svg | safe }}
 
-    <h3>{{ y.survey_year }} — share who see AI as a threat</h3>
+    <h3>{{ y.survey_year }}: share who see AI as a threat</h3>
     {{ y.ai_threat_svg | safe }}
 
-    <h3>{{ y.survey_year }} — average job satisfaction</h3>
+    <h3>{{ y.survey_year }}: average job satisfaction</h3>
     {{ y.ai_job_svg | safe }}
     {% endfor %}
 

@@ -4,7 +4,7 @@ Why this module exists
 ----------------------
 dbt used to CREATE TABLE the marts on every run. A crash mid-run left
 analysts looking at a half-built table. FlashBuy's chaos tests ask "what
-does the buyer see if we die between steps?" — this is that question for
+does the buyer see if we die between steps?" This is that question for
 warehouse publication.
 
 Each pipeline run owns a release_id and a survey_year. Mart rows for that
@@ -57,7 +57,7 @@ def get_git_sha() -> Optional[str]:
     """HEAD of the checkout, or None if git is missing / not a repo.
 
     Stored for forensics ("which code built this candidate?"). It is not
-    used as the uniqueness key — two runs of the same SHA still get two
+    used as the uniqueness key: two runs of the same SHA still get two
     release_ids, because source data can change without a code change.
     """
     try:

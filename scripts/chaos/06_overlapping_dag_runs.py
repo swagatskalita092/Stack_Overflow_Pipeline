@@ -3,7 +3,7 @@
 Sets max_active_runs=2, triggers two runs a few seconds apart. Both use the
 local fixture ZIP so we are testing Airflow concurrency + seq monotonicity,
 not the CDN. After both finish, the live pointer must be the higher seq
-that actually published — never rolled back to an older seq.
+that actually published, never rolled back to an older seq.
 """
 
 from __future__ import annotations

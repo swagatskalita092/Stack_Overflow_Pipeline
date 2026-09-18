@@ -2,8 +2,8 @@
 
 Five consecutive end-to-end runs of the **same Python callables** the weekly
 workflow uses (`scripts/run_cdn_e2e.py` → ingest, DQ, `dbt run`, `dbt test`,
-`mark_candidate`, `publish_release`). Not Airflow — that is Part 1
-(`docs/failure_modes.md`). Not the 13-row fixture — that is too small to
+`mark_candidate`, `publish_release`). Not Airflow: that is Part 1
+(`docs/failure_modes.md`). Not the 13-row fixture: that is too small to
 time.
 
 Script: `scripts/chaos/measure_runtime.py`. Raw numbers:
@@ -96,7 +96,7 @@ After run 5, `dwh.active_release` is `7e6f383b-55d1-41bc-8faf-2fea83c0be7c`,
 1. **Host dbt vs Compose bind mount.** The first timing attempt (after a
    successful 65,437-row ingest) died with
    `OSError: [Errno 22] Invalid argument` opening
-   `dbt_project/target/graph_summary.json` — the same error overlapping
+   `dbt_project/target/graph_summary.json`: the same error overlapping
    Airflow `dbt_run_models` hit in injection 6. `dbt_project/` is mounted
    into the scheduler. The timing script then passed `--target-path
    data/chaos/dbt_target` so host dbt did not open the container's

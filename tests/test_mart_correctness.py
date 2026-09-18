@@ -9,7 +9,7 @@ This test does **not** stand in for dbt with INSERT of the expected CSVs
 (that is what test_publication_safety.py does, on purpose). It runs dbt.
 
 If a cell does not match, this test must fail. Do not edit the expected
-CSVs to silence it — the fixtures are the contract, not the warehouse.
+CSVs to silence it: the fixtures are the contract, not the warehouse.
 """
 
 from __future__ import annotations
@@ -252,7 +252,7 @@ def test_published_views_match_phase_a_hand_calculated_csvs(warehouse):
     """Load fixture raw → real dbt → publish → marts.v_* == expected_mart_*.csv.
 
     Raw job_sat is '8.0' / '7.0' / … (2024 CDN format). Expected AI averages
-    stay 8.00 and 5.00 — same arithmetic as the old integer fixtures, but the
+    stay 8.00 and 5.00: same arithmetic as the old integer fixtures, but the
     path that used to drop '8.0' now has to parse it.
     """
     conn = warehouse

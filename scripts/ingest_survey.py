@@ -9,7 +9,7 @@ The rest of the pipeline (DQ, dbt) assumes `raw.survey_responses` looks
 like this extract, not like the 114-column public file.
 
 survey_year is explicit (CLI `--year` / env `SURVEY_YEAR`). We do not
-guess it from the filename or a CSV column — those are fragile across
+guess it from the filename or a CSV column: those are fragile across
 archive layouts. Default is 2024 so an unconfigured weekly DAG still
 loads the year this pipeline started on.
 """
@@ -88,7 +88,7 @@ SENTINEL_VALUES = {"NA", "N/A", "nan", "NaN", "None", ""}
 
 # Columns the public extract does not have in a given year. Ingest still
 # lands them as SQL NULL (the warehouse columns stay). DQ must not treat
-# that known absence as a data-quality failure — see KNOWN_ABSENT_COLUMNS
+# that known absence as a data-quality failure: see KNOWN_ABSENT_COLUMNS
 # in dq_checks.py and docs/data_contracts.md.
 KNOWN_ABSENT_SOURCE_COLUMNS = {
     2023: ("AIThreat", "JobSat"),

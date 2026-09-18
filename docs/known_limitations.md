@@ -8,7 +8,7 @@ Honest boundaries, not a backlog dressed up as documentation.
 deletes `WHERE survey_year = :year` and bulk-inserts that year's extract.
 A 2023 load does not destroy already-loaded 2024 rows (and the other way
 around). A crash after the DELETE and before the INSERT commits still
-rolls back with the current one-transaction boundary — the feared empty
+rolls back with the current one-transaction boundary: the feared empty
 slice is the year being loaded, not every year.
 
 That is a **deliberate remaining gap at the raw layer**, now per year
@@ -22,7 +22,7 @@ instead of global truncate. Publication safety is guaranteed at the mart /
 
 It is **not** guaranteed that a killed 2023 reload leaves 2023 raw intact.
 Staging and a new 2023 candidate would then be built from that broken
-slice — or DQ would block on `total_rows_loaded = 0` for that year.
+slice, or DQ would block on `total_rows_loaded = 0` for that year.
 
 **Phase D** probed the old whole-table TRUNCATE. The kill-after-delete
 window still exists; the blast radius is one year.
