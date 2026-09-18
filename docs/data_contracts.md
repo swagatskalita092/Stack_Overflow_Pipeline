@@ -59,7 +59,7 @@ are joined into the salary aggregation?
 respondent with three languages and two databases still contributes **one**
 salary to `AVG` / `PERCENTILE_CONT` / `COUNT(*)`.
 
-Evidence — the entire `FROM` / filter / `GROUP BY` of
+Evidence: the entire `FROM` / filter / `GROUP BY` of
 `dbt_project/models/marts/mart_salary_analytics.sql`:
 
 ```sql
@@ -182,7 +182,7 @@ descending (ties share a rank; the next rank skips).
 | Column | Meaning |
 | --- | --- |
 | `total_users` | `COUNT(DISTINCT response_id)` who listed that tech. One person with `Python;SQL` counts once for Python and once for SQL, never twice for Python. |
-| `want_to_continue_count` | `SUM(CASE WHEN wants_to_continue THEN 1 ELSE 0 END)` — **not** distinct. Duplicate tokens in one person's semicolon list would inflate this numerator. |
+| `want_to_continue_count` | `SUM(CASE WHEN wants_to_continue THEN 1 ELSE 0 END)`: **not** distinct. Duplicate tokens in one person's semicolon list would inflate this numerator. |
 | `retention_rate_pct` | `100.0 * want_to_continue_count / total_users`, rounded to 1 decimal. Denominator is distinct users of **that tech**, not all survey respondents and not all people who answered any tech question. |
 
 `wants_to_continue` is true when `language_want_work` / `database_want_work`
@@ -227,7 +227,7 @@ not enough.
 | Column | Meaning |
 | --- | --- |
 | `respondent_count` | `COUNT(*)` in the cell (one staged row per person). |
-| `avg_job_satisfaction` | `AVG` of `job_sat` when `job_sat` matches `^[0-9]+(\.[0-9]+)?$` (integer or decimal text such as `8` or `8.0`). Non-numeric / missing satisfaction is skipped in the average, **not** removed from `respondent_count`. **Bug, found Phase F (2024-09-18) while rendering the dashboard from a real 2024 CDN publish:** the previous gate was `^[0-9]+$`, which rejected every 2024 answer (`'8.0'`, `'7.0'`, …). 29,126 raw 2024 rows had `job_sat`; 0 of 3,828 published AI cells got a non-null average. The dashboard would have labeled that NULL as “Not asked in 2024,” which is false — JobSat was on the 2024 survey. Fixed in `mart_ai_sentiment.sql` the same day. 2023 remains all-NULL because the extract has no `JobSat` column. |
+| `avg_job_satisfaction` | `AVG` of `job_sat` when `job_sat` matches `^[0-9]+(\.[0-9]+)?$` (integer or decimal text such as `8` or `8.0`). Non-numeric / missing satisfaction is skipped in the average, **not** removed from `respondent_count`. **Bug, found Phase F (2024-09-18) while rendering the dashboard from a real 2024 CDN publish:** the previous gate was `^[0-9]+$`, which rejected every 2024 answer (`'8.0'`, `'7.0'`, …). 29,126 raw 2024 rows had `job_sat`; 0 of 3,828 published AI cells got a non-null average. The dashboard would have labeled that NULL as “Not asked in 2024,” which is false: JobSat was on the 2024 survey. Fixed in `mart_ai_sentiment.sql` the same day. 2023 remains all-NULL because the extract has no `JobSat` column. |
 | `pct_see_ai_as_threat` | For years where `ai_threat` exists (2024): `100.0 * (rows whose `ai_threat` `ILIKE '%Yes%') / COUNT(*)`. Denominator is the cell headcount, including people with null `ai_threat`. An explicit `"No"` is a zero in the numerator, not a missing row. **When the cell has zero non-null `ai_threat` values (all of 2023), this column is NULL.** We do not report `0.0`. Zero would mean "nobody in this cell sees AI as a threat," which is a lie when the question was not on the survey. |
 
 **Existing filters, and whether the repo documented a reason:**

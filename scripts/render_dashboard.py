@@ -240,7 +240,7 @@ def fetch_published(conn) -> dict[str, Any]:
                 "respondent_count": int(row[6]) if row[6] is not None else 0,
                 "avg_job_satisfaction": _num(row[7]),
                 "pct_see_ai_as_threat": _num(row[8]),
-                "label": f"{row[1]} · {row[2]} · {row[3] or '—'} / {row[4] or '—'}",
+                "label": f"{row[1]} · {row[2]} · {row[3] or 'n/a'} / {row[4] or 'n/a'}",
             }
         )
 
@@ -369,7 +369,7 @@ def _yoy(years: list[dict], salary, tech, ai) -> dict[str, Any]:
     ai_pairs = pairs(
         ai_idx,
         "pct_see_ai_as_threat",
-        lambda k, _b: f"{k[0]} · {k[1]} · {k[2] or '—'} / {k[3] or '—'}",
+        lambda k, _b: f"{k[0]} · {k[1]} · {k[2] or 'n/a'} / {k[3] or 'n/a'}",
     )
 
     def pair_svg(pair_list, value_key, unit, decimals, prefix):

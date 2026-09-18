@@ -31,7 +31,7 @@ SCHEMA = ROOT / "dbt_project" / "models" / "marts" / "schema.yml"
 
 FAILING_TEST = """
       - name: chaos_phase_d_must_fail
-        description: "Phase D injection — always fails. Removed after the run."
+        description: "Phase D injection: always fails. Removed after the run."
         tests:
           - dbt_utils.expression_is_true:
               expression: "1 = 0"

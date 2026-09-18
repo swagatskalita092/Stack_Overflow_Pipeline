@@ -6,8 +6,8 @@
 # Cadence is weekly to match the DAG's schedule_interval="@weekly".
 #
 # What "end to end" means here: docker compose up postgres (same image and
-# init SQL as local), then the same callables the DAG runs — ingest from the
-# real CDN, DQ, dbt run/test, mark_candidate, publish_release — and a smoke
+# init SQL as local), then the same callables the DAG runs: ingest from the
+# real CDN, DQ, dbt run/test, mark_candidate, publish_release, and a smoke
 # query that marts.v_* are non-empty. We do not boot airflow-webserver /
 # airflow-scheduler: those images pip-install on every start and would make
 # this job slow and brittle without testing extra data-path code.
