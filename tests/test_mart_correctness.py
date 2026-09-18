@@ -94,6 +94,9 @@ def _run_dbt(subcommand: str, release_id: str, survey_year: int = 2024) -> None:
             "pip install dbt-postgres==1.7.0"
         )
     vars_json = json.dumps({"release_id": release_id, "survey_year": int(survey_year)})
+    # Off dbt_project/target: Windows hits OSError 22 on graph_summary.json there.
+    target_dir = ROOT / "data" / "dbt_target_e2e"
+    target_dir.mkdir(parents=True, exist_ok=True)
     cmd = [
         dbt_bin,
         subcommand,
@@ -101,6 +104,8 @@ def _run_dbt(subcommand: str, release_id: str, survey_year: int = 2024) -> None:
         str(DBT_DIR),
         "--profiles-dir",
         str(DBT_DIR),
+        "--target-path",
+        str(target_dir),
         "--target",
         "prod",
         "--vars",
@@ -225,8 +230,31 @@ def _compare_mart(
     return problems
 
 
+def test_phase_a_raw_fixture_job_sat_uses_decimal_text():
+    """The 2024 extract stores JobSat as '8.0', not '8'.
+
+    The old mart gate `job_sat ~ '^[0-9]+$'` rejected that format, so every
+    published 2024 avg_job_satisfaction was NULL. Phase A fixtures used
+    integers and never caught it. At least one raw fixture cell must stay
+    decimal so test_published_views_match_phase_a_hand_calculated_csvs
+    would fail again if the integer-only regex came back.
+    """
+    with (FIXTURES / "raw_survey_responses.csv").open(encoding="utf-8", newline="") as f:
+        rows = list(csv.DictReader(f))
+    decimals = [r["job_sat"] for r in rows if r.get("job_sat") and "." in r["job_sat"]]
+    assert "8.0" in decimals, (
+        "raw_survey_responses.csv must include job_sat='8.0' "
+        f"(found decimal values: {decimals})"
+    )
+
+
 def test_published_views_match_phase_a_hand_calculated_csvs(warehouse):
-    """Load fixture raw → real dbt → publish → marts.v_* == expected_mart_*.csv."""
+    """Load fixture raw → real dbt → publish → marts.v_* == expected_mart_*.csv.
+
+    Raw job_sat is '8.0' / '7.0' / … (2024 CDN format). Expected AI averages
+    stay 8.00 and 5.00 — same arithmetic as the old integer fixtures, but the
+    path that used to drop '8.0' now has to parse it.
+    """
     conn = warehouse
     rid = PHASE_C_RELEASE_ID
     open_release(release_id=rid, survey_year=2024)

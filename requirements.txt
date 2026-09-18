@@ -8,3 +8,4 @@ dbt-postgres==1.7.0
 # That kwarg was removed in protobuf 5, so an otherwise successful `dbt run`
 # exits 1 during the resource-report teardown (seen on the first GitHub CI run).
 protobuf>=4.21.0,<5
+jinja2>=3.1,<4

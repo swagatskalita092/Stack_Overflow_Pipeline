@@ -101,10 +101,34 @@ def _publish_release(**context):
     return publish_release(rid)
 
 
+def _render_dashboard(**context):
+    """Write docs/site from marts.v_*. Runs after publish; must not unpublish.
+
+    Import is inside the callable so DagBag parse does not need Jinja2/Postgres.
+    """
+    from render_dashboard import render
+
+    return str(render())
+
+
 def _on_release_failed(context):
-    """Any task failure after open_release stamps that id as failed."""
+    """Any task failure after open_release stamps that id as failed.
+
+    Not used by render_dashboard: that task overrides on_failure_callback so
+    a chart crash cannot call mark_failed.
+    """
     from release import on_release_failed
     on_release_failed(context)
+
+
+def _render_failed_leave_publish_alone(context):
+    """Presentation failure after a successful publish. Pointer stays put."""
+    import logging
+
+    logging.getLogger("airflow.task").warning(
+        "render_dashboard failed; leaving dwh.active_release untouched "
+        "(publish_release already committed)"
+    )
 
 
 default_args = {
@@ -174,6 +198,13 @@ with DAG(
         python_callable=_publish_release,
     )
 
+    render_dashboard = PythonOperator(
+        task_id="render_dashboard",
+        python_callable=_render_dashboard,
+        # Override default_args: a broken chart must not mark_failed.
+        on_failure_callback=_render_failed_leave_publish_alone,
+    )
+
     (
         open_release
         >> ingest_raw_survey
@@ -183,4 +214,5 @@ with DAG(
         >> dbt_test_models
         >> mark_candidate
         >> publish_release
+        >> render_dashboard
     )

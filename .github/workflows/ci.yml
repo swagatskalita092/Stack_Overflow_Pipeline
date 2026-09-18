@@ -83,4 +83,5 @@ jobs:
             tests/test_mart_correctness.py \
             tests/test_dag_structure.py \
             tests/test_year_2023.py \
-            tests/test_dq_row_count_drop.py
+            tests/test_dq_row_count_drop.py \
+            tests/test_dashboard_render.py

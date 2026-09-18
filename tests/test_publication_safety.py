@@ -214,4 +214,5 @@ def test_dag_wires_publish_after_dbt_test():
     chain_index = dag.rfind("dbt_test_models")
     mark_index = dag.rfind("mark_candidate")
     pub_index = dag.rfind("publish_release")
-    assert chain_index < mark_index < pub_index
+    render_index = dag.rfind("render_dashboard")
+    assert chain_index < mark_index < pub_index < render_index

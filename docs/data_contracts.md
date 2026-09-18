@@ -227,7 +227,7 @@ not enough.
 | Column | Meaning |
 | --- | --- |
 | `respondent_count` | `COUNT(*)` in the cell (one staged row per person). |
-| `avg_job_satisfaction` | `AVG` of `job_sat` when `job_sat` matches `^[0-9]+$`. Non-numeric satisfaction is skipped in the average, **not** removed from `respondent_count`. |
+| `avg_job_satisfaction` | `AVG` of `job_sat` when `job_sat` matches `^[0-9]+(\.[0-9]+)?$` (integer or decimal text such as `8` or `8.0`). Non-numeric / missing satisfaction is skipped in the average, **not** removed from `respondent_count`. **Bug, found Phase F (2024-09-18) while rendering the dashboard from a real 2024 CDN publish:** the previous gate was `^[0-9]+$`, which rejected every 2024 answer (`'8.0'`, `'7.0'`, …). 29,126 raw 2024 rows had `job_sat`; 0 of 3,828 published AI cells got a non-null average. The dashboard would have labeled that NULL as “Not asked in 2024,” which is false — JobSat was on the 2024 survey. Fixed in `mart_ai_sentiment.sql` the same day. 2023 remains all-NULL because the extract has no `JobSat` column. |
 | `pct_see_ai_as_threat` | For years where `ai_threat` exists (2024): `100.0 * (rows whose `ai_threat` `ILIKE '%Yes%') / COUNT(*)`. Denominator is the cell headcount, including people with null `ai_threat`. An explicit `"No"` is a zero in the numerator, not a missing row. **When the cell has zero non-null `ai_threat` values (all of 2023), this column is NULL.** We do not report `0.0`. Zero would mean "nobody in this cell sees AI as a threat," which is a lie when the question was not on the survey. |
 
 **Existing filters, and whether the repo documented a reason:**
@@ -285,7 +285,7 @@ satisfaction *average* are the things we refuse to invent.
 | `mart_ai_sentiment.ai_sent` | yes | yes | Present in both extracts. |
 | `mart_ai_sentiment.ai_threat` | **NULL** | yes | 2023 extract has no `AIThreat` column. |
 | `mart_ai_sentiment.respondent_count` | yes | yes | People who answered `ai_select` or `ai_sent`. |
-| `mart_ai_sentiment.avg_job_satisfaction` | **NULL** | yes | 2023 extract has no `JobSat` column; AVG of no numeric values is NULL. |
+| `mart_ai_sentiment.avg_job_satisfaction` | **NULL** | yes | 2023 extract has no `JobSat` column; AVG of no numeric values is NULL. 2024 answers are decimal text (`8.0`); see the regex fix under Denominators. |
 | `mart_ai_sentiment.pct_see_ai_as_threat` | **NULL** | yes | `COUNT(ai_threat) = 0` → NULL, not 0.0. See above. |
 
 Asserted by `tests/test_year_2023.py` (ingest + DQ allowlist + dbt NULL rate)

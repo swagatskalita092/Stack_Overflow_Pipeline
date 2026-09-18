@@ -36,6 +36,7 @@ EXPECTED_CHAIN = [
     "dbt_test_models",
     "mark_candidate",
     "publish_release",
+    "render_dashboard",
 ]
 
 
@@ -102,6 +103,34 @@ def test_dag_task_ids_cover_the_chain():
     assert not missing, f"task_id missing for chained names: {missing}"
 
 
+def _operator_kwargs_for_task(tree: ast.AST, task_id: str) -> dict[str, ast.AST]:
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        kwargs = {kw.arg: kw.value for kw in node.keywords if kw.arg}
+        tid = kwargs.get("task_id")
+        if isinstance(tid, ast.Constant) and tid.value == task_id:
+            return kwargs
+    raise AssertionError(f"no operator with task_id={task_id!r}")
+
+
+def test_render_dashboard_overrides_failure_callback_so_publish_stays():
+    """A chart crash must not call _on_release_failed / mark_failed.
+
+    default_args still uses _on_release_failed for ingest/DQ/dbt. The
+    render task sets its own callback. Combined with `publish_release >>
+    render_dashboard`, a failed chart cannot unpublish.
+    """
+    source = DAG_PATH.read_text(encoding="utf-8")
+    tree = ast.parse(source, filename=str(DAG_PATH))
+    kwargs = _operator_kwargs_for_task(tree, "render_dashboard")
+    cb = kwargs.get("on_failure_callback")
+    assert cb is not None, "render_dashboard must override on_failure_callback"
+    assert isinstance(cb, ast.Name)
+    assert cb.id == "_render_failed_leave_publish_alone"
+    assert cb.id != "_on_release_failed"
+
+
 def test_dag_module_does_not_import_ingest_at_parse_time():
     """Parse-time imports must not pull in the CDN client.
 
@@ -117,3 +146,4 @@ def test_dag_module_does_not_import_ingest_at_parse_time():
             dumped = ast.dump(node)
             assert "ingest_survey" not in dumped
             assert "requests" not in dumped
+            assert "render_dashboard" not in dumped

@@ -16,6 +16,8 @@ x-airflow-common: &airflow-common
     - ./scripts:/opt/airflow/scripts
     - ./data:/opt/airflow/data
     - ./dbt_project:/opt/airflow/dbt_project
+    # So render_dashboard writes host docs/site/, not a throwaway container path.
+    - ./docs:/opt/airflow/docs
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     postgres:
