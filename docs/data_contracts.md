@@ -19,11 +19,25 @@ respondent pool, stored as a number in **whatever currency the respondent
 typed**. It is **not** USD, and it is **not** a representative labor-market
 salary sample.
 
-USD conversion is **not implemented**. Stack Overflow converts local currencies
-to USD using the exchange rate on **11 June 2024**; this pipeline only strips
-non-numeric characters from `comp_total` and casts. The `currency` column is
-stored on staging and then ignored. A later phase can add FX; until then the
-column name is `comp_total_raw` on purpose.
+USD conversion **is implemented**, added on top of `comp_total_raw` rather
+than replacing it: `stg_survey_responses.comp_total_usd_converted` and
+`mart_salary_analytics.avg_salary_usd` / `median_salary_usd` /
+`p25_salary_usd` / `p75_salary_usd` / `min_salary_usd` / `max_salary_usd`.
+The rate is a real historical European Central Bank reference rate (via the
+Frankfurter API), taken for one fixed date per survey year — the same
+single-fixed-date-conversion approach Stack Overflow's own 2024 methodology
+describes using (11 June 2024; the 2023 date used here, 2 June 2023, is
+sourced from an independent analysis of the 2023 dataset, since Stack
+Overflow's own 2023 methodology page is no longer live). See
+`seeds/fx_rates_to_usd.csv` for the exact rates, dates, and currencies.
+
+The ECB publishes daily reference rates for 31 currencies (30 plus EUR
+itself); `currency_code` (the leading 3-letter code parsed from the raw
+`currency` field) is looked up against that table. A currency not in it
+gets `comp_total_usd_converted = NULL`, never a guessed or default rate —
+see `docs/known_limitations.md` for what that means for coverage.
+`comp_total_raw` is untouched and still here for a reader who wants the
+self-reported number in the respondent's own currency.
 
 Stack Overflow's own 2024 methodology states that respondents were recruited
 primarily through channels Stack Overflow owns (onsite messaging, blog posts,

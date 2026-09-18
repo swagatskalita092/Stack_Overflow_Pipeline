@@ -56,6 +56,13 @@ SALARY_NUMS = {
     "p75_salary": MONEY_TOL,
     "min_salary": MONEY_TOL,
     "max_salary": MONEY_TOL,
+    "fx_converted_count": Decimal("0"),
+    "avg_salary_usd": MONEY_TOL,
+    "median_salary_usd": MONEY_TOL,
+    "p25_salary_usd": MONEY_TOL,
+    "p75_salary_usd": MONEY_TOL,
+    "min_salary_usd": MONEY_TOL,
+    "max_salary_usd": MONEY_TOL,
 }
 
 AI_KEYS = ("country", "dev_type", "ai_select", "ai_sent", "ai_threat")
@@ -259,6 +266,7 @@ def test_published_views_match_phase_a_hand_calculated_csvs(warehouse):
     rid = PHASE_C_RELEASE_ID
     open_release(release_id=rid, survey_year=2024)
     record_source_checksum(rid)
+    _run_dbt("seed", rid, survey_year=2024)
     _run_dbt("run", rid, survey_year=2024)
     _run_dbt("test", rid, survey_year=2024)
     mark_candidate(rid)

@@ -51,7 +51,7 @@ def test_ingest_2023_fixture_warns_and_nulls_missing_columns(warehouse, caplog):
     with conn.cursor() as cur:
         cur.execute("SELECT COUNT(*) FROM raw.survey_responses WHERE survey_year = 2024")
         n_2024_before = cur.fetchone()[0]
-    assert n_2024_before == 13
+    assert n_2024_before == 14
 
     with caplog.at_level(logging.WARNING, logger="ingest_survey"):
         ingest_run(
@@ -255,6 +255,7 @@ def test_dbt_2023_ai_threat_rate_is_null_not_zero(warehouse):
     rid = PHASE_E_2023_RELEASE_ID
     open_release(release_id=rid, survey_year=2023)
     record_source_checksum(rid)
+    _run_dbt("seed", rid, survey_year=2023)
     _run_dbt("run", rid, survey_year=2023)
     _run_dbt("test", rid, survey_year=2023)
     mark_candidate(rid)

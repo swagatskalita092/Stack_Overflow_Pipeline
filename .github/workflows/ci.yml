@@ -76,7 +76,7 @@ jobs:
       - name: Lint scripts/ and airflow/dags/
         run: ruff check scripts/ airflow/dags/
 
-      - name: Run publication-safety, mart-correctness, and DAG-structure tests
+      - name: Run publication-safety, mart-correctness, DAG-structure, and FX-conversion tests
         run: |
           pytest -v \
             tests/test_publication_safety.py \
@@ -84,4 +84,5 @@ jobs:
             tests/test_dag_structure.py \
             tests/test_year_2023.py \
             tests/test_dq_row_count_drop.py \
-            tests/test_dashboard_render.py
+            tests/test_dashboard_render.py \
+            tests/test_fx_conversion.py
