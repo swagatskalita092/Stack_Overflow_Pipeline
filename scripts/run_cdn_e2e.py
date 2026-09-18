@@ -89,6 +89,7 @@ def main(argv: list[str] | None = None) -> int:
     ingest_run(survey_year=year)
     record_source_checksum(rid)
     run_checks(survey_year=year)
+    _run_dbt("seed", rid, year)
     _run_dbt("run", rid, year)
     _run_dbt("test", rid, year)
     print("mark_candidate", mark_candidate(rid), flush=True)

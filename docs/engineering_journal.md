@@ -326,6 +326,65 @@ spot-checked or judged by whether the automated checks pass.
 
 ---
 
+## 8. Currency normalization with real ECB rates, not a guessed USD column
+
+**Question:** entry 1 left `comp_total_raw` as mixed local-currency figures
+and documented that USD conversion was not implemented. Could that
+limitation be closed with a real, sourced conversion instead of left open
+indefinitely?
+
+**Hypothesis:** a single-fixed-date FX table, keyed on
+`(survey_year, currency_code)` and sourced from a real published rate
+provider, added as a new column alongside (not replacing) `comp_total_raw`,
+would let a reader see a defensible USD figure without pretending coverage
+is complete. A currency the table cannot map would get NULL, never a
+default or invented rate.
+
+**Fixture / experiment:** pulled real European Central Bank reference rates
+(via the Frankfurter API) for the two dates Stack Overflow's own 2024
+methodology (11 June 2024) and an independent analysis of the 2023 dataset
+(2 June 2023) use. Seeded those rates in `seeds/fx_rates_to_usd.csv` (31
+currencies × 2 years). Parsed `currency_code` as the leading 3-letter
+token so both a bare code (`USD`) and a code-plus-name string
+(`USD United States dollar`) resolve the same way. Added a genuinely
+unmapped code (`XYZ`, fixture `R013`) that cannot match any existing
+salary cell, to prove the unmapped path degrades to NULL instead of a
+guess.
+
+**Observed result:** `R001` (USD) converts at parity (rate 1.0). `R008`
+(INR 180000) converts at the real 2024-06-11 rate to 2153.88 USD.
+`R009`/`R010`/`R011` (CAD) convert at that same date's CAD rate.
+`R012` (EUR 80000) converts to 85839.67 USD. `R013` (`XYZ`) comes out
+NULL with `comp_total_raw` preserved at 90000. The published 2023
+Germany/EUR salary cell's six USD columns match the real 2023-06-02 EUR
+rate (1.07629882) times the existing raw numbers, rounded to 2 decimals:
+113011.38 / 113011.38 / 99557.64 / 126465.11 / 86103.91 / 139918.85.
+
+**Decision:** ship it as additive columns (`comp_total_usd_converted` on
+staging; `avg_salary_usd`, `median_salary_usd`, `p25_salary_usd`,
+`p75_salary_usd`, `min_salary_usd`, `max_salary_usd`, and
+`fx_converted_count` on the salary mart), not a replacement of the raw
+columns, with the ~31-currency ECB coverage limit documented rather than
+hidden.
+
+**Regression test:** `tests/test_fx_conversion.py`:
+`test_seed_loaded_real_eur_rate`,
+`test_usd_currency_converts_at_parity`,
+`test_inr_currency_converts_with_real_2024_rate`,
+`test_cad_currency_converts_with_real_2024_rate`,
+`test_eur_currency_converts_with_real_2024_rate`,
+`test_unmapped_currency_is_null_not_guessed`,
+`test_salary_mart_usd_columns_match_real_eur_conversion`.
+The existing mart-correctness expected CSVs now include the USD columns
+so `_compare_mart` asserts them too.
+
+**Remaining limitation:** USD conversion covers the ~31 currencies the ECB
+publishes daily, not every currency in the survey, and each year's rate is
+a single fixed date rather than the respondent's completion date. Both are
+now stated in `docs/known_limitations.md`.
+
+---
+
 ## Also investigated, more briefly
 
 - **A live CI teardown crash (Phase C):** the first real CI run built all 9

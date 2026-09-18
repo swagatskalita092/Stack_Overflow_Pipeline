@@ -32,6 +32,7 @@ EXPECTED_CHAIN = [
     "ingest_raw_survey",
     "record_source_checksum",
     "run_dq_checks",
+    "dbt_seed",
     "dbt_run_models",
     "dbt_test_models",
     "mark_candidate",

@@ -51,3 +51,27 @@ What that means in practice:
 That is a deliberate Phase C scope boundary: PR CI stays off the survey CDN
 and off a multi-minute Airflow image boot. It is not a claim that the
 scheduler was tested.
+
+## USD conversion covers ~31 currencies, not every currency in the survey
+
+`comp_total_usd_converted` and the `*_salary_usd` mart columns use real
+European Central Bank reference rates (via the Frankfurter API), which
+covers the 30 non-EUR currencies the ECB publishes daily plus EUR and USD
+themselves — see `seeds/fx_rates_to_usd.csv`. A respondent whose currency is
+not one of those (the ECB does not publish daily rates for every world
+currency — for example several are excluded from official ECB publication
+for sanctions or data-availability reasons) gets `comp_total_usd_converted
+= NULL`. That respondent still counts in `respondent_count` and in the raw
+`avg_salary` / `median_salary` / etc.; they are simply excluded from the
+USD aggregates and from `fx_converted_count`. This is a deliberate honesty
+boundary: an unmapped currency is never assigned a guessed or default rate.
+
+Each year's rate is also a **single fixed date**, not the date the
+individual respondent completed the survey (Stack Overflow's own published
+methodology takes the same shortcut for 2024). A currency that moved
+significantly against the dollar during the ~2-3 month survey collection
+window will have some genuine within-year drift baked into every
+`*_salary_usd` figure for that currency. That is accepted, not corrected,
+for the same reason Stack Overflow accepts it: doing per-respondent-date FX
+would require knowing each respondent's actual completion date to the day,
+which the public extract does not reliably provide.

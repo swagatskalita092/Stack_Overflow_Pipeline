@@ -22,14 +22,14 @@ from release import (
 
 
 def test_first_publish_of_fixture_size_is_not_blocked(warehouse):
-    """No prior published baseline: 13 fixture rows must still be legal."""
+    """No prior published baseline: 14 fixture rows must still be legal."""
     summary = run_checks()
-    assert summary["total_rows_loaded"] == 13
+    assert summary["total_rows_loaded"] == 14
     assert summary["row_count_drop"] == 0
 
 
 def test_truncated_fixture_is_blocked_instead_of_published(warehouse):
-    """Publish 13 rows, then keep 2. DQ must block; the live pointer stays."""
+    """Publish 14 rows, then keep 2. DQ must block; the live pointer stays."""
     conn = warehouse
     good = open_release()
     record_source_checksum(good)
@@ -132,7 +132,7 @@ def test_first_2023_publish_skips_drop_then_second_2023_drop_blocks(warehouse):
         still_2024 = cur.fetchone()[0]
     conn.commit()
     assert leftover == 2
-    assert still_2024 == 13
+    assert still_2024 == 14
 
     second_2023 = open_release(survey_year=2023)
     record_source_checksum(second_2023)

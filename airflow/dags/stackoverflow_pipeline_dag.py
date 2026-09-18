@@ -168,6 +168,16 @@ with DAG(
         python_callable=_run_dq_checks,
     )
 
+    dbt_seed = BashOperator(
+        task_id="dbt_seed",
+        bash_command=(
+            "cd /opt/airflow/dbt_project && "
+            "dbt seed --profiles-dir /opt/airflow/dbt_project --target prod "
+            '--vars \'{"release_id": "{{ ti.xcom_pull(task_ids="open_release") }}", '
+            '"survey_year": {{ ti.xcom_pull(task_ids="open_release", key="survey_year") | default(2024) }}}}\''
+        ),
+    )
+
     dbt_run_models = BashOperator(
         task_id="dbt_run_models",
         bash_command=(
@@ -210,6 +220,7 @@ with DAG(
         >> ingest_raw_survey
         >> record_source_checksum
         >> run_dq_checks
+        >> dbt_seed
         >> dbt_run_models
         >> dbt_test_models
         >> mark_candidate

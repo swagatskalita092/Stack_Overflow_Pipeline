@@ -237,7 +237,14 @@ CREATE TABLE IF NOT EXISTS marts.mart_salary_analytics (
     p25_salary NUMERIC,
     p75_salary NUMERIC,
     min_salary NUMERIC,
-    max_salary NUMERIC
+    max_salary NUMERIC,
+    fx_converted_count BIGINT,
+    avg_salary_usd NUMERIC,
+    median_salary_usd NUMERIC,
+    p25_salary_usd NUMERIC,
+    p75_salary_usd NUMERIC,
+    min_salary_usd NUMERIC,
+    max_salary_usd NUMERIC
 );
 
 CREATE TABLE IF NOT EXISTS marts.mart_tech_adoption (
@@ -298,6 +305,17 @@ BEGIN
     UPDATE marts.mart_ai_sentiment SET survey_year = 2024 WHERE survey_year IS NULL;
     ALTER TABLE marts.mart_ai_sentiment ALTER COLUMN survey_year SET NOT NULL;
 END $$;
+
+-- Currency normalization: add USD aggregate columns to an already-existing
+-- mart_salary_analytics (a fresh CREATE TABLE IF NOT EXISTS above already
+-- has them; this covers a database migrated before this change).
+ALTER TABLE marts.mart_salary_analytics ADD COLUMN IF NOT EXISTS fx_converted_count BIGINT;
+ALTER TABLE marts.mart_salary_analytics ADD COLUMN IF NOT EXISTS avg_salary_usd NUMERIC;
+ALTER TABLE marts.mart_salary_analytics ADD COLUMN IF NOT EXISTS median_salary_usd NUMERIC;
+ALTER TABLE marts.mart_salary_analytics ADD COLUMN IF NOT EXISTS p25_salary_usd NUMERIC;
+ALTER TABLE marts.mart_salary_analytics ADD COLUMN IF NOT EXISTS p75_salary_usd NUMERIC;
+ALTER TABLE marts.mart_salary_analytics ADD COLUMN IF NOT EXISTS min_salary_usd NUMERIC;
+ALTER TABLE marts.mart_salary_analytics ADD COLUMN IF NOT EXISTS max_salary_usd NUMERIC;
 
 CREATE INDEX IF NOT EXISTS mart_salary_analytics_release_idx
     ON marts.mart_salary_analytics (release_id);

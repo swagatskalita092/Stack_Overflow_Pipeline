@@ -1,2 +1,2 @@
-country,experience_band,dev_type,remote_work,org_size,respondent_count,avg_salary,median_salary,p25_salary,p75_salary,min_salary,max_salary
-Germany,5-9 years,"Developer, full-stack",Remote,100 to 499 employees,6,105000.00,105000.00,92500.00,117500.00,80000.00,130000.00
+country,experience_band,dev_type,remote_work,org_size,respondent_count,avg_salary,median_salary,p25_salary,p75_salary,min_salary,max_salary,fx_converted_count,avg_salary_usd,median_salary_usd,p25_salary_usd,p75_salary_usd,min_salary_usd,max_salary_usd
+Germany,5-9 years,"Developer, full-stack",Remote,100 to 499 employees,6,105000.00,105000.00,92500.00,117500.00,80000.00,130000.00,6,113011.38,113011.38,99557.64,126465.11,86103.91,139918.85
