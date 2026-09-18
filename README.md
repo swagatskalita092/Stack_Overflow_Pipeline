@@ -28,7 +28,7 @@ This isn't just a pipeline that moves data from A to B. The engineering effort w
                                         v                                         
 +--------------------------------------------------------------------------------+
 | dbt run: staging (stg_survey_responses, grain survey_year + response_id) ->    |
-| intermediate (int_exploded) -> marts. Every row tagged (release_id,            |
+| intermediate (int_*_exploded) -> marts. Every row tagged (release_id,          |
 | survey_year).                                                                  |
 |                                                                                |
 | marts: mart_salary_analytics | mart_tech_adoption | mart_ai_sentiment          |
@@ -51,7 +51,7 @@ This isn't just a pipeline that moves data from A to B. The engineering effort w
 |                                                                                |
 | JOIN dwh.active_release ON (survey_year, release_id): both years' current      |
 | publish are visible at once, each independently protected. Never query         |
-| marts.mart directly for an official number.                                    |
+| marts.mart_* directly for an official number.                                  |
 +--------------------------------------------------------------------------------+
                                         |                                         
                                         v                                         
