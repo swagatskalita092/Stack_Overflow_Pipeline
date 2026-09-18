@@ -2,29 +2,30 @@
 
 Honest boundaries, not a backlog dressed up as documentation.
 
-## Raw ingest is still truncate-and-reload
+## Raw ingest is year-scoped delete-and-reload, not append-only
 
 `raw.survey_responses` is **not** append-only. `scripts/ingest_survey.py`
-truncates the table and bulk-inserts the current extract on every run.
+deletes `WHERE survey_year = :year` and bulk-inserts that year's extract.
+A 2023 load does not destroy already-loaded 2024 rows (and the other way
+around). A crash after the DELETE and before the INSERT commits still
+rolls back with the current one-transaction boundary — the feared empty
+slice is the year being loaded, not every year.
 
-That is a **deliberate Phase B scope boundary**. Publication safety is
-guaranteed at the mart / `release_id` / `dwh.active_release` layer:
+That is a **deliberate remaining gap at the raw layer**, now per year
+instead of global truncate. Publication safety is guaranteed at the mart /
+`release_id` / per-year `dwh.active_release` layer:
 
-- a finished mart snapshot is tagged and kept
-- readers use `marts.v_*` filtered to the active release
-- a failed or superseded run cannot become the official answer
+- a finished mart snapshot is tagged with `(release_id, survey_year)` and kept
+- readers use `marts.v_*` joined to `dwh.active_release` on both keys
+- a failed or superseded run cannot become that year's official answer
+- publishing 2023 cannot move 2024's pointer
 
-It is **not** guaranteed at the raw layer. If the loader dies after
-`TRUNCATE` and before the insert commits, `raw.survey_responses` can be
-empty (or half-loaded) until the next successful ingest. Staging and a
-new candidate would then be built from that broken landing table — or
-DQ would block on `total_rows_loaded = 0`, depending on when the crash
-lands.
+It is **not** guaranteed that a killed 2023 reload leaves 2023 raw intact.
+Staging and a new 2023 candidate would then be built from that broken
+slice — or DQ would block on `total_rows_loaded = 0` for that year.
 
-**Phase D** (failure-injection / chaos on the pipeline itself) should
-specifically probe: kill ingest mid-truncate-and-reload, confirm what
-raw, DQ, and the live views show, and decide whether raw needs its own
-release/swap pattern. Phase B does not pretend that work is done.
+**Phase D** probed the old whole-table TRUNCATE. The kill-after-delete
+window still exists; the blast radius is one year.
 
 ## CI does not run the Airflow DAG
 

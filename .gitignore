@@ -205,3 +205,6 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Local dbt artifacts written off dbt_project/target (Windows errno 22)
+data/dbt_target_e2e/

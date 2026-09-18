@@ -1,9 +1,10 @@
 -- Salary cell: country × experience band × role × remote × org size,
--- plus release_id so many runs can coexist in this table.
+-- plus release_id and survey_year so many runs and years can coexist.
 --
--- Grain of one run: those five attributes. Physical grain is
--- (release_id, country, experience_band, dev_type, remote_work, org_size).
--- Readers use marts.v_salary_analytics, which keeps a single release.
+-- Grain of one run: those five attributes for one survey_year. Physical
+-- grain is (release_id, survey_year, country, experience_band, dev_type,
+-- remote_work, org_size). Readers use marts.v_salary_analytics, which
+-- joins dwh.active_release on (survey_year, release_id).
 --
 -- Append-only: dbt incremental INSERT. Never DROP this table on a run;
 -- a half-finished run would otherwise become the official answer.
@@ -15,9 +16,15 @@
 --
 -- Aggregates are of comp_total_raw (self-reported CompTotal in the
 -- respondent's own currency). USD conversion is not implemented.
+--
+-- This run only writes the year it was opened for. Other years stay in
+-- staging but must not land under this release_id.
 
 {% if var('release_id', none) is none %}
   {{ exceptions.raise_compiler_error('release_id var is required; the DAG must pass --vars') }}
+{% endif %}
+{% if var('survey_year', none) is none %}
+  {{ exceptions.raise_compiler_error('survey_year var is required; the DAG must pass --vars') }}
 {% endif %}
 
 {{ config(
@@ -29,6 +36,7 @@
 
 SELECT
     '{{ var("release_id") }}'::uuid AS release_id,
+    survey_year,
     country,
     CASE
         WHEN years_code_pro IS NULL THEN 'Unknown'
@@ -49,11 +57,13 @@ SELECT
     ROUND(MIN(comp_total_raw)::NUMERIC, 2) AS min_salary,
     ROUND(MAX(comp_total_raw)::NUMERIC, 2) AS max_salary
 FROM {{ ref('stg_survey_responses') }}
-WHERE comp_total_raw IS NOT NULL
+WHERE survey_year = {{ var('survey_year') | int }}
+  AND comp_total_raw IS NOT NULL
   AND comp_total_raw >= 10000
   AND comp_total_raw <= 5000000
   AND country IS NOT NULL
 GROUP BY
+    survey_year,
     country,
     CASE
         WHEN years_code_pro IS NULL THEN 'Unknown'

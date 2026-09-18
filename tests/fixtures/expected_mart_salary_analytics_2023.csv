@@ -1,0 +1,2 @@
+country,experience_band,dev_type,remote_work,org_size,respondent_count,avg_salary,median_salary,p25_salary,p75_salary,min_salary,max_salary
+Germany,5-9 years,"Developer, full-stack",Remote,100 to 499 employees,6,105000.00,105000.00,92500.00,117500.00,80000.00,130000.00

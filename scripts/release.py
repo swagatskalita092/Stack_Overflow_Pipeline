@@ -1,4 +1,4 @@
-"""Append-only release pointer: build many, publish one, readers see one.
+"""Append-only release pointer: build many, publish one per year, readers see both.
 
 Why this module exists
 ----------------------
@@ -7,16 +7,20 @@ analysts looking at a half-built table. FlashBuy's chaos tests ask "what
 does the buyer see if we die between steps?" — this is that question for
 warehouse publication.
 
-Each pipeline run owns a release_id. Mart rows for that id are INSERTed
-next to older ids. dwh.active_release holds the single id that
-marts.v_* views filter to. publish_release() moves that pointer in one
-transaction under an advisory lock, so two overlapping publishes cannot
-interleave updates and leave a mix.
+Each pipeline run owns a release_id and a survey_year. Mart rows for that
+id are INSERTed next to older ids. dwh.active_release holds one id *per
+year* that marts.v_* views join to on (survey_year, release_id).
+publish_release() moves that year's pointer in one transaction under an
+advisory lock, so two overlapping publishes cannot interleave updates
+and leave a mix.
 
 A bad run stays in pipeline_releases as failed, candidate_ready, or
 superseded and never becomes the view output unless someone publishes a
-*newer* (higher seq) candidate. An older run that finishes late cannot
-roll the pointer backward.
+*newer* (higher seq) candidate *for that same year*. An older run that
+finishes late cannot roll the pointer backward. seq is still a global
+BIGSERIAL; the comparison is scoped to the candidate's survey_year so a
+2023 release built after several 2024 releases is not "newer than 2024"
+and cannot move 2024's pointer.
 """
 
 from __future__ import annotations
@@ -34,6 +38,7 @@ if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
 
 from db import get_connection
+from ingest_survey import resolve_survey_year
 
 logger = logging.getLogger(__name__)
 
@@ -66,13 +71,14 @@ def get_git_sha() -> Optional[str]:
         return None
 
 
-def compute_source_checksum(cur) -> str:
-    """Stable md5 of every raw.survey_responses row.
+def compute_source_checksum(cur, survey_year: int) -> str:
+    """Stable md5 of every raw.survey_responses row for this survey_year.
 
     CAST(t.* AS text) is Postgres's whole-row text. We order by that hash
     so insert order does not change the checksum. Empty table hashes as
     md5('') so a zero-row ingest is distinguishable from "we forgot to
-    checksum."
+    checksum." Scoped per year so loading 2023 does not change 2024's
+    "unchanged source" comparison.
     """
     cur.execute(
         """
@@ -80,13 +86,35 @@ def compute_source_checksum(cur) -> str:
         FROM (
             SELECT md5(CAST(t.* AS text)) AS row_md5
             FROM raw.survey_responses t
+            WHERE t.survey_year = %s
         ) s
-        """
+        """,
+        (int(survey_year),),
     )
     return cur.fetchone()[0]
 
 
-def open_release(release_id: Optional[str] = None, git_sha: Optional[str] = None) -> str:
+def _release_survey_year(cur, release_id: str) -> int:
+    """survey_year stamped when this release was opened."""
+    cur.execute(
+        """
+        SELECT survey_year
+        FROM dwh.pipeline_releases
+        WHERE release_id = %s::uuid
+        """,
+        (release_id,),
+    )
+    row = cur.fetchone()
+    if row is None:
+        raise ReleaseError(f"unknown release_id {release_id}")
+    return int(row[0])
+
+
+def open_release(
+    release_id: Optional[str] = None,
+    git_sha: Optional[str] = None,
+    survey_year=None,
+) -> str:
     """Insert a building row and return the new release_id (uuid str).
 
     Call this at the start of a run, before dbt, so a later ingest/DQ/dbt
@@ -100,42 +128,47 @@ def open_release(release_id: Optional[str] = None, git_sha: Optional[str] = None
         release_id = str(uuid.uuid4())
     if git_sha is None:
         git_sha = get_git_sha()
+    year = resolve_survey_year(survey_year)
     conn = get_connection()
     try:
         with conn.cursor() as cur:
             cur.execute(
                 """
                 INSERT INTO dwh.pipeline_releases
-                    (release_id, git_sha, status)
-                VALUES (%s::uuid, %s, 'building')
+                    (release_id, git_sha, status, survey_year)
+                VALUES (%s::uuid, %s, 'building', %s)
                 ON CONFLICT (release_id) DO NOTHING
                 """,
-                (release_id, git_sha),
+                (release_id, git_sha, year),
             )
         conn.commit()
-        logger.info("Opened release %s (building)", release_id)
+        logger.info("Opened release %s (building, survey_year=%s)", release_id, year)
         return release_id
     finally:
         conn.close()
 
 
 def record_source_checksum(release_id: str) -> str:
-    """Hash raw.survey_responses and flag identical-to-published source.
+    """Hash this year's raw.survey_responses and flag identical-to-published source.
 
     We still build and (if tests pass) still publish. The flag only changes
     the candidate status name so operators can see "this was a no-op ingest"
-    without us silently skipping the run.
+    without us silently skipping the run. Comparison is against this year's
+    active release, not "whatever row happens to come back from active_release."
     """
     conn = get_connection()
     try:
         with conn.cursor() as cur:
-            checksum = compute_source_checksum(cur)
+            year = _release_survey_year(cur, release_id)
+            checksum = compute_source_checksum(cur, year)
             cur.execute(
                 """
                 SELECT r.source_checksum
                 FROM dwh.active_release a
                 JOIN dwh.pipeline_releases r ON r.release_id = a.release_id
-                """
+                WHERE a.survey_year = %s
+                """,
+                (year,),
             )
             row = cur.fetchone()
             published_checksum = row[0] if row else None
@@ -153,10 +186,11 @@ def record_source_checksum(release_id: str) -> str:
             )
         conn.commit()
         logger.info(
-            "Release %s checksum=%s unchanged_source=%s",
+            "Release %s checksum=%s unchanged_source=%s survey_year=%s",
             release_id,
             checksum,
             unchanged,
+            year,
         )
         return checksum
     finally:
@@ -274,21 +308,23 @@ def publish_release(
     release_id: str,
     after_lock: Optional[Callable[[], None]] = None,
 ) -> str:
-    """Point dwh.active_release at this candidate, in one locked transaction.
+    """Point this year's dwh.active_release row at this candidate, locked.
 
     after_lock is a test hook (widen a race window). Production DAG leaves
     it None.
 
     Returns a short result tag: 'published', 'already_active', 'superseded'.
     Raises ReleaseError if the row is not a candidate (still building, or
-    failed). Retrying after a crash is already_active when the pointer
-    already matches.
+    failed). Retrying after a crash is already_active when this year's
+    pointer already matches.
 
-    Monotonicity: dwh.pipeline_releases.seq is a BIGSERIAL assigned at
-    open_release. If something is already active and this candidate's seq
-    is not strictly greater, we do not move the pointer. The late run is
-    marked superseded. That stops a slow older DAG from rolling readers
-    back to stale marts after a newer run already published.
+    Monotonicity is *per survey_year*. dwh.pipeline_releases.seq is a
+    global BIGSERIAL, so a 2023 release opened after several 2024 releases
+    has a numerically higher seq. Comparing that seq to "the" active
+    release globally would either (a) treat 2023 as newer than 2024 and
+    move the wrong pointer, or (b) treat a stale 2024 rerun as older than
+    a later 2023 seq and wrongly supersede it. We read and upsert only
+    WHERE survey_year = the candidate's year.
     """
     conn = get_connection()
     try:
@@ -300,7 +336,7 @@ def publish_release(
 
             cur.execute(
                 """
-                SELECT status, seq
+                SELECT status, seq, survey_year
                 FROM dwh.pipeline_releases
                 WHERE release_id = %s::uuid
                 FOR UPDATE
@@ -310,9 +346,18 @@ def publish_release(
             row = cur.fetchone()
             if row is None:
                 raise ReleaseError(f"unknown release_id {release_id}")
-            status, candidate_seq = row
+            status, candidate_seq, survey_year = row
+            survey_year = int(survey_year)
 
-            cur.execute("SELECT release_id FROM dwh.active_release FOR UPDATE")
+            cur.execute(
+                """
+                SELECT a.release_id
+                FROM dwh.active_release a
+                WHERE a.survey_year = %s
+                FOR UPDATE
+                """,
+                (survey_year,),
+            )
             active = cur.fetchone()
             active_id = str(active[0]) if active else None
             active_seq = None
@@ -324,7 +369,8 @@ def publish_release(
                     """,
                     (active_id,),
                 )
-                active_seq = cur.fetchone()[0]
+                seq_row = cur.fetchone()
+                active_seq = seq_row[0] if seq_row else None
 
             if active_id == release_id:
                 if status != "published":
@@ -338,7 +384,11 @@ def publish_release(
                         (release_id,),
                     )
                 conn.commit()
-                logger.info("Release %s already active; publish is a no-op", release_id)
+                logger.info(
+                    "Release %s already active for survey_year=%s; publish is a no-op",
+                    release_id,
+                    survey_year,
+                )
                 return "already_active"
 
             if (
@@ -355,16 +405,18 @@ def publish_release(
                       AND status <> 'published'
                     """,
                     (
-                        f"seq {candidate_seq} is not newer than active seq {active_seq}",
+                        f"seq {candidate_seq} is not newer than active seq "
+                        f"{active_seq} for survey_year={survey_year}",
                         release_id,
                     ),
                 )
                 conn.commit()
                 logger.info(
-                    "Release %s superseded (seq %s <= active seq %s)",
+                    "Release %s superseded (seq %s <= active seq %s, survey_year=%s)",
                     release_id,
                     candidate_seq,
                     active_seq,
+                    survey_year,
                 )
                 return "superseded"
 
@@ -375,13 +427,13 @@ def publish_release(
 
             cur.execute(
                 """
-                INSERT INTO dwh.active_release (singleton, release_id, updated_at)
-                VALUES (TRUE, %s::uuid, NOW())
-                ON CONFLICT (singleton) DO UPDATE
+                INSERT INTO dwh.active_release (survey_year, release_id, updated_at)
+                VALUES (%s, %s::uuid, NOW())
+                ON CONFLICT (survey_year) DO UPDATE
                 SET release_id = EXCLUDED.release_id,
                     updated_at = NOW()
                 """,
-                (release_id,),
+                (survey_year, release_id),
             )
             cur.execute(
                 """
@@ -393,7 +445,7 @@ def publish_release(
                 (release_id,),
             )
         conn.commit()
-        logger.info("Published release %s", release_id)
+        logger.info("Published release %s (survey_year=%s)", release_id, survey_year)
         return "published"
     except Exception:
         conn.rollback()
@@ -402,13 +454,21 @@ def publish_release(
         conn.close()
 
 
-def get_active_release_id() -> Optional[str]:
-    """The id the views filter to, or None if nothing is published yet."""
+def get_active_release_id(survey_year=None) -> Optional[str]:
+    """The id the views join to for this year, or None if that year is unpublished."""
+    year = resolve_survey_year(survey_year)
     conn = get_connection()
     try:
         with conn.cursor() as cur:
-            cur.execute("SELECT release_id FROM dwh.active_release")
+            cur.execute(
+                """
+                SELECT release_id FROM dwh.active_release
+                WHERE survey_year = %s
+                """,
+                (year,),
+            )
             row = cur.fetchone()
             return str(row[0]) if row else None
     finally:
         conn.close()
+

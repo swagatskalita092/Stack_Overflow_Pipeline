@@ -74,8 +74,8 @@ TECH_NUMS = {
 }
 
 
-def _run_dbt(subcommand: str, release_id: str) -> None:
-    """Call the real dbt CLI (run or test) with this release_id.
+def _run_dbt(subcommand: str, release_id: str, survey_year: int = 2024) -> None:
+    """Call the real dbt CLI (run or test) with this release_id and year.
 
     Uses the same --profiles-dir / --target / --vars shape as the DAG.
     Fails the pytest with dbt's stdout/stderr on a non-zero exit.
@@ -93,7 +93,7 @@ def _run_dbt(subcommand: str, release_id: str) -> None:
             "dbt is not on PATH. Install the same pin CI uses: "
             "pip install dbt-postgres==1.7.0"
         )
-    vars_json = json.dumps({"release_id": release_id})
+    vars_json = json.dumps({"release_id": release_id, "survey_year": int(survey_year)})
     cmd = [
         dbt_bin,
         subcommand,
@@ -229,10 +229,10 @@ def test_published_views_match_phase_a_hand_calculated_csvs(warehouse):
     """Load fixture raw → real dbt → publish → marts.v_* == expected_mart_*.csv."""
     conn = warehouse
     rid = PHASE_C_RELEASE_ID
-    open_release(release_id=rid)
+    open_release(release_id=rid, survey_year=2024)
     record_source_checksum(rid)
-    _run_dbt("run", rid)
-    _run_dbt("test", rid)
+    _run_dbt("run", rid, survey_year=2024)
+    _run_dbt("test", rid, survey_year=2024)
     mark_candidate(rid)
     assert publish_release(rid) == "published"
 

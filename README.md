@@ -93,22 +93,24 @@ stackoverflow-pipeline/
 
 | Task | Description |
 | --- | --- |
-| **open_release** | Inserts `dwh.pipeline_releases` (`building`) and pushes `release_id` to XCom. |
-| **ingest_raw_survey** | Downloads the 2024 survey ZIP, cleans it, replaces `raw.survey_responses`. |
-| **record_source_checksum** | Hashes the raw table; flags identical-to-published source (still builds). |
-| **run_dq_checks** | Six checks → `dwh.dq_issues`. Blocking checks fail the DAG (see `docs/data_quality_policy.md`). |
-| **dbt_run_models** | Staging → intermediate → append mart rows tagged with `release_id`. |
+| **open_release** | Inserts `dwh.pipeline_releases` (`building`, with `survey_year`) and pushes `release_id` to XCom. |
+| **ingest_raw_survey** | Downloads that year's survey CSV, cleans it, replaces `raw.survey_responses` **for that year only**. |
+| **record_source_checksum** | Hashes that year's raw rows; flags identical-to-published source for the same year (still builds). |
+| **run_dq_checks** | Checks scoped to `survey_year` → `dwh.dq_issues`. Blocking checks fail the DAG (see `docs/data_quality_policy.md`). |
+| **dbt_run_models** | Staging → intermediate → append mart rows tagged with `release_id` and `survey_year`. |
 | **dbt_test_models** | dbt tests, scoped to this `release_id` for mart not_null checks. |
 | **mark_candidate** | `candidate_ready` or `candidate_ready_unchanged_source`. Does **not** move the live pointer. |
-| **publish_release** | One locked transaction: `dwh.active_release` := this candidate. |
+| **publish_release** | One locked transaction: this year's `dwh.active_release` row := this candidate. |
 
-Readers query `marts.v_salary_analytics`, `marts.v_tech_adoption`, `marts.v_ai_sentiment` (filter to the active release). Do not query `marts.mart_*` for official numbers.
+Readers query `marts.v_salary_analytics`, `marts.v_tech_adoption`, `marts.v_ai_sentiment` (join to the per-year active release). Do not query `marts.mart_*` for official numbers.
+
+Trigger a 2023 run with DAG conf `{"survey_year": 2023}` or env `SURVEY_YEAR=2023`. Default is 2024.
 
 ---
 
 ## Data Model (dbt)
 
-- Staging: `stg_survey_responses` — One row per unique `response_id`; numeric casting for `years_code`, `years_code_pro`, `comp_total_raw` (local currency as entered; USD conversion is not implemented).
+- Staging: `stg_survey_responses` — One row per `(survey_year, response_id)`; numeric casting for `years_code`, `years_code_pro`, `comp_total_raw` (local currency as entered; USD conversion is not implemented).
 - **Intermediate:** `int_languages_exploded`, `int_databases_exploded` — One row per (response, language) or (response, database); includes `wants_to_continue` from “want to work with” fields.
 - **Marts:**
   - **mart_salary_analytics** — Append-only per `release_id`. Official read is `marts.v_salary_analytics`. Aggregations by country, experience band, dev type, remote work, org size; filters e.g. 10k–5M, ≥5 respondents.

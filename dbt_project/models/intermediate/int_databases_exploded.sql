@@ -8,6 +8,7 @@
 -- because salary does not read either exploded table.
 
 SELECT
+    s.survey_year,
     s.response_id,
     s.country,
     s.dev_type,

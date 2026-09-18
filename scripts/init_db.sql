@@ -1,6 +1,6 @@
 -- Warehouse bootstrap: database, schemas, landing table, DQ log.
 --
--- raw.survey_responses is the ingest target (truncate + reload each run).
+-- raw.survey_responses is the ingest target (year-scoped DELETE + reload).
 -- dwh.dq_issues is the DQ script's "this run only" log (the script deletes
 -- prior rows). dbt creates staging / intermediate / marts schemas on run.
 
@@ -47,7 +47,8 @@ CREATE TABLE raw.survey_responses (
     ai_threat TEXT,
     job_sat TEXT,
     industry TEXT,
-    loaded_at TIMESTAMP DEFAULT NOW()
+    loaded_at TIMESTAMP DEFAULT NOW(),
+    survey_year INTEGER NOT NULL
 );
 
 -- Publication-safety tables/views: scripts/migrate_release_safety.sql

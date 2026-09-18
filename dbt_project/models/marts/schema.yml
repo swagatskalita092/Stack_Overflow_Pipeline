@@ -2,11 +2,16 @@ version: 2
 
 models:
   - name: stg_survey_responses
-    description: "Staged and deduplicated Stack Overflow Developer Survey 2024 responses. One row per unique ResponseId."
+    description: >
+      Staged and deduplicated Stack Overflow Developer Survey responses.
+      One row per (survey_year, ResponseId). survey_year is copied from
+      raw, not inferred.
     columns:
+      - name: survey_year
+        tests:
+          - not_null
       - name: response_id
         tests:
-          - unique
           - not_null
       - name: country
         description: "Developer country of residence"
@@ -16,7 +21,7 @@ models:
         description: "Professional coding experience in years"
 
   - name: int_languages_exploded
-    description: "One row per (response_id, language). Includes wants_to_continue flag."
+    description: "One row per (survey_year, response_id, language). Includes wants_to_continue flag."
     columns:
       - name: response_id
         tests:
@@ -30,7 +35,7 @@ models:
               values: [true, false]
 
   - name: int_databases_exploded
-    description: "One row per (response_id, database_name)."
+    description: "One row per (survey_year, response_id, database_name)."
     columns:
       - name: response_id
         tests:
@@ -40,9 +45,14 @@ models:
           - not_null
 
   - name: mart_salary_analytics
-    description: "Salary analytics by cell, append-only per release_id. Readers must use marts.v_salary_analytics."
+    description: "Salary analytics by cell, append-only per (release_id, survey_year). Readers must use marts.v_salary_analytics."
     columns:
       - name: release_id
+        tests:
+          - not_null:
+              config:
+                where: "release_id = '{{ var('release_id') }}'"
+      - name: survey_year
         tests:
           - not_null:
               config:
@@ -56,7 +66,7 @@ models:
         description: "Median of comp_total_raw for this segment (mixed local currencies, not USD)"
 
   - name: mart_tech_adoption
-    description: "Technology adoption per release_id. Readers must use marts.v_tech_adoption."
+    description: "Technology adoption per (release_id, survey_year). Readers must use marts.v_tech_adoption."
     columns:
       - name: tech_name
         tests:
@@ -64,6 +74,11 @@ models:
               config:
                 where: "release_id = '{{ var('release_id') }}'"
       - name: release_id
+        tests:
+          - not_null:
+              config:
+                where: "release_id = '{{ var('release_id') }}'"
+      - name: survey_year
         tests:
           - not_null:
               config:
@@ -77,9 +92,17 @@ models:
               values: ['Language', 'Database']
 
   - name: mart_ai_sentiment
-    description: "AI sentiment per release_id. Readers must use marts.v_ai_sentiment."
+    description: >
+      AI sentiment per (release_id, survey_year). Readers must use marts.v_ai_sentiment.
+      2023 rows have NULL pct_see_ai_as_threat (AIThreat absent from the extract)
+      and NULL avg_job_satisfaction (JobSat absent).
     columns:
       - name: release_id
+        tests:
+          - not_null:
+              config:
+                where: "release_id = '{{ var('release_id') }}'"
+      - name: survey_year
         tests:
           - not_null:
               config:

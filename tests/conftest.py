@@ -79,33 +79,56 @@ def wipe_warehouse(conn) -> None:
     conn.commit()
 
 
-def load_raw_fixtures(conn) -> None:
-    """Load tests/fixtures/raw_survey_responses.csv into raw.survey_responses."""
-    path = FIXTURES / "raw_survey_responses.csv"
+def load_raw_fixtures(conn, path: Path | None = None, survey_year: int = 2024) -> None:
+    """Load a fixture CSV into raw.survey_responses.
+
+    The Phase A 2024 fixture is already warehouse-shaped (snake_case). The
+    2023 source-shaped fixture is loaded through ingest_survey instead.
+    survey_year is stamped here when the CSV does not have that column.
+    """
+    path = path or (FIXTURES / "raw_survey_responses.csv")
     with path.open(encoding="utf-8", newline="") as f:
         rows = list(csv.DictReader(f))
     if not rows:
-        raise RuntimeError("raw fixture is empty")
+        raise RuntimeError(f"raw fixture is empty: {path}")
     columns = list(rows[0].keys())
+    stamp_year = "survey_year" not in columns
+    if stamp_year:
+        columns = columns + ["survey_year"]
     placeholders = ", ".join(["%s"] * len(columns))
     col_sql = ", ".join(columns)
     insert = f"INSERT INTO raw.survey_responses ({col_sql}) VALUES ({placeholders})"
     tuples = []
     for row in rows:
-        tuples.append(tuple(None if v == "" else v for v in (row[c] for c in columns)))
+        values = []
+        for c in columns:
+            if stamp_year and c == "survey_year":
+                values.append(int(survey_year))
+            else:
+                v = row[c]
+                values.append(None if v == "" else v)
+        tuples.append(tuple(values))
     with conn.cursor() as cur:
         cur.executemany(insert, tuples)
     conn.commit()
 
 
-def insert_expected_marts(conn, release_id: str, *, corrupt_salary: bool = False) -> None:
+def insert_expected_marts(
+    conn,
+    release_id: str,
+    *,
+    corrupt_salary: bool = False,
+    survey_year: int = 2024,
+    salary_path: Path | None = None,
+    ai_path: Path | None = None,
+) -> None:
     """Stand-in for a successful (or deliberately broken) dbt run.
 
-    Copies Phase A expected mart CSVs, tagged with this release_id.
+    Copies Phase A expected mart CSVs, tagged with this release_id and year.
     Tech-adoption expected file is headers-only (the >=100 cutoff).
     corrupt_salary=True inserts a NULL respondent_count so a not_null test fails.
     """
-    salary_path = FIXTURES / "expected_mart_salary_analytics.csv"
+    salary_path = salary_path or (FIXTURES / "expected_mart_salary_analytics.csv")
     with salary_path.open(encoding="utf-8", newline="") as f:
         salary_rows = list(csv.DictReader(f))
     with conn.cursor() as cur:
@@ -113,15 +136,16 @@ def insert_expected_marts(conn, release_id: str, *, corrupt_salary: bool = False
             cur.execute(
                 """
                 INSERT INTO marts.mart_salary_analytics (
-                    release_id, country, experience_band, dev_type, remote_work,
-                    org_size, respondent_count, avg_salary, median_salary,
-                    p25_salary, p75_salary, min_salary, max_salary
+                    release_id, survey_year, country, experience_band, dev_type,
+                    remote_work, org_size, respondent_count, avg_salary,
+                    median_salary, p25_salary, p75_salary, min_salary, max_salary
                 ) VALUES (
-                    %s::uuid, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s::uuid, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                 )
                 """,
                 (
                     release_id,
+                    survey_year,
                     row["country"],
                     row["experience_band"],
                     row["dev_type"],
@@ -136,28 +160,33 @@ def insert_expected_marts(conn, release_id: str, *, corrupt_salary: bool = False
                     row["max_salary"],
                 ),
             )
-        ai_path = FIXTURES / "expected_mart_ai_sentiment.csv"
+        ai_path = ai_path or (FIXTURES / "expected_mart_ai_sentiment.csv")
         with ai_path.open(encoding="utf-8", newline="") as f:
             for row in csv.DictReader(f):
+                threat = row.get("ai_threat") or None
+                job = row.get("avg_job_satisfaction") or None
+                pct = row.get("pct_see_ai_as_threat") or None
                 cur.execute(
                     """
                     INSERT INTO marts.mart_ai_sentiment (
-                        release_id, country, dev_type, ai_select, ai_sent, ai_threat,
-                        respondent_count, avg_job_satisfaction, pct_see_ai_as_threat
+                        release_id, survey_year, country, dev_type, ai_select,
+                        ai_sent, ai_threat, respondent_count, avg_job_satisfaction,
+                        pct_see_ai_as_threat
                     ) VALUES (
-                        %s::uuid, %s, %s, %s, %s, %s, %s, %s, %s
+                        %s::uuid, %s, %s, %s, %s, %s, %s, %s, %s, %s
                     )
                     """,
                     (
                         release_id,
+                        survey_year,
                         row["country"],
                         row["dev_type"],
                         row["ai_select"],
                         row["ai_sent"],
-                        row["ai_threat"],
+                        threat if threat not in ("", None) else None,
                         int(row["respondent_count"]),
-                        row["avg_job_satisfaction"],
-                        row["pct_see_ai_as_threat"],
+                        None if job in ("", None) else job,
+                        None if pct in ("", None) else pct,
                     ),
                 )
     conn.commit()
@@ -197,9 +226,15 @@ def table_salary_count(conn) -> int:
         return cur.fetchone()[0]
 
 
-def active_id(conn) -> str | None:
+def active_id(conn, survey_year: int = 2024) -> str | None:
     with conn.cursor() as cur:
-        cur.execute("SELECT release_id::text FROM dwh.active_release")
+        cur.execute(
+            """
+            SELECT release_id::text FROM dwh.active_release
+            WHERE survey_year = %s
+            """,
+            (survey_year,),
+        )
         row = cur.fetchone()
         return row[0] if row else None
 
@@ -213,11 +248,23 @@ def release_status(conn, release_id: str) -> str:
         return cur.fetchone()[0]
 
 
-def build_good_release(conn) -> str:
-    """open → checksum → insert Phase A marts → candidate. Does not publish."""
-    rid = open_release()
+def build_good_release(
+    conn,
+    *,
+    survey_year: int = 2024,
+    salary_path: Path | None = None,
+    ai_path: Path | None = None,
+) -> str:
+    """open → checksum → insert expected marts → candidate. Does not publish."""
+    rid = open_release(survey_year=survey_year)
     record_source_checksum(rid)
-    insert_expected_marts(conn, rid)
+    insert_expected_marts(
+        conn,
+        rid,
+        survey_year=survey_year,
+        salary_path=salary_path,
+        ai_path=ai_path,
+    )
     mark_candidate(rid)
     return rid
 

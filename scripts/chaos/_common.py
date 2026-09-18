@@ -107,9 +107,16 @@ def snapshot() -> dict:
     conn = connect_warehouse()
     try:
         with conn.cursor() as cur:
-            cur.execute("SELECT release_id::text FROM dwh.active_release")
-            row = cur.fetchone()
-            active = row[0] if row else None
+            cur.execute(
+                "SELECT survey_year, release_id::text FROM dwh.active_release ORDER BY survey_year"
+            )
+            active_rows = cur.fetchall()
+            active_by_year = {int(r[0]): r[1] for r in active_rows}
+            # Chaos scripts still read "active" as a single id. The weekly DAG
+            # defaults to 2024; that year's pointer is the one they care about.
+            active = active_by_year.get(2024)
+            if active is None and len(active_by_year) == 1:
+                active = next(iter(active_by_year.values()))
             cur.execute("SELECT COUNT(*) FROM raw.survey_responses")
             raw_n = cur.fetchone()[0]
             cur.execute("SELECT COUNT(*) FROM marts.v_salary_analytics")
@@ -137,6 +144,7 @@ def snapshot() -> dict:
             ]
         return {
             "active": active,
+            "active_by_year": active_by_year,
             "raw_n": raw_n,
             "view_n": view_n,
             "view_ids": view_ids,
@@ -282,13 +290,14 @@ def container_path(host_path: Path) -> str:
 def ingest_from_local_zip_source(zip_path: Path, extra_load_lines: str = "") -> str:
     """ingest_survey.py with _download_zip reading a local file instead of the CDN.
 
-    extra_load_lines is spliced into _load_to_postgres after TRUNCATE (for the
-    mid-truncate kill window).
+    extra_load_lines is spliced into _load_to_postgres after the year-scoped
+    DELETE (for the mid-delete kill window).
     """
     src = INGEST_PATH.read_text(encoding="utf-8")
     posix = container_path(zip_path)
-    old_dl = '''    logger.info("Downloading survey data from %s", SURVEY_DATA_URL)
-    resp = requests.get(SURVEY_DATA_URL, timeout=180, allow_redirects=True)
+    old_dl = '''    url = survey_data_url(survey_year)
+    logger.info("Downloading survey data from %s", url)
+    resp = requests.get(url, timeout=180, allow_redirects=True)
     resp.raise_for_status()
     logger.info("Downloaded %s bytes", len(resp.content))
     return resp.content'''
@@ -302,9 +311,14 @@ def ingest_from_local_zip_source(zip_path: Path, extra_load_lines: str = "") -> 
         raise RuntimeError("ingest_survey.py download block changed; update chaos patch")
     src = src.replace(old_dl, new_dl, 1)
     if extra_load_lines:
-        marker = '            logger.info("Truncated raw.survey_responses")\n'
+        marker = (
+            '            logger.info(\n'
+            '                "Deleted existing raw.survey_responses rows for survey_year=%s",\n'
+            '                survey_year,\n'
+            '            )\n'
+        )
         if marker not in src:
-            raise RuntimeError("truncate log line missing; update chaos patch")
+            raise RuntimeError("year-scoped delete log line missing; update chaos patch")
         src = src.replace(marker, marker + extra_load_lines, 1)
     return src
 
