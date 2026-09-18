@@ -73,7 +73,7 @@ def _dbt(subcommand: str, release_id: str) -> None:
         "--target",
         "prod",
         "--vars",
-        '{"release_id": "%s"}' % release_id,
+        json.dumps({"release_id": release_id, "survey_year": 2024}),
     ]
     subprocess.check_call(cmd, cwd=str(dbt_dir), env=os.environ.copy())
 
@@ -166,11 +166,11 @@ def fetch_official_archive_zip() -> dict:
 def install_local_zip_download(zip_path: Path) -> None:
     """In-process stand-in for _download_zip. Does not write ingest_survey.py."""
 
-    def _download_zip() -> bytes:
+    def _download_source(survey_year: int = 2024) -> bytes:
         ingest_survey.logger.info("MEASURE: reading cached survey ZIP from %s", zip_path)
         return zip_path.read_bytes()
 
-    ingest_survey._download_zip = _download_zip  # type: ignore[method-assign]
+    ingest_survey._download_source = _download_source  # type: ignore[method-assign]
 
 
 def one_run(n: int) -> dict:

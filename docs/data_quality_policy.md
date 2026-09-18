@@ -33,10 +33,11 @@ failed its primary key.
 
 **Log** (do not block) when `row_count > 0`.
 
-Staging already keeps one row per `response_id` (latest `loaded_at`). The
+Staging already keeps one row per `(survey_year, response_id)` (latest `loaded_at`). The
 Phase A fixture includes a duplicate on purpose; the contract is "collapse to
 the newest row," not "the ZIP must be unique." Blocking publication on a
 handled duplicate would fail every run the source repeats a `ResponseId`.
+The same `ResponseId` in two survey years is **not** a duplicate.
 
 Log it because duplicates are still a smell (re-load bug, or a source change).
 The count is **distinct ids that appear more than once**, not extra-row
@@ -110,11 +111,18 @@ fail. Catastrophic shrink is `row_count_drop`, not this check.
 ## `row_count_drop`
 
 **Block publication** when the current `COUNT(*)` of `raw.survey_responses`
-is **strictly less than half** of `total_rows_loaded` on the last
-**published** release (`dwh.active_release` → `pipeline_releases.dq_summary`).
+**for this run's `survey_year`** is **strictly less than half** of
+`total_rows_loaded` on the last **published** release **for that same
+year** (`dwh.active_release` WHERE `survey_year = :year` →
+`pipeline_releases.dq_summary`).
 
-**Do not block** when there is no active release, or the published row has
-no `total_rows_loaded` (first publish, or a test that never ran DQ).
+**Do not block** when there is no active release for this year, or the
+published row has no `total_rows_loaded` (first publish of that year, or a
+test that never ran DQ). A first 2023 load is not compared to 2024's 65k
+rows.
+
+`duplicate_response_id` is also per year: the same `ResponseId` in 2023 and
+2024 is two people-years, not a duplicate.
 
 **Why 50%, not an absolute floor.** A healthy production load is tens of
 thousands of rows; a healthy Phase A fixture load is a dozen. A floor of
@@ -145,4 +153,4 @@ table size at DQ time), not the mart cell count.
 | `null_comp_total` | No; log only |
 | `invalid_years_code_pro` | Yes, if count > 0 |
 | `total_rows_loaded` | Only if count = 0; otherwise log the audit total |
-| `row_count_drop` | Yes, if current count < 50% of last published `total_rows_loaded` |
+| `row_count_drop` | Yes, if this year's count < 50% of that year's last published `total_rows_loaded` |

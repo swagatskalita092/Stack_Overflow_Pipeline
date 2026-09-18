@@ -2,12 +2,16 @@ version: 2
 sources:
   - name: raw
     schema: raw
-    description: "Raw landing zone for Stack Overflow Developer Survey 2024"
+    description: "Raw landing zone for Stack Overflow Developer Survey (one or more survey_year values)"
     tables:
       - name: survey_responses
-        description: "65,000+ raw survey responses loaded by the ingestion script"
+        description: "Raw survey responses loaded by the ingestion script, keyed by (survey_year, response_id)"
         columns:
           - name: response_id
-            description: "Unique identifier per survey response"
+            description: "Identifier per survey response within a year"
+            tests:
+              - not_null
+          - name: survey_year
+            description: "Explicit survey year stamped at ingest. Not inferred from the file."
             tests:
               - not_null

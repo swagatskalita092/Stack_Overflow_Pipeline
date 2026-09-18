@@ -1,0 +1,3 @@
+country,dev_type,ai_select,ai_sent,ai_threat,respondent_count,avg_job_satisfaction,pct_see_ai_as_threat
+Germany,"Developer, full-stack",Yes,Favorable,,6,,
+Canada,"Developer, back-end","No, and I don't plan to",Unfavorable,,3,,

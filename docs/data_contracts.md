@@ -104,19 +104,21 @@ regression net: three languages × two databases, still one salary.
 ## `mart_salary_analytics`
 
 **Grain (one published answer):** one row per
-`(country, experience_band, dev_type, remote_work, org_size)`.
+`(survey_year, country, experience_band, dev_type, remote_work, org_size)`.
 
 **Physical table grain:** the same keys plus `release_id`. Every pipeline run
-appends a new copy. Analysts must query `marts.v_salary_analytics`, which
-keeps `WHERE release_id = (SELECT release_id FROM dwh.active_release)`.
-Querying the table directly will mix history.
+appends a new copy for the year it was opened for. Analysts must query
+`marts.v_salary_analytics`, which joins `dwh.active_release` on
+`(survey_year, release_id)` so 2023 and 2024 can both be live. Querying the
+table directly will mix history.
 
 That is a **cell of people who share those five attributes**, not one row per
 person and not one row per language/database.
 
 **Eligible population (the rows that feed `COUNT` / `AVG` / percentiles):**
 
-- Source: `stg_survey_responses` (already one row per `response_id`).
+- Source: `stg_survey_responses` (already one row per `(survey_year, response_id)`).
+- `survey_year` equals this run's `--vars` year (a 2023 run does not rewrite 2024 cells under the new `release_id`).
 - `comp_total_raw IS NOT NULL`
 - `comp_total_raw >= 10000`
 - `comp_total_raw <= 5000000`
@@ -160,12 +162,12 @@ N sorted values the p-th percentile sits at position `1 + p * (N - 1)`.
 
 ## `mart_tech_adoption`
 
-**Grain:** one row per `(tech_type, tech_name)`, where `tech_type` is
+**Grain:** one row per `(survey_year, tech_type, tech_name)`, where `tech_type` is
 `'Language'` or `'Database'`.
 
 Languages and databases are unioned, never mixed into one rank list.
-`usage_rank` is `RANK()` within `tech_type` by `total_users` descending (ties
-share a rank; the next rank skips).
+`usage_rank` is `RANK()` within `(survey_year, tech_type)` by `total_users`
+descending (ties share a rank; the next rank skips).
 
 **Eligible population:**
 
@@ -199,7 +201,7 @@ semicolon membership test. `"Java"` matches `"JavaScript"`. `"C"` matches
 
 ## `mart_ai_sentiment`
 
-**Grain:** one row per `(country, dev_type, ai_select, ai_sent, ai_threat)`.
+**Grain:** one row per `(survey_year, country, dev_type, ai_select, ai_sent, ai_threat)`.
 
 That is a **combination of three AI answers**, not "people in this country who
 use AI." `dev_type` is the raw survey string (often a single primary role in
@@ -226,7 +228,7 @@ not enough.
 | --- | --- |
 | `respondent_count` | `COUNT(*)` in the cell (one staged row per person). |
 | `avg_job_satisfaction` | `AVG` of `job_sat` when `job_sat` matches `^[0-9]+$`. Non-numeric satisfaction is skipped in the average, **not** removed from `respondent_count`. |
-| `pct_see_ai_as_threat` | `100.0 * (rows whose `ai_threat` `ILIKE '%Yes%') / COUNT(*)`. Denominator is the cell headcount, including people with null `ai_threat`. An explicit `"No"` is a zero in the numerator, not a missing row. |
+| `pct_see_ai_as_threat` | For years where `ai_threat` exists (2024): `100.0 * (rows whose `ai_threat` `ILIKE '%Yes%') / COUNT(*)`. Denominator is the cell headcount, including people with null `ai_threat`. An explicit `"No"` is a zero in the numerator, not a missing row. **When the cell has zero non-null `ai_threat` values (all of 2023), this column is NULL.** We do not report `0.0`. Zero would mean "nobody in this cell sees AI as a threat," which is a lie when the question was not on the survey. |
 
 **Existing filters, and whether the repo documented a reason:**
 
@@ -238,20 +240,74 @@ not enough.
 
 ---
 
+## Per-year column coverage (Phase E)
+
+`survey_year` is an explicit ingest stamp (`--year` / `SURVEY_YEAR`), copied
+from `raw.survey_responses` through staging → intermediate → marts. It is not
+inferred from a filename.
+
+The 2023 public extract is missing **AIThreat** and **JobSat**. Ingest warns
+and lands `ai_threat` / `job_sat` as NULL for every 2023 row. That is a known
+schema gap (`dq_checks.KNOWN_ABSENT_COLUMNS[2023]`), not a data-quality
+failure: `run_dq_checks` does not have a generic "column is all NULL" rule,
+and must not grow one that flags 2023 without consulting that allowlist.
+
+2023 rows still enter `mart_ai_sentiment` when they have `ai_select` or
+`ai_sent` (those columns exist in 2023). The AI-threat *rate* and the job-
+satisfaction *average* are the things we refuse to invent.
+
+| Mart column | 2023 | 2024 | Notes |
+| --- | --- | --- | --- |
+| `mart_salary_analytics.survey_year` | yes | yes | Copied from raw. |
+| `mart_salary_analytics.country` | yes | yes | |
+| `mart_salary_analytics.experience_band` | yes | yes | From `years_code_pro` (present both years). |
+| `mart_salary_analytics.dev_type` | yes | yes | |
+| `mart_salary_analytics.remote_work` | yes | yes | |
+| `mart_salary_analytics.org_size` | yes | yes | |
+| `mart_salary_analytics.respondent_count` | yes | yes | |
+| `mart_salary_analytics.avg_salary` | yes | yes | `comp_total_raw`; mixed local currencies. |
+| `mart_salary_analytics.median_salary` | yes | yes | |
+| `mart_salary_analytics.p25_salary` | yes | yes | |
+| `mart_salary_analytics.p75_salary` | yes | yes | |
+| `mart_salary_analytics.min_salary` | yes | yes | |
+| `mart_salary_analytics.max_salary` | yes | yes | |
+| `mart_tech_adoption.survey_year` | yes | yes | Rank is per year, not global. |
+| `mart_tech_adoption.tech_name` | yes | yes | |
+| `mart_tech_adoption.total_users` | yes | yes | |
+| `mart_tech_adoption.want_to_continue_count` | yes | yes | |
+| `mart_tech_adoption.retention_rate_pct` | yes | yes | |
+| `mart_tech_adoption.tech_type` | yes | yes | |
+| `mart_tech_adoption.usage_rank` | yes | yes | `PARTITION BY survey_year, tech_type`. |
+| `mart_ai_sentiment.survey_year` | yes | yes | |
+| `mart_ai_sentiment.country` | yes | yes | |
+| `mart_ai_sentiment.dev_type` | yes | yes | |
+| `mart_ai_sentiment.ai_select` | yes | yes | Present in both extracts. |
+| `mart_ai_sentiment.ai_sent` | yes | yes | Present in both extracts. |
+| `mart_ai_sentiment.ai_threat` | **NULL** | yes | 2023 extract has no `AIThreat` column. |
+| `mart_ai_sentiment.respondent_count` | yes | yes | People who answered `ai_select` or `ai_sent`. |
+| `mart_ai_sentiment.avg_job_satisfaction` | **NULL** | yes | 2023 extract has no `JobSat` column; AVG of no numeric values is NULL. |
+| `mart_ai_sentiment.pct_see_ai_as_threat` | **NULL** | yes | `COUNT(ai_threat) = 0` → NULL, not 0.0. See above. |
+
+Asserted by `tests/test_year_2023.py` (ingest + DQ allowlist + dbt NULL rate)
+and `tests/fixtures/expected_mart_ai_sentiment_2023.csv`.
+
+---
+
 ## Upstream grain (needed to read the marts)
 
-**`stg_survey_responses`:** one row per `response_id`. Raw duplicates keep the
-row with the latest `loaded_at` (`DISTINCT ON (response_id) ... ORDER BY
-response_id, loaded_at DESC NULLS LAST`). `"Less than 1 year"` → `0`;
-`"More than 50 years"` → `51`.
+**`stg_survey_responses`:** one row per `(survey_year, response_id)`. Raw
+duplicates *within a year* keep the row with the latest `loaded_at`
+(`DISTINCT ON (survey_year, response_id) ... ORDER BY survey_year, response_id,
+loaded_at DESC NULLS LAST`). The same `ResponseId` in 2023 and 2024 is two
+rows. `"Less than 1 year"` → `0`; `"More than 50 years"` → `51`.
 
-**`int_languages_exploded`:** one row per `(response_id, language token)`.
+**`int_languages_exploded`:** one row per `(survey_year, response_id, language token)`.
 Carries `comp_total_raw` along for convenience; that column is **not** a
 permission to aggregate salary from this table.
 
-**`int_databases_exploded`:** one row per `(response_id, database token)`.
+**`int_databases_exploded`:** one row per `(survey_year, response_id, database token)`.
 Does **not** carry `comp_total_raw` (inconsistent with languages; unused by
 salary).
 
-Raw ingest (`raw.survey_responses`) is still truncate-and-reload. That is
-outside mart publication safety — see [known_limitations.md](known_limitations.md).
+Raw ingest (`raw.survey_responses`) is year-scoped DELETE + reload: ingesting
+2023 does not destroy 2024 raw rows. See [known_limitations.md](known_limitations.md).

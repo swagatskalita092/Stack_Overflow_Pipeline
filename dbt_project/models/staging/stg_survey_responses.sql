@@ -1,8 +1,10 @@
--- Staging: one clean row per survey respondent.
+-- Staging: one clean row per (survey_year, respondent).
 --
--- Grain: response_id. Raw can contain duplicates (see fixture R008); we keep
--- the latest loaded_at so a re-ingest or a repeated ResponseId does not
--- double-count that person downstream.
+-- Grain: (survey_year, response_id). The same ResponseId can appear in 2023
+-- and 2024; those are different people-years, not duplicates. Within one
+-- year, raw can contain duplicates (see fixture R008); we keep the latest
+-- loaded_at so a re-ingest or a repeated ResponseId does not double-count
+-- that person downstream.
 --
 -- Experience sentinels become numbers here because the salary mart bands on
 -- numeric years_code_pro. "Less than 1 year" → 0 (band 0-1). "More than 50
@@ -12,13 +14,18 @@
 -- stored but not applied. USD conversion is not implemented (Stack Overflow
 -- uses the 11 Jun 2024 FX rate; we do not). Null response_id is dropped
 -- because nothing downstream can join on it.
+--
+-- survey_year is copied from raw, not inferred. 2023 rows have NULL
+-- ai_threat and job_sat because those columns do not exist in the 2023
+-- extract (see docs/data_contracts.md).
 
 WITH deduped AS (
-    SELECT DISTINCT ON (response_id) *
+    SELECT DISTINCT ON (survey_year, response_id) *
     FROM {{ source('raw', 'survey_responses') }}
-    ORDER BY response_id, loaded_at DESC NULLS LAST
+    ORDER BY survey_year, response_id, loaded_at DESC NULLS LAST
 )
 SELECT
+    survey_year,
     response_id,
     main_branch,
     age,

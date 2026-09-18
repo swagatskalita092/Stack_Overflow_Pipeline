@@ -14,6 +14,7 @@
 -- behavior, documented in docs/data_contracts.md, not a join.
 
 SELECT
+    s.survey_year,
     s.response_id,
     s.country,
     s.years_code_pro,

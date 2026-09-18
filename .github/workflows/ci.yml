@@ -42,6 +42,10 @@ jobs:
       SURVEY_DB_NAME: survey_db
       SURVEY_DB_USER: airflow
       SURVEY_DB_PASSWORD: airflow
+      # dbt --vars and publish_release are year-scoped. Pytest passes
+      # survey_year=2024 explicitly in the Phase C/B helpers; this env is
+      # the fallback ingest/DQ/open_release would use if a test forgot.
+      SURVEY_YEAR: "2024"
 
     steps:
       - name: Checkout
@@ -77,4 +81,6 @@ jobs:
           pytest -v \
             tests/test_publication_safety.py \
             tests/test_mart_correctness.py \
-            tests/test_dag_structure.py
+            tests/test_dag_structure.py \
+            tests/test_year_2023.py \
+            tests/test_dq_row_count_drop.py
