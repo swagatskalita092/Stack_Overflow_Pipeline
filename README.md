@@ -1,6 +1,6 @@
-# Stack Overflow Developer Survey 2024 — Analytics Pipeline
+# Stack Overflow Developer Survey — Analytics Pipeline
 
-An end-to-end data engineering pipeline that ingests the Stack Overflow Developer Survey 2024 (65,000+ responses, 114 columns), applies structured data quality checks, transforms the data through a layered dbt model architecture, and exposes three analytical marts covering **salary benchmarks**, **technology adoption**, and **AI sentiment trends**.
+An end-to-end data engineering pipeline that ingests the Stack Overflow Developer Survey (**2023 and 2024**), applies structured data quality checks, transforms the data through a layered dbt model architecture, and exposes three analytical marts covering **salary benchmarks**, **technology adoption**, and **AI sentiment**. A static dashboard is regenerated from the published views after each run.
 
 ---
 
@@ -55,7 +55,7 @@ An end-to-end data engineering pipeline that ingests the Stack Overflow Develope
 
    - Unpause the DAG **`stackoverflow_survey_pipeline`** (toggle on the left).
    - Trigger a run manually or wait for the weekly schedule.
-   - Order of tasks: `ingest_raw_survey` → `run_dq_checks` → `dbt_run_models` → `dbt_test_models`.
+   - Order of tasks: `open_release` → ingest → DQ → dbt run/test → `mark_candidate` → `publish_release` → `render_dashboard`.
 
 4. **Query the results**
 
@@ -74,7 +74,12 @@ stackoverflow-pipeline/
 ├── scripts/
 │   ├── init_db.sql                        # Creates survey_db, raw + dwh schemas, tables
 │   ├── ingest_survey.py                   # Download ZIP, extract CSV, clean, load raw.survey_responses
+│   ├── render_dashboard.py                # Query marts.v_* → docs/site/index.html (inline SVG)
+│   ├── dashboard_templates/               # Jinja2 for the static dashboard
 │   └── dq_checks.py                       # Six checks on raw data → dwh.dq_issues
+├── docs/
+│   ├── site/                              # GitHub Pages dashboard (served at /site/)
+│   └── data_contracts.md
 ├── dbt_project/
 │   ├── dbt_project.yml
 │   ├── models/
@@ -101,10 +106,34 @@ stackoverflow-pipeline/
 | **dbt_test_models** | dbt tests, scoped to this `release_id` for mart not_null checks. |
 | **mark_candidate** | `candidate_ready` or `candidate_ready_unchanged_source`. Does **not** move the live pointer. |
 | **publish_release** | One locked transaction: this year's `dwh.active_release` row := this candidate. |
+| **render_dashboard** | After publish: write `docs/site/index.html` from `marts.v_*`. Failure fails this task only; it does not unpublish. |
 
 Readers query `marts.v_salary_analytics`, `marts.v_tech_adoption`, `marts.v_ai_sentiment` (join to the per-year active release). Do not query `marts.mart_*` for official numbers.
 
 Trigger a 2023 run with DAG conf `{"survey_year": 2023}` or env `SURVEY_YEAR=2023`. Default is 2024.
+
+---
+
+## Dashboard (static, not live)
+
+After `publish_release`, `render_dashboard` writes [docs/site/index.html](docs/site/index.html) from `marts.v_*`. Charts are inline SVG computed in Python. The page labels **data as of** the latest `published_at`. It is a snapshot of a tested release, not a live warehouse query.
+
+Once GitHub Pages is on, the public URL is:
+
+**https://swagatskalita092.github.io/Stack_Overflow_Pipeline/site/**
+
+GitHub Pages can serve the `/docs` folder on `main`, not `/docs/site` as a source. That is why the dashboard lives at `/site/` on the Pages host, and [docs/index.html](docs/index.html) is a one-click redirect there.
+
+To turn Pages on (repo owner, in the GitHub UI):
+
+1. Open the repo **Settings** tab.
+2. Left sidebar → **Pages**.
+3. **Build and deployment** → **Source**: **Deploy from a branch**.
+4. **Branch**: `main` (after this work is merged), folder: **/docs**.
+5. **Save**. Wait a minute; the Pages URL appears at the top of that same screen.
+6. Open `https://swagatskalita092.github.io/Stack_Overflow_Pipeline/site/` (or the site root, which redirects).
+
+A new pipeline run updates the file on disk (Compose mounts `./docs`). GitHub Pages only changes when that file is committed and pushed to `main`.
 
 ---
 
@@ -121,9 +150,8 @@ Trigger a 2023 run with DAG conf `{"survey_year": 2023}` or env `SURVEY_YEAR=202
 
 ## Data Source
 
-- **Survey:** [Stack Overflow Developer Survey 2024](https://survey.stackoverflow.co/2024/)  
-- **Dataset:** Public ZIP at `https://survey.stackoverflow.co/datasets/stack-overflow-developer-survey-2024.zip` (CSV: 65,000+ rows, 114 columns).  
-- The pipeline uses a subset of columns (identity, demographics, experience, work, compensation, languages, databases, platforms, AI-related fields); see `scripts/ingest_survey.py` and [PROJECT_SUMMARY_REPORT.md](PROJECT_SUMMARY_REPORT.md) for details.
+- **Survey:** [Stack Overflow Developer Survey 2024](https://survey.stackoverflow.co/2024/) and [2023](https://survey.stackoverflow.co/2023/)
+- **2024 dataset:** public ZIP (`survey_results_public.csv`: 65,000+ rows, 114 columns). 2023 is ingested the same way (AI threat / job satisfaction columns are absent; the marts store NULL, not 0.0).
 
 ---
 
