@@ -77,6 +77,7 @@ This isn't just a pipeline that moves data from A to B. The engineering effort w
 | Schema-drift handling | A second real survey year (2023) with a genuinely different schema, a documented per-year data contract, and NULL-not-zero handling for questions that weren't asked that year | `docs/data_contracts.md`, `tests/test_year_2023.py` |
 | Reproducible measurement | Real baseline runtimes against the actual ~65k-row 2024 dataset, 5 repeated runs, machine specs recorded, ranges not cherry-picked | `docs/reproducibility.md` |
 | Known limitations, stated plainly | What CI doesn't cover, what raw-layer safety doesn't guarantee, on purpose, not a backlog dressed up as documentation | `docs/known_limitations.md` |
+| Engineering journal | Every real investigation across every phase, in question, hypothesis, experiment, result, decision, regression test, remaining limitation format, including the most significant bug in the project (`avg_job_satisfaction` silently NULL since Phase A) | `docs/engineering_journal.md` |
 
 ---
 
@@ -224,4 +225,4 @@ For ingest and DQ scripts (defaults work with Docker Compose):
 
 ## More Detail
 
-For the full write-up, why this was built, the approach, the dataset, the data quality checks, and an honest account of every real bug found and fixed along the way, see **[PROJECT_SUMMARY_REPORT.md](PROJECT_SUMMARY_REPORT.md)**.
+For the full write-up, why this was built, the approach, the dataset, the data quality checks, and an honest account of every real bug found and fixed along the way, see **[PROJECT_SUMMARY_REPORT.md](PROJECT_SUMMARY_REPORT.md)**. For the investigation-by-investigation detail behind those bugs, question, hypothesis, experiment, result, decision, regression test, remaining limitation, see **[docs/engineering_journal.md](docs/engineering_journal.md)**.
