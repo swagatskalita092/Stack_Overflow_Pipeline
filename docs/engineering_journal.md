@@ -353,4 +353,4 @@ spot-checked or judged by whether the automated checks pass.
 This is not a list of every commit. It is a record of investigations that
 actually changed what was believed to be true about the pipeline, or that
 changed the code as a direct result of a real, verified finding. Routine
-refactors, dependency bumps, and formatting passes are
+refactors, dependency bumps, and formatting passes are not journal entries.
