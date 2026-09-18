@@ -9,40 +9,60 @@ This isn't just a pipeline that moves data from A to B. The engineering effort w
 ## Architecture
 
 ```
-┌──────────────────┐     ┌──────────────────┐     ┌─────────────────┐     ┌──────────────────┐
-│  Survey CSV (CDN)  │────▶│  ingest_survey   │────▶│  raw.survey_    │────▶│  run_dq_checks   │
-│  2023 or 2024, per │     │  (Python)        │     │  responses      │     │  → dwh.dq_issues  │
-│  --year / SURVEY_  │     │  year-scoped     │     │  (year-scoped   │     │  (year-scoped;    │
-│  YEAR              │     │  delete+insert   │     │  delete+insert) │     │  row_count_drop    │
-└──────────────────┘     └──────────────────┘     └────────┬────────┘     │  blocks a truncated │
-                                                              │             │  load from publishing)│
-                                                              ▼             └────────┬─────────┘
-┌──────────────────────────────────────────────────────────────────────────────────────────────┐
-│  dbt run:  staging (stg_survey_responses, grain (survey_year, response_id))                    │
-│            → intermediate (int_*_exploded) → marts, every row tagged (release_id, survey_year) │
-│  marts: mart_salary_analytics | mart_tech_adoption | mart_ai_sentiment                          │
-└──────────────────────────────────────────────────────────────────────────────────────────────┘
-                                                              │
-                                                              ▼
-┌──────────────────────────────────────────────────────────────────────────────────────────────┐
-│  dbt test → mark_candidate → publish_release                                                    │
-│  One locked transaction, scoped per survey_year: dwh.active_release[survey_year] := candidate.  │
-│  A candidate's seq is only compared against its own year's active release. 2023 and 2024         │
-│  publish independently and can never move each other's pointer.                                 │
-└──────────────────────────────────────────────────────────────────────────────────────────────┘
-                                                              │
-                                                              ▼
-┌──────────────────────────────────────────────────────────────────────────────────────────────┐
-│  Readers: marts.v_salary_analytics | v_tech_adoption | v_ai_sentiment                            │
-│  JOIN dwh.active_release ON (survey_year, release_id): both years' current publish visible at    │
-│  once, each independently protected. Never query marts.mart_* directly for an official number.  │
-└──────────────────────────────────────────────────────────────────────────────────────────────┘
-                                                              │
-                                                              ▼
-┌──────────────────┐
-│  render_dashboard  │  Static docs/site/index.html from marts.v_*. Failure fails only this task,
-│  (after publish)   │  it cannot unpublish or roll back a release (regression-tested).
-└──────────────────┘
++--------------------------------------------------------------------------------+
+| Survey CSV (CDN), 2023 or 2024, selected via --year / SURVEY_YEAR              |
++--------------------------------------------------------------------------------+
+                                        |                                         
+                                        v                                         
++--------------------------------------------------------------------------------+
+| ingest_survey (Python): year-scoped delete + insert into raw.survey_responses  |
++--------------------------------------------------------------------------------+
+                                        |                                         
+                                        v                                         
++--------------------------------------------------------------------------------+
+| run_dq_checks -> dwh.dq_issues (year-scoped)                                   |
+|                                                                                |
+| row_count_drop blocks a truncated load from ever reaching publish.             |
++--------------------------------------------------------------------------------+
+                                        |                                         
+                                        v                                         
++--------------------------------------------------------------------------------+
+| dbt run: staging (stg_survey_responses, grain survey_year + response_id) ->    |
+| intermediate (int_*_exploded) -> marts. Every row tagged (release_id,          |
+| survey_year).                                                                  |
+|                                                                                |
+| marts: mart_salary_analytics | mart_tech_adoption | mart_ai_sentiment          |
++--------------------------------------------------------------------------------+
+                                        |                                         
+                                        v                                         
++--------------------------------------------------------------------------------+
+| dbt test -> mark_candidate -> publish_release                                  |
+|                                                                                |
+| One locked transaction, scoped per survey_year:                                |
+| dwh.active_release[survey_year] := candidate.                                  |
+|                                                                                |
+| A candidate's seq is only compared against its own year's active release. 2023 |
+| and 2024 publish independently and can never move each other's pointer.        |
++--------------------------------------------------------------------------------+
+                                        |                                         
+                                        v                                         
++--------------------------------------------------------------------------------+
+| Readers: marts.v_salary_analytics | v_tech_adoption | v_ai_sentiment           |
+|                                                                                |
+| JOIN dwh.active_release ON (survey_year, release_id): both years' current      |
+| publish are visible at once, each independently protected. Never query         |
+| marts.mart_* directly for an official number.                                  |
++--------------------------------------------------------------------------------+
+                                        |                                         
+                                        v                                         
++--------------------------------------------------------------------------------+
+| render_dashboard (after publish): renders the static docs/site/index.html from |
+| marts.v_*.                                                                     |
+|                                                                                |
+| Failure fails only this task. It cannot unpublish or roll back a release       |
+| (regression-tested).                                                           |
+|                                                                                |
++--------------------------------------------------------------------------------+
 ```
 
 **Stack:** Apache Airflow 2.8 (orchestration), PostgreSQL 16 (warehouse), dbt (transformations), Python (ingest + DQ), Docker Compose (runtime)
