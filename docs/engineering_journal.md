@@ -413,3 +413,22 @@ This is not a list of every commit. It is a record of investigations that
 actually changed what was believed to be true about the pipeline, or that
 changed the code as a direct result of a real, verified finding. Routine
 refactors, dependency bumps, and formatting passes are not journal entries.
+
+---
+
+## 9. Static story page replaces the generated results page (2026-10-22)
+
+**What changed:** `docs/site/index.html` is now a plain-language five-chapter
+story of the same 2026-09-18 published numbers (languages, databases,
+salaries, job satisfaction, AI). The old generated layout, raw contract
+dumps, empty "Not asked in 2023" blocks, and the 0%/100% AI-threat chart
+are gone from the committed page.
+
+**Why:** the previous page was hard for newcomers to read, and the AI-threat
+percentages were an artifact of `ai_threat` being part of the
+`mart_ai_sentiment` grain, not a real share of opinion.
+
+**Follow-up (open work):** `scripts/dashboard_templates/index.html.j2` and
+`scripts/render_dashboard.py` are not updated yet. The next pipeline run
+that reaches the `render_dashboard` task will overwrite this story page
+with the old layout until the template is rewritten.
