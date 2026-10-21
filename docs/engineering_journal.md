@@ -428,6 +428,10 @@ are gone from the committed page.
 percentages were an artifact of `ai_threat` being part of the
 `mart_ai_sentiment` grain, not a real share of opinion.
 
+The page was later expanded with pay and job-satisfaction charts, 12
+databases, a pipeline chapter and a glossary. Template and renderer remain
+not updated, so the next `render_dashboard` run will overwrite this page.
+
 **Follow-up (open work):** `scripts/dashboard_templates/index.html.j2` and
 `scripts/render_dashboard.py` are not updated yet. The next pipeline run
 that reaches the `render_dashboard` task will overwrite this story page
