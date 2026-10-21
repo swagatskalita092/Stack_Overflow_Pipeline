@@ -191,6 +191,8 @@ GitHub Pages serves the `/docs` folder on `main`, not `/docs/site` as a source. 
 
 A new pipeline run updates the file on disk (Compose mounts `./docs`). GitHub Pages only changes when that file is committed and pushed to `main`.
 
+The published snapshot is dated 2026-09-18, before historical ECB conversion was added (PR #8). The page's wording that USD conversion is not implemented describes that snapshot. Running and publishing the pipeline again regenerates the page from the current docs.
+
 ---
 
 ## Data Model (dbt)
