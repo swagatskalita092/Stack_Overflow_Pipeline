@@ -4,7 +4,7 @@
 
 An end-to-end data engineering pipeline that ingests the Stack Overflow Developer Survey (**2023 and 2024**), applies structured data quality checks, transforms the data through a layered dbt model architecture, and publishes three analytical marts covering **salary benchmarks**, **technology adoption**, and **AI sentiment**. Every publish goes through a candidate/publish safety pattern so readers never see a half-built or rolled-back result, and a static dashboard is regenerated from the published views after each run.
 
-This isn't just a pipeline that moves data from A to B. The engineering effort went into three things most portfolio pipelines skip: proving a bad run can never silently become the official published answer (release safety, six real failure injections against a live stack), proving the pipeline survives its data source actually changing shape (a second real survey year, with a genuine schema drift handled and tested, not simulated), and catching a real correctness bug that had been silently wrong since the first version (found by a dashboard forcing a look at real per-cell coverage, not by a passing test suite). See [`PROJECT_SUMMARY_REPORT.md`](PROJECT_SUMMARY_REPORT.md) for the full account.
+This isn't just a pipeline that moves data from A to B. The engineering effort went into three things most portfolio pipelines skip: six real failure injections against a live stack, recorded in docs/failure_modes.md (injection 1 published junk and was later guarded by row_count_drop; injection 5 was inconclusive), proving the pipeline survives its data source actually changing shape (a second real survey year, with a genuine schema drift handled and tested, not simulated), and catching a real correctness bug that had been silently wrong since the first version (found by a dashboard forcing a look at real per-cell coverage, not by a passing test suite). See [`PROJECT_SUMMARY_REPORT.md`](PROJECT_SUMMARY_REPORT.md) for the full account.
 
 ---
 
@@ -110,7 +110,7 @@ This isn't just a pipeline that moves data from A to B. The engineering effort w
 
    - Unpause the DAG **`stackoverflow_survey_pipeline`** (toggle on the left).
    - Trigger a run manually or wait for the weekly schedule.
-   - Order of tasks: `open_release` then ingest, DQ, dbt run/test, `mark_candidate`, `publish_release`, `render_dashboard`.
+   - Order of tasks: `open_release`, `ingest_raw_survey`, `record_source_checksum`, `run_dq_checks`, `dbt_seed`, `dbt_run_models`, `dbt_test_models`, `mark_candidate`, `publish_release`, `render_dashboard`.
 
 4. **Query the results**
 
@@ -125,7 +125,7 @@ This isn't just a pipeline that moves data from A to B. The engineering effort w
 stackoverflow-pipeline/
 ├── airflow/
 │   └── dags/
-│       └── stackoverflow_pipeline_dag.py   # open_release, ingest, DQ, dbt run/test, mark_candidate, publish_release, render_dashboard
+│       └── stackoverflow_pipeline_dag.py   # open_release, ingest_raw_survey, record_source_checksum, run_dq_checks, dbt_seed, dbt_run_models, dbt_test_models, mark_candidate, publish_release, render_dashboard
 ├── scripts/
 │   ├── init_db.sql                        # Creates survey_db, raw + dwh schemas, tables
 │   ├── migrate_release_safety.sql         # Release/candidate/publish schema, per-year active_release
@@ -168,6 +168,7 @@ stackoverflow-pipeline/
 | **ingest_raw_survey** | Downloads that year's survey CSV, cleans it, replaces `raw.survey_responses` **for that year only**. |
 | **record_source_checksum** | Hashes that year's raw rows; flags identical-to-published source for the same year (still builds). |
 | **run_dq_checks** | Checks scoped to `survey_year`, written to `dwh.dq_issues`. Blocking checks fail the DAG (see `docs/data_quality_policy.md`). |
+| **dbt_seed** | Runs `dbt seed` with this run's `release_id` and `survey_year` so seed tables are loaded before `dbt run`. |
 | **dbt_run_models** | Staging, intermediate, then append mart rows tagged with `release_id` and `survey_year`. |
 | **dbt_test_models** | dbt tests, scoped to this `release_id` for mart not_null checks. |
 | **mark_candidate** | `candidate_ready` or `candidate_ready_unchanged_source`. Does **not** move the live pointer. |
@@ -194,7 +195,7 @@ A new pipeline run updates the file on disk (Compose mounts `./docs`). GitHub Pa
 
 ## Data Model (dbt)
 
-- **Staging:** `stg_survey_responses`, one row per `(survey_year, response_id)`; numeric casting for `years_code`, `years_code_pro`, `comp_total_raw` (local currency as entered; USD conversion is not implemented).
+- **Staging:** `stg_survey_responses`, one row per `(survey_year, response_id)`; numeric casting for `years_code`, `years_code_pro`, `comp_total_raw` (local currency as entered) plus `comp_total_usd_converted` from historical ECB rates in `fx_rates_to_usd.csv`; unmapped currencies stay NULL.
 - **Intermediate:** `int_languages_exploded`, `int_databases_exploded`: one row per (response, language) or (response, database); includes `wants_to_continue` from "want to work with" fields.
 - **Marts:**
   - **mart_salary_analytics**: append-only per `(release_id, survey_year)`. Official read is `marts.v_salary_analytics`. Aggregations by country, experience band, dev type, remote work, org size; filters e.g. 10k to 5M, at least 5 respondents.

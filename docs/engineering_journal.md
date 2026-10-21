@@ -163,11 +163,11 @@ metadata database for Airflow) out of scope for a chaos-testing phase.
 **Regression test:** none, this is an infrastructure/operational finding, not
 a code-level bug with a deterministic fixture to regress against.
 
-**Remaining limitation:** documented explicitly in `docs/known_limitations.md`
-and `docs/failure_modes.md`, Airflow's metadata DB still shares the warehouse
-Postgres instance. A future hardening pass would split these, this project
-chose to document the gap honestly rather than silently accept the risk or
-overstate a fix that was never made.
+**Remaining limitation:** documented in `docs/failure_modes.md` (injection 3),
+Airflow's metadata DB still shares the warehouse Postgres instance. A future
+hardening pass would split these, this project chose to document the gap
+honestly rather than silently accept the risk or overstate a fix that was
+never made.
 
 ---
 
