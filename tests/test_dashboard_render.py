@@ -29,24 +29,24 @@ def test_render_includes_fixture_numbers(warehouse, tmp_path):
 
     out = render(out_dir=tmp_path)
     html = _html(out)
-    assert "125000.00" in html
+    assert "125,000" in html
     assert 'data-salary-respondents="6"' in html
     assert "United States" in html
     assert "8.00" in html
-    assert "0.0%" in html
+    assert "pct_see_ai_as_threat" not in html
+    assert ">0.0%</span>" not in html
     assert rid.split("-")[0] in html
     assert 'data-published-years="2024"' in html
     assert "<script" not in html.lower()
     assert 'src="https://' not in html.lower()
-    # Contract language is copied, not rewritten.
     snippet = "is **self-reported survey compensation**"
     contracts = (ROOT / "docs" / "data_contracts.md").read_text(encoding="utf-8")
     assert snippet in contracts
-    assert snippet in html
+    assert snippet not in html
 
 
 def test_null_ai_metrics_get_not_asked_badge_not_zero_bar(warehouse, tmp_path):
-    """2023 all-NULL threat/job_sat → badge. Must not look like 0%."""
+    """2023 all-NULL threat/job_sat: the story says the questions were not asked."""
     conn = warehouse
     y24 = build_good_release(conn, survey_year=2024)
     publish_release(y24)
@@ -59,18 +59,14 @@ def test_null_ai_metrics_get_not_asked_badge_not_zero_bar(warehouse, tmp_path):
     publish_release(y23)
 
     html = _html(render(out_dir=tmp_path))
-    assert "Not asked in 2023" in html
-    assert 'data-asked="false" data-year="2023" data-metric="pct_see_ai_as_threat"' in html
-    assert 'data-asked="false" data-year="2023" data-metric="avg_job_satisfaction"' in html
-    # 2023 must not draw a threat bar with a numeric 0.
-    assert 'data-year="2023" data-metric="pct_see_ai_as_threat" data-value="0.0%"' not in html
-    assert "105000.00" in html
-    assert "Germany" in html
-    # 2024 0.0% is a real measured rate (everyone said No), not a missing question.
-    assert 'data-year="2024" data-metric="pct_see_ai_as_threat" data-value="0.0%"' in html
-    assert 'data-yoy="true"' in html
-    # Canada back-end AI group exists in both fixture years.
+    assert "The 2023 survey did not ask whether AI is a threat" in html
+    assert "job-satisfaction" in html or "satisfied people are with their job" in html
+    assert "pct_see_ai_as_threat" not in html
+    assert ">0.0%</span>" not in html
+    assert 'data-asked="false"' not in html
+    assert "105,000" in html
     assert "Canada" in html
+    assert 'data-yoy="true"' in html
 
 
 def test_single_published_year_does_not_invent_yoy(warehouse, tmp_path):
@@ -85,7 +81,7 @@ def test_single_published_year_does_not_invent_yoy(warehouse, tmp_path):
     assert 'data-provenance-year="2023"' not in html
     assert 'data-yoy="false"' in html
     assert "does not invent a second year" in html
-    assert "125000.00" in html
+    assert "125,000" in html
 
 
 def test_render_failure_does_not_touch_published_release(warehouse, tmp_path, monkeypatch):

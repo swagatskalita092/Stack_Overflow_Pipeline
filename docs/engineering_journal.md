@@ -436,3 +436,31 @@ not updated, so the next `render_dashboard` run will overwrite this page.
 `scripts/render_dashboard.py` are not updated yet. The next pipeline run
 that reaches the `render_dashboard` task will overwrite this story page
 with the old layout until the template is rewritten.
+
+---
+
+## 10. Renderer generates the story page (2026-10-22)
+
+**What changed:** `scripts/render_dashboard.py` and
+`scripts/dashboard_templates/index.html.j2` now produce the plain-language
+story layout. Respondent counts, language and database charts, salary
+groups, job-satisfaction bars, and the "not asked" AI sentences are
+computed from `marts.v_*` plus `dwh.active_release` / `dwh.pipeline_releases`.
+Claims such as "leads", "same order", "lower", and "higher" have a fallback
+when the data does not support them. The 0%/100% AI-threat rate chart is
+removed: `pct_see_ai_as_threat` is an artifact of `ai_threat` sitting in the
+`mart_ai_sentiment` grain. Drift tests check that the ten pipeline task
+names and the seven data-check names on the page match the DAG and
+`scripts/dq_checks.py`, and that "Four stop, three only log" matches the
+blocking flags. A golden render of the live snapshot numbers is compared
+to the committed story page. `docs/site/index.html` is not rewritten in
+this change.
+
+**Why:** a pipeline run that reached `render_dashboard` would have replaced
+the hand-written story with the old jargon-heavy layout.
+
+**Follow-up (open work):** showing a real AI-threat rate needs a mart grain
+change that removes `ai_threat` from `mart_ai_sentiment`. Re-running the
+pipeline will regenerate `docs/site/index.html` from the live published
+marts, including any numbers that have changed since the 2026-09-18
+snapshot.

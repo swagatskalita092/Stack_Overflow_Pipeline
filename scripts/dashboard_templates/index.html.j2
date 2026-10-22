@@ -1,123 +1,121 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Stack Overflow Developer Survey: published marts</title>
-  <style>
-    :root { --ink: #1a1a1a; --muted: #555; --line: #d8d8d8; --bar: #2c5f8a; --bg: #fafafa; --card: #fff; }
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: Georgia, "Times New Roman", serif; color: var(--ink); background: var(--bg); line-height: 1.45; }
-    header, main { max-width: 880px; margin: 0 auto; padding: 1.25rem 1.25rem 0; }
-    header { padding-bottom: 0.5rem; border-bottom: 1px solid var(--line); }
-    h1 { font-size: 1.6rem; margin: 0 0 0.4rem; }
-    h2 { font-size: 1.2rem; margin: 1.6rem 0 0.5rem; }
-    h3 { font-size: 1.05rem; margin: 1rem 0 0.4rem; }
-    .as-of { font-size: 0.95rem; color: var(--muted); }
-    .lede { font-size: 0.95rem; }
-    .panel { background: var(--card); border: 1px solid var(--line); padding: 0.75rem 1rem; margin: 0.6rem 0 1rem; }
-    .panel dl { display: grid; grid-template-columns: 11rem 1fr; gap: 0.2rem 0.8rem; margin: 0; }
-    .panel dt { color: var(--muted); font-size: 0.85rem; }
-    .panel dd { margin: 0; font-family: ui-monospace, Consolas, monospace; font-size: 0.9rem; }
-    .badge { display: inline-block; background: #f3e6c8; color: #5a3d00; font-size: 0.8rem; padding: 0.1rem 0.4rem; border-radius: 3px; font-family: system-ui, sans-serif; }
-    .not-asked { margin: 0.35rem 0; font-size: 0.9rem; }
-    .empty, .note { color: var(--muted); font-size: 0.9rem; }
-    svg.chart { width: 100%; height: auto; display: block; margin: 0.4rem 0 0.8rem; }
-    .bar-label, .bar-num { font-size: 11px; font-family: system-ui, sans-serif; fill: var(--ink); }
-    .bar { fill: var(--bar); }
-    pre.contract { white-space: pre-wrap; font-size: 0.78rem; background: #f3f3f3; padding: 0.75rem; overflow-x: auto; border: 1px solid var(--line); font-family: ui-monospace, Consolas, monospace; }
-    footer { max-width: 880px; margin: 0 auto; padding: 1.5rem 1.25rem 2rem; color: var(--muted); font-size: 0.85rem; }
-    code { font-family: ui-monospace, Consolas, monospace; font-size: 0.85em; }
-  </style>
-</head>
-<body data-published-years="{{ year_list | join(',') }}">
-  <header>
-    <h1>Stack Overflow Developer Survey: published results</h1>
-    <p class="as-of" data-as-of="{{ data_as_of }}">Data as of {{ data_as_of }}. This page is regenerated from the warehouse after each successful publish. It is not a live query.</p>
-    <p class="lede">Numbers below come from <code>marts.v_salary_analytics</code>, <code>marts.v_tech_adoption</code>, and <code>marts.v_ai_sentiment</code>: the same views that filter to <code>dwh.active_release</code>. They are not read from the historical <code>marts.mart_*</code> tables.</p>
-  </header>
-  <main>
-    {% if nothing_published %}
-    <p class="empty">Nothing is published yet. <code>dwh.active_release</code> is empty, so the views have no rows.</p>
-    {% endif %}
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ title }}</title>
+<style>
+:root{--bg:#fafafa;--ink:#1a1a1a;--mut:#555;--card:#fff;--line:#d8d8d8;--blue:#2c5f8a;--lite:#9bb7d0;--warn:#f3e6c8;--warni:#4a3300}
+@media (prefers-color-scheme:dark){:root{--bg:#14181d;--ink:#e8eaed;--mut:#a3acb7;--card:#1c222a;--line:#333c47;--blue:#6fa8d6;--lite:#456a8a;--warn:#3a3016;--warni:#f1dfae}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.6 Georgia,serif;overflow-x:hidden}
+main{max-width:760px;margin:0 auto;padding:2rem 1.25rem 4rem}
+h1{font-size:2rem;line-height:1.2} h2{font-size:1.35rem;margin:.3rem 0 .6rem}
+.ch{font:600 .8rem system-ui;letter-spacing:.08em;color:var(--blue);text-transform:uppercase;margin-top:3rem}
+.big{display:flex;gap:1rem;flex-wrap:wrap} .big div{flex:1;min-width:200px;background:var(--card);border:1px solid var(--line);padding:1rem}
+.big b{display:block;font:700 2rem system-ui} .big small{font:.85rem system-ui;color:var(--mut)}
+.row{display:grid;grid-template-columns:9.5rem 1fr;gap:.1rem .6rem;margin:.6rem 0;font:14px system-ui}
+.row .nm{grid-row:span 2;align-self:center} .row.one .nm{grid-row:auto} .row small{display:block;color:var(--mut);font-size:12px;line-height:1.3}
+.tr{display:flex;align-items:center;gap:.5rem} .b{height:12px;min-width:2px;background:var(--blue)} .y23{background:var(--lite)} .y24{background:var(--blue)}
+.key{font:13px system-ui;color:var(--mut)} .key i{display:inline-block;width:12px;height:12px;margin:0 .3rem 0 .8rem} .key i:first-child{margin-left:0}
+.note{background:var(--warn);color:var(--warni);padding:.8rem 1rem;font:15px/1.5 system-ui}
+.small{font:14px/1.5 system-ui;color:var(--mut);overflow-wrap:anywhere}
+ol,ul.t{font:15px/1.5 system-ui;padding-left:1.3rem} li{margin:.35rem 0} code{font:13px ui-monospace,Consolas,monospace;background:var(--card);border:1px solid var(--line);padding:0 .25rem}
+dl{font:15px/1.5 system-ui} dt{font-weight:700;margin-top:.7rem} dd{margin:0;color:var(--mut)}
+nav{font:14px/1.9 system-ui;color:var(--mut)} nav a{color:var(--blue)}
+</style></head>
+<body data-published-years="{{ year_list | join(',') }}" data-yoy="{{ 'true' if yoy_enabled else 'false' }}" data-as-of="{{ data_as_of }}">
+<main>
+<h1>{{ title }}</h1>
+<p>{{ lede }}</p>
+{% if nothing_published %}
+<p class="empty">Nothing is published yet. <code>dwh.active_release</code> is empty, so the views have no rows.</p>
+{% endif %}
+{% if respondents.tiles %}
+<div class="big">
+{% for tile in respondents.tiles %}
+<div data-respondents-year="{{ tile.year }}"><b>{{ tile.display }}</b><small>people in the {{ tile.year }} survey</small></div>
+{% endfor %}
+</div>
+{% endif %}
+{% if respondents.fewer_later_note %}<p class="small">{{ respondents.fewer_later_note }}</p>{% endif %}
+{% for y in years %}
+<div hidden data-provenance-year="{{ y.survey_year }}" data-release-id="{{ y.release_id }}" data-salary-respondents="{{ y.salary_cell_respondents }}"></div>
+{% endfor %}
+{% if not nothing_published %}
+<nav>In this story: <a href="#c1">1 Languages</a> · <a href="#c2">2 Databases</a> · <a href="#c3">3 Pay</a> · <a href="#c4">4 Happiness</a> · <a href="#c5">5 AI</a> · <a href="#c6">6 How the numbers got here</a> · <a href="#gl">Glossary</a></nav>
 
-    {% for y in years %}
-    <section class="panel" data-provenance-year="{{ y.survey_year }}">
-      <h2>{{ y.survey_year }} release</h2>
-      <dl>
-        <dt>active release_id</dt>
-        <dd><code data-release-id="{{ y.release_id }}">{{ y.release_id_short }}</code> (full: {{ y.release_id }})</dd>
-        <dt>published_at</dt>
-        <dd>{{ y.published_at_label }}</dd>
-        <dt>salary-cell respondents</dt>
-        <dd data-salary-respondents="{{ y.salary_cell_respondents }}">{{ y.salary_cell_respondents }} people in published salary cells ({{ y.salary_n_cells }} {{ 'cell' if y.salary_n_cells == 1 else 'cells' }}). This is <em>not</em> the raw survey headcount; salary filters and HAVING ≥ 5 apply. See the contract excerpt below.</dd>
-        <dt>AI-cell respondents</dt>
-        <dd data-ai-respondents="{{ y.ai_cell_respondents }}">{{ y.ai_cell_respondents }} people in published AI cells ({{ y.ai_n_cells }} {{ 'cell' if y.ai_n_cells == 1 else 'cells' }}).</dd>
-        <dt>tech rows</dt>
-        <dd>{{ y.tech_n_cells }} language/database {{ 'row' if y.tech_n_cells == 1 else 'rows' }} that passed the ≥ 100-user cutoff.</dd>
-      </dl>
-    </section>
+<div class="ch" id="c1">Chapter 1</div><h2>What do developers write code in?</h2>
+<p>The question was "which languages did you use this year?". People could pick several. Each bar is the number of people who picked that language.</p>
+{% if year_key %}
+<p class="key">{% for y in year_key %}<i class="{{ y.css }}" style="background:var({% if y.css == 'y23' %}--lite{% else %}--blue{% endif %})"></i>{{ y.year }}{% endfor %}</p>
+{% endif %}
+{% for row in languages.rows %}
+<div class="row{% if row.bars|length == 1 %} one{% endif %}"><div class="nm">{{ row.name }}<small></small></div>
+{% for bar in row.bars %}
+<div class="tr"><div class="b {{ bar.css }}" style="width:{{ bar.width_pct }}%"></div><span>{{ bar.display }}</span></div>
+{% endfor %}
+</div>
+{% endfor %}
+{% if languages.lead_sentence or languages.order_sentence %}
+<p><b>What it says:</b> {{ languages.lead_sentence }}{% if languages.order_sentence %} {{ languages.order_sentence }}{% endif %}</p>
+{% endif %}
 
-    <h3>{{ y.survey_year }}: salary (median, mixed local currencies)</h3>
-    {{ y.salary_svg | safe }}
+<div class="ch" id="c2">Chapter 2</div><h2>Where do they keep their data?</h2>
+<p>{{ databases.intro }}</p>
+{% if databases.show_key and year_key %}
+<p class="key">{% for y in year_key %}<i class="{{ y.css }}" style="background:var({% if y.css == 'y23' %}--lite{% else %}--blue{% endif %})"></i>{{ y.year }}{% endfor %}</p>
+{% endif %}
+{% for row in databases.rows %}
+<div class="row{% if row.bars|length == 1 %} one{% endif %}"><div class="nm">{{ row.name }}<small></small></div>
+{% for bar in row.bars %}
+<div class="tr"><div class="b {{ bar.css }}" style="width:{{ bar.width_pct }}%"></div><span>{{ bar.display }}</span></div>
+{% endfor %}
+</div>
+{% endfor %}
+{% if databases.lead_sentence or databases.change_sentence %}
+<p><b>What it says:</b> {{ databases.lead_sentence }}{% if databases.change_sentence %} {{ databases.change_sentence }}{% endif %}</p>
+{% endif %}
 
-    <h3>{{ y.survey_year }}: technology adoption (languages, top 10)</h3>
-    {{ y.tech_svg | safe }}
+<div class="ch" id="c3">Chapter 3</div><h2>What do developers earn?</h2>
+<p>{{ salaries.intro }}</p>
+{% if salaries.pair_note %}<p>{{ salaries.pair_note }}</p>{% endif %}
+{% if salaries.show_key and year_key %}
+<p class="key">{% for y in year_key %}<i class="{{ y.css }}" style="background:var({% if y.css == 'y23' %}--lite{% else %}--blue{% endif %})"></i>{{ y.year }}{% endfor %}</p>
+{% endif %}
+{% for g in salaries.groups %}
+<div class="row{% if g.bars|length == 1 %} one{% endif %}"><div class="nm">Group {{ g.n }}<small>{{ g.sub }}</small></div>
+{% for bar in g.bars %}
+<div class="tr"><div class="b {{ bar.css }}" style="width:{{ bar.width_pct }}%"></div><span>{{ bar.display }}</span></div>
+{% endfor %}
+</div>
+{% endfor %}
+{% if salaries.range_sentence or salaries.change_sentence %}
+<p><b>What it says:</b> {{ salaries.range_sentence }}{% if salaries.change_sentence %} {{ salaries.change_sentence }}{% endif %} Because the groups are small and the survey is voluntary, treat these as snapshots, not trends.</p>
+{% endif %}
+<p class="note">Not a salary guide. The survey has no weights and the people who answer are not a random sample of all developers.</p>
 
-    <h3>{{ y.survey_year }}: share who see AI as a threat</h3>
-    {{ y.ai_threat_svg | safe }}
+<div class="ch" id="c4">Chapter 4</div><h2>How happy are they at work?</h2>
+<p>{{ jobsat.intro }}</p>
+{% for row in jobsat.rows %}
+<div class="row one"><div class="nm">{{ row.main }}<small>{{ row.sub }}</small></div><div class="tr"><div class="b {{ row.css }}" style="width:{{ row.width_pct }}%"></div><span>{{ row.display }}</span></div></div>
+{% endfor %}
+{% if not jobsat.not_asked and (jobsat.range_sentence or jobsat.contrast_sentences) %}
+<p><b>What it says:</b> {{ jobsat.range_sentence }}
+{% for s in jobsat.contrast_sentences %} {{ s }}{% endfor %}
+ This is a pattern in the numbers, not proof that AI tools make people happier.</p>
+{% endif %}
 
-    <h3>{{ y.survey_year }}: average job satisfaction</h3>
-    {{ y.ai_job_svg | safe }}
-    {% endfor %}
+<div class="ch" id="c5">Chapter 5</div><h2>What about AI?</h2>
+<p>{{ ai_chapter.sentence }}</p>
+<p>{{ ai_chapter.dropped_chart_sentence }}</p>
 
-    <section id="year-over-year" data-yoy="{{ 'true' if yoy.enabled else 'false' }}">
-      <h2>Year-over-year</h2>
-      {% if not yoy.enabled %}
-      <p class="note">Year-over-year charts appear when two or more survey years are published. Only {{ year_list | join(' and ') or 'no years' }} {{ 'is' if year_list|length == 1 else 'are' }} live in <code>dwh.active_release</code>, so this section does not invent a second year.</p>
-      {% else %}
-        <h3>Salary cells present in more than one year</h3>
-        {% if yoy.salary_empty %}
-        <p class="note">No overlapping salary cells across the published years (same country, band, role, remote, org size). The page does not compare unrelated cells.</p>
-        {% endif %}
-        {% for block in yoy.salary %}
-        <p>{{ block.label }}</p>
-        {{ block.svg | safe }}
-        {% endfor %}
+<div class="ch" id="c6">Chapter 6</div><h2>How the numbers got here</h2>
+<p>A pipeline built with Apache Airflow, dbt and PostgreSQL turns the raw survey files into these results. It has 10 steps:</p>
+<ol><li><code>open_release</code> Creates a new, empty release for this run.</li><li><code>ingest_raw_survey</code> Loads the survey file into the database.</li><li><code>record_source_checksum</code> Saves a fingerprint of the file, so we know exactly what was loaded.</li><li><code>run_dq_checks</code> Runs seven data quality checks. A blocking check stops everything.</li><li><code>dbt_seed</code> Loads small lookup tables, such as currency rates.</li><li><code>dbt_run_models</code> Builds the cleaned tables and the three result tables.</li><li><code>dbt_test_models</code> Tests the result tables. A failure stops the run here.</li><li><code>mark_candidate</code> Marks the release as ready, but not live.</li><li><code>publish_release</code> Moves the live pointer to this release. Only this step changes what readers see.</li><li><code>render_dashboard</code> Builds the results page from the live release.</li></ol>
+<p><b>Seven checks look at the raw file before anything is built.</b> Four stop the run when they fail. Three only write a note and carry on:</p>
+<ul class="t"><li><code>null_response_id</code> stops the run if any row has no ID.</li><li><code>duplicate_response_id</code> only logs a repeated ID. The newest row is kept and the run continues.</li><li><code>null_country</code> only logs a missing country. The run continues.</li><li><code>null_comp_total</code> only logs missing pay. The run continues.</li><li><code>invalid_years_code_pro</code> stops the run on impossible years of coding.</li><li><code>total_rows_loaded</code> stops the run if nothing was loaded, and otherwise records the row count.</li><li><code>row_count_drop</code> stops the run if the file has less than half the rows of the last published release for that year.</li></ul>
+<p>The key idea: results are built as a <b>candidate</b> and only become live at <code>publish_release</code>. If a test fails before that, the last good release stays live.</p>
+<p><b>The honest part:</b> the pipeline was tested with six deliberate failures. One of them, a truncated file, was published as the live release. That is why the seventh check, <code>row_count_drop</code>, was added. One weakness is still open: Airflow's own database shares the same Postgres instance as the warehouse, so killing Postgres also stops the scheduler. The notes are in the repository.</p>
+<p class="small">{% if published_date_line %}{{ published_date_line }} {% endif %}This page is a plain-language retelling of the published numbers. Code and notes: github.com/swagatskalita092/Stack_Overflow_Pipeline</p>
 
-        <h3>Technologies present in more than one year</h3>
-        {% if yoy.tech_empty %}
-        <p class="note">No overlapping technologies across the published years.</p>
-        {% endif %}
-        {% for block in yoy.tech %}
-        <p>{{ block.label }}</p>
-        {{ block.svg | safe }}
-        {% endfor %}
-
-        <h3>AI threat rate for answer groups present in more than one year</h3>
-        {% if yoy.ai_empty %}
-        <p class="note">No overlapping AI answer groups across the published years.</p>
-        {% endif %}
-        {% for block in yoy.ai %}
-        <p>{{ block.label }}</p>
-        {{ block.svg | safe }}
-        {% endfor %}
-      {% endif %}
-    </section>
-
-    <h2>What these numbers are (from data_contracts.md)</h2>
-    <p class="note">The blocks below are copied from <code>docs/data_contracts.md</code>, not rewritten here.</p>
-    <h3>Compensation</h3>
-    <pre class="contract" data-contract="currency">{{ contracts.currency }}</pre>
-    <h3>Salary mart</h3>
-    <pre class="contract" data-contract="salary">{{ contracts.salary }}</pre>
-    <h3>Tech mart</h3>
-    <pre class="contract" data-contract="tech">{{ contracts.tech }}</pre>
-    <h3>AI mart</h3>
-    <pre class="contract" data-contract="ai">{{ contracts.ai }}</pre>
-  </main>
-  <footer>
-    Generated by <code>scripts/render_dashboard.py</code>. Charts are inline SVG computed in Python; there is no Chart.js and no CDN.
-  </footer>
-</body>
-</html>
+<div class="ch" id="gl">Glossary</div><h2>Words used on this page</h2>
+<dl><dt>Median</dt><dd>The middle value: half of the group earns more, half earns less. It is less thrown off by a few very high salaries than an average.</dd><dt>Average</dt><dd>All values added up and divided by the number of people.</dd><dt>Release</dt><dd>One complete, tested copy of the results from one pipeline run. Only one release per year is live.</dd><dt>Candidate</dt><dd>A release that is built and tested but not live yet.</dd><dt>Publish</dt><dd>Make a candidate the live release.</dd><dt>Group (cell)</dt><dd>One slice of people who share the same country, experience, role, remote-work and company-size answers. A group only appears if enough people are in it.</dd><dt>Pipeline</dt><dd>The chain of steps that takes the raw survey file and produces these results.</dd><dt>Data quality check</dt><dd>An automatic test on the raw file, such as 'no missing IDs'.</dd></dl>
+{% endif %}
+</main></body></html>

@@ -132,7 +132,7 @@ stackoverflow-pipeline/
 │   ├── ingest_survey.py                   # Download, extract, clean, year-scoped load into raw.survey_responses
 │   ├── dq_checks.py                       # Data quality checks (year-scoped) to dwh.dq_issues
 │   ├── release.py                         # open_release / mark_candidate / publish_release, per-year monotonicity guard
-│   ├── render_dashboard.py                # Query marts.v_* to docs/site/index.html (inline SVG)
+│   ├── render_dashboard.py                # Query marts.v_* to the story page at docs/site/index.html
 │   ├── dashboard_templates/               # Jinja2 for the static dashboard
 │   └── chaos/                             # Reusable failure-injection scripts (Phase D), run by hand
 ├── docs/
@@ -183,7 +183,7 @@ Trigger a 2023 run with DAG conf `{"survey_year": 2023}` or env `SURVEY_YEAR=202
 
 ## Dashboard (static, not live)
 
-After `publish_release`, `render_dashboard` writes [docs/site/index.html](docs/site/index.html) from `marts.v_*`. Charts are inline SVG computed in Python: no client-side JS, no external CDN, every number on the page is literally readable out of the generated HTML. The page labels **data as of** the latest `published_at` and shows a provenance panel per year (`release_id`, `published_at`, real respondent counts). It is a snapshot of a tested release, not a live warehouse query. Anywhere a question genuinely wasn't asked that year (2023's AI-threat and job-satisfaction fields), the page shows an explicit "Not asked in `<year>`" badge, never a zero-height bar that could be misread as a real answer.
+After `publish_release`, `render_dashboard` writes [docs/site/index.html](docs/site/index.html) from `marts.v_*`. The page is a plain-language story of the published years: languages, databases, pay, job satisfaction, and how the pipeline works. Bars are inline CSS: no client-side JS, no external CDN, every number is readable in the generated HTML. The snapshot date is the latest `published_at`. If a question was not asked in a published year, the story says so. It does not draw a 0% bar for a missing question. Year-over-year sections appear only when two or more years are published.
 
 Public URL: **https://swagatskalita092.github.io/Stack_Overflow_Pipeline/site/**
 
@@ -191,7 +191,7 @@ GitHub Pages serves the `/docs` folder on `main`, not `/docs/site` as a source. 
 
 A new pipeline run updates the file on disk (Compose mounts `./docs`). GitHub Pages only changes when that file is committed and pushed to `main`.
 
-The published snapshot is dated 2026-09-18, before historical ECB conversion was added (PR #8). The page's wording that USD conversion is not implemented describes that snapshot. Running and publishing the pipeline again regenerates the page from the current docs. The results page has been rewritten as a plain-language story using the same published numbers.
+The committed snapshot is dated 2026-09-18, before historical ECB conversion was added (PR #8). Running and publishing the pipeline again regenerates the story page from the live published marts.
 
 ---
 

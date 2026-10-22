@@ -75,3 +75,13 @@ window will have some genuine within-year drift baked into every
 for the same reason Stack Overflow accepts it: doing per-respondent-date FX
 would require knowing each respondent's actual completion date to the day,
 which the public extract does not reliably provide.
+
+## AI-threat rate is not shown on the results page
+
+`mart_ai_sentiment` is grained on `(country, dev_type, ai_select, ai_sent,
+ai_threat)`. A percentage of people who see AI as a threat, computed inside
+that grain, is 0% or 100% for almost every cell, because the cell already
+selected one threat answer. That is an artifact, not a share of opinion. The
+results page therefore does not chart `pct_see_ai_as_threat`. Showing a real
+rate needs a mart change that removes `ai_threat` from the grain. The mart
+itself is unchanged.
