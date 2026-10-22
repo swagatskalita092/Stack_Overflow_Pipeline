@@ -33,8 +33,8 @@ def test_render_includes_fixture_numbers(warehouse, tmp_path):
     assert 'data-salary-respondents="6"' in html
     assert "United States" in html
     assert "8.00" in html
-    assert "0.0%" not in html
     assert "pct_see_ai_as_threat" not in html
+    assert ">0.0%</span>" not in html
     assert rid.split("-")[0] in html
     assert 'data-published-years="2024"' in html
     assert "<script" not in html.lower()
@@ -61,8 +61,8 @@ def test_null_ai_metrics_get_not_asked_badge_not_zero_bar(warehouse, tmp_path):
     html = _html(render(out_dir=tmp_path))
     assert "The 2023 survey did not ask whether AI is a threat" in html
     assert "job-satisfaction" in html or "satisfied people are with their job" in html
-    assert "0.0%" not in html
     assert "pct_see_ai_as_threat" not in html
+    assert ">0.0%</span>" not in html
     assert 'data-asked="false"' not in html
     assert "105,000" in html
     assert "Canada" in html

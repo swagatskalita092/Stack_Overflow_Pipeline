@@ -188,16 +188,67 @@ def test_currency_wording_us_vs_other():
     assert currency_wording("Germany") == "in the currency people reported"
 
 
-def test_jobsat_duplicate_label_appends_threat():
+def test_jobsat_different_ai_answers_get_no_suffix():
+    rows = [
+        _ai(2024, "United States", "Developer, full-stack", "Yes", "Favorable", 7.13, n=20),
+        _ai(
+            2024,
+            "United States",
+            "Developer, full-stack",
+            "Yes",
+            "Very favorable",
+            7.46,
+            n=19,
+        ),
+    ]
+    out = story_jobsat(rows, [2024])
+    assert len(out["rows"]) == 2
+    assert out["rows"][0]["main"] == out["rows"][1]["main"]
+    for row in out["rows"]:
+        assert "answered the AI-threat question" not in row["sub"]
+        assert "group 1 of" not in row["sub"]
+        assert not row["sub"].endswith(".")
+
+
+def test_jobsat_identical_label_non_null_threat_gets_yes_no_suffix():
     rows = [
         _ai(2024, "United States", "Developer, full-stack", "Yes", "Favorable", 7.1, n=20, threat="Yes"),
         _ai(2024, "United States", "Developer, full-stack", "Yes", "Favorable", 7.0, n=19, threat="No"),
     ]
     out = story_jobsat(rows, [2024])
     assert len(out["rows"]) == 2
-    assert out["rows"][0]["main"] == out["rows"][1]["main"]
-    assert "answered the AI-threat question: Yes" in out["rows"][0]["sub"]
-    assert "answered the AI-threat question: No" in out["rows"][1]["sub"]
+    assert out["rows"][0]["sub"].endswith("answered the AI-threat question: Yes")
+    assert out["rows"][1]["sub"].endswith("answered the AI-threat question: No")
+    assert "not answered" not in out["rows"][0]["sub"]
+    assert "not answered" not in out["rows"][1]["sub"]
+
+
+def test_jobsat_identical_label_null_threat_gets_group_numbers():
+    rows = [
+        _ai(2024, "United States", "Developer, full-stack", "Yes", "Favorable", 7.1, n=20),
+        _ai(2024, "United States", "Developer, full-stack", "Yes", "Favorable", 7.0, n=19),
+    ]
+    out = story_jobsat(rows, [2024])
+    assert "(group 1 of 2)" in out["rows"][0]["sub"]
+    assert "(group 2 of 2)" in out["rows"][1]["sub"]
+    assert "answered the AI-threat question" not in out["rows"][0]["sub"]
+    assert "not answered" not in out["range_sentence"]
+
+
+def test_jobsat_lowest_highest_use_clean_labels():
+    rows = [
+        _ai(2024, "United States", "Developer, full-stack", "Yes", "Favorable", 7.46, n=20, threat="Yes"),
+        _ai(2024, "United States", "Developer, full-stack", "Yes", "Favorable", 6.74, n=19, threat="No"),
+    ]
+    sentence = story_jobsat(rows, [2024])["range_sentence"]
+    assert "answered the AI-threat question" not in sentence
+    assert ".." not in sentence
+    assert ". answered" not in sentence
+    assert "Lowest: United States · full-stack (Uses AI tools, favorable view) at 6.74." in sentence
+    assert "Highest: United States · full-stack (Uses AI tools, favorable view) at 7.46." in sentence
+    assert sentence.count("Lowest:") == 1
+    assert sentence.rstrip().endswith(".")
+    assert not sentence.rstrip().endswith("..")
 
 
 def test_jobsat_contrast_only_when_both_exist():
@@ -221,6 +272,8 @@ def test_jobsat_contrast_only_when_both_exist():
     assert len(sentences) == 1
     assert "who use AI tools" in sentences[0]
     assert "against" in sentences[0]
+    assert "In the United States," in sentences[0]
+    assert "In United States," not in sentences[0]
 
 
 def test_missing_respondents_tile():

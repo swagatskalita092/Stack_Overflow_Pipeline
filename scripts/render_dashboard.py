@@ -737,7 +737,32 @@ def jobsat_sub_label(row: dict[str, Any]) -> str:
     sent = humanize_ai_sent(row.get("ai_sent"))
     if sent:
         bits.append(sent)
-    return ", ".join(bits)
+    return ", ".join(bits).rstrip(".")
+
+
+def jobsat_full_key(row: dict[str, Any]) -> tuple:
+    """Identity for a job-sat chart row: country, role, ai_select, ai_sent."""
+    return (
+        row.get("country"),
+        row.get("dev_type"),
+        row.get("ai_select"),
+        row.get("ai_sent"),
+    )
+
+
+def sentence_country(name: Optional[str]) -> str:
+    """Country name for a sentence: add 'the' for the US and the UK only."""
+    shown = display_country(name)
+    if shown in {"United States", "United Kingdom"}:
+        return f"the {shown}"
+    return shown
+
+
+def _ai_threat_value(row: dict[str, Any]) -> Optional[str]:
+    threat = row.get("ai_threat")
+    if threat in (None, ""):
+        return None
+    return str(threat)
 
 
 def story_jobsat(ai: list[dict[str, Any]], years: list[int]) -> dict[str, Any]:
@@ -770,25 +795,30 @@ def story_jobsat(ai: list[dict[str, Any]], years: list[int]) -> dict[str, Any]:
     ]
     ranked = sorted(ranked, key=lambda r: -int(r.get("respondent_count") or 0))[:8]
 
-    main_counts: dict[str, int] = {}
-    prepared = []
-    for row in ranked:
-        main = f"{display_country(row.get('country'))} · {display_role(row.get('dev_type'))}"
-        main_counts[main] = main_counts.get(main, 0) + 1
-        prepared.append((main, row))
+    peers_by_key: dict[tuple, list[int]] = {}
+    for i, row in enumerate(ranked):
+        peers_by_key.setdefault(jobsat_full_key(row), []).append(i)
 
     rows = []
-    for main, row in prepared:
-        sub = jobsat_sub_label(row)
-        if main_counts[main] > 1:
-            threat = row.get("ai_threat")
-            answer = threat if threat not in (None, "") else "not answered"
-            sub = f"{sub}. answered the AI-threat question: {answer}"
+    for i, row in enumerate(ranked):
+        main = f"{display_country(row.get('country'))} · {display_role(row.get('dev_type'))}"
+        clean_sub = jobsat_sub_label(row)
+        chart_sub = clean_sub
+        peers = peers_by_key[jobsat_full_key(row)]
+        if len(peers) > 1:
+            threat = _ai_threat_value(row)
+            all_null = all(_ai_threat_value(ranked[j]) is None for j in peers)
+            if threat is not None:
+                chart_sub = f"{clean_sub}. answered the AI-threat question: {threat}"
+            elif all_null:
+                pos = peers.index(i) + 1
+                chart_sub = f"{clean_sub} (group {pos} of {len(peers)})"
         score = float(row["avg_job_satisfaction"])
         rows.append(
             {
                 "main": main,
-                "sub": sub,
+                "sub": chart_sub,
+                "clean_sub": clean_sub,
                 "score": score,
                 "display": format_score(score),
                 "width_pct": bar_width_pct(score, 10.0),
@@ -807,8 +837,8 @@ def story_jobsat(ai: list[dict[str, Any]], years: list[int]) -> dict[str, Any]:
         hi = max(rows, key=lambda r: r["score"])
         range_sentence = (
             f"all {len(rows)} groups sit between {lo['display']} and {hi['display']}. "
-            f"Lowest: {lo['main']} ({lo['sub']}) at {lo['display']}. "
-            f"Highest: {hi['main']} ({hi['sub']}) at {hi['display']}."
+            f"Lowest: {lo['main']} ({lo['clean_sub']}) at {lo['display']}. "
+            f"Highest: {hi['main']} ({hi['clean_sub']}) at {hi['display']}."
         )
 
     contrast = []
@@ -829,7 +859,7 @@ def story_jobsat(ai: list[dict[str, Any]], years: list[int]) -> dict[str, Any]:
             view = humanize_ai_sent(yes_row.get("ai_sent")) or "unspecified view"
             contrast.append(
                 "In "
-                f"{display_country(country)}, {display_role(dev_type)} developers "
+                f"{sentence_country(country)}, {display_role(dev_type)} developers "
                 f"who use AI tools ({view}) score {yes_row['display']}, against "
                 f"{no_row['display']} for those who do not."
             )
