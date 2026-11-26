@@ -1,76 +1,91 @@
-# Stack Overflow Developer Survey: Analytics Pipeline
+<div align="center">
+
+<img src="assets/banner.png" alt="Stack Overflow Survey Pipeline. An Airflow, dbt and Postgres pipeline with a candidate/publish release safety pattern." width="100%">
+
+<br>
 
 [![CI](https://github.com/swagatskalita092/Stack_Overflow_Pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/swagatskalita092/Stack_Overflow_Pipeline/actions/workflows/ci.yml)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24428050.svg)](https://doi.org/10.5281/zenodo.24428050)
+![License](https://img.shields.io/badge/license-MIT-2563EB?style=for-the-badge&labelColor=111827)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.24428050-f48225?style=for-the-badge&labelColor=111827)](https://doi.org/10.5281/zenodo.24428050)
 
-An end-to-end data engineering pipeline that ingests the Stack Overflow Developer Survey (**2023 and 2024**), applies structured data quality checks, transforms the data through a layered dbt model architecture, and publishes three analytical marts covering **salary benchmarks**, **technology adoption**, and **AI sentiment**. Every publish goes through a candidate/publish safety pattern so readers never see a half-built or rolled-back result, and a static dashboard is regenerated from the published views after each run.
+![Airflow](https://img.shields.io/badge/Airflow-111827?style=flat-square&logo=apacheairflow&logoColor=017CEE)
+![dbt](https://img.shields.io/badge/dbt-111827?style=flat-square&logo=dbt&logoColor=FF694B)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-111827?style=flat-square&logo=postgresql&logoColor=8CB4E6)
+![Python](https://img.shields.io/badge/Python-111827?style=flat-square&logo=python&logoColor=3776AB)
+![Docker](https://img.shields.io/badge/Docker-111827?style=flat-square&logo=docker&logoColor=2496ED)
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-111827?style=flat-square&logo=githubactions&logoColor=2088FF)
 
-This isn't just a pipeline that moves data from A to B. The engineering effort went into three things most portfolio pipelines skip: six real failure injections against a live stack, recorded in docs/failure_modes.md (injection 1 published junk and was later guarded by row_count_drop; injection 5 was inconclusive), proving the pipeline survives its data source actually changing shape (a second real survey year, with a genuine schema drift handled and tested, not simulated), and catching a real correctness bug that had been silently wrong since the first version (found by a dashboard forcing a look at real per-cell coverage, not by a passing test suite). See [`PROJECT_SUMMARY_REPORT.md`](PROJECT_SUMMARY_REPORT.md) for the full account.
+[Live dashboard](https://swagatskalita092.github.io/Stack_Overflow_Pipeline/site/) &nbsp;|&nbsp; [Project summary report](PROJECT_SUMMARY_REPORT.md) &nbsp;|&nbsp; [Engineering journal](docs/engineering_journal.md) &nbsp;|&nbsp; [Failure modes](docs/failure_modes.md)
 
----
+<br>
 
-## Architecture
+<img src="assets/release-flow.gif" alt="Animated diagram of a survey year moving through ingest, data quality checks, dbt build and test, mark_candidate, publish_release, the reader views, and the static dashboard render." width="900">
 
+</div>
+
+<br>
+
+An end-to-end data engineering pipeline that ingests the Stack Overflow
+Developer Survey (**2023 and 2024**), runs it through structured data quality
+checks, transforms it through a layered dbt model architecture, and publishes
+three analytical marts covering **salary benchmarks**, **technology
+adoption**, and **AI sentiment**. Every publish goes through a
+candidate/publish safety pattern so readers never see a half-built or
+rolled-back result, and a static dashboard is regenerated from the published
+views after each run.
+
+This isn't just a pipeline that moves data from A to B. The engineering
+effort went into three things most portfolio pipelines skip: six real
+failure injections against a live stack, recorded in
+[docs/failure_modes.md](docs/failure_modes.md) (injection 1 published junk
+and was later guarded by `row_count_drop`; injection 5 was inconclusive);
+proving the pipeline survives its data source actually changing shape (a
+second real survey year, with genuine schema drift handled and tested, not
+simulated); and catching a real correctness bug that had been silently
+wrong since the first version (found by a dashboard forcing a look at real
+per-cell coverage, not by a passing test suite). See
+[`PROJECT_SUMMARY_REPORT.md`](PROJECT_SUMMARY_REPORT.md) for the full
+account.
+
+## <img src="assets/icons/compass.svg" width="24" height="24" align="middle">&nbsp; Start here
+
+| Read | You will find |
+| --- | --- |
+| [Architecture](#architecture) | The full build-then-publish path, as a diagram |
+| [Engineering rigor](#engineering-rigor-beyond-the-happy-path) | Publication safety, real failure injection, schema drift, reproducible numbers |
+| [Quick start](#quick-start) | `docker compose up`, the Airflow UI, and the DAG task order |
+| [Data model](#data-model-dbt) | Staging, intermediate, and the three marts, grain and all |
+| [Dashboard](#dashboard-static-not-live) | How the static story page gets built and published |
+| [More detail](#more-detail) | The full write-up and the investigation-by-investigation journal |
+
+## <img src="assets/icons/layers.svg" width="24" height="24" align="middle">&nbsp; Architecture
+
+```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#1e2a44','primaryTextColor':'#f8fafc','primaryBorderColor':'#f48225','lineColor':'#3b4a6b','fontFamily':'Inter, Segoe UI, sans-serif'}}}%%
+flowchart LR
+    CSV["Survey CSV<br/>CDN, one year at a time"] --> ING["ingest_survey<br/>year-scoped delete + insert"]
+    ING --> DQ["run_dq_checks<br/>row_count_drop guard"]
+    DQ --> DBT["dbt run + dbt test<br/>staging &#8594; intermediate &#8594; marts"]
+    DBT --> CAND["mark_candidate<br/>not live yet"]
+    CAND --> PUB["publish_release<br/>locked txn, per survey_year"]
+    PUB --> VIEWS[("Reader views<br/>v_* joined to active_release")]
+    VIEWS --> DASH["render_dashboard<br/>static story page"]
+    classDef core fill:#111827,stroke:#f48225,color:#f8fafc;
+    class PUB,VIEWS core;
 ```
-+--------------------------------------------------------------------------------+
-| Survey CSV (CDN), 2023 or 2024, selected via --year / SURVEY_YEAR              |
-+--------------------------------------------------------------------------------+
-                                        |                                         
-                                        v                                         
-+--------------------------------------------------------------------------------+
-| ingest_survey (Python): year-scoped delete + insert into raw.survey_responses  |
-+--------------------------------------------------------------------------------+
-                                        |                                         
-                                        v                                         
-+--------------------------------------------------------------------------------+
-| run_dq_checks -> dwh.dq_issues (year-scoped)                                   |
-|                                                                                |
-| row_count_drop blocks a truncated load from ever reaching publish.             |
-+--------------------------------------------------------------------------------+
-                                        |                                         
-                                        v                                         
-+--------------------------------------------------------------------------------+
-| dbt run: staging (stg_survey_responses, grain survey_year + response_id) ->    |
-| intermediate (int_*_exploded) -> marts. Every row tagged (release_id,          |
-| survey_year).                                                                  |
-|                                                                                |
-| marts: mart_salary_analytics | mart_tech_adoption | mart_ai_sentiment          |
-+--------------------------------------------------------------------------------+
-                                        |                                         
-                                        v                                         
-+--------------------------------------------------------------------------------+
-| dbt test -> mark_candidate -> publish_release                                  |
-|                                                                                |
-| One locked transaction, scoped per survey_year:                                |
-| dwh.active_release[survey_year] := candidate.                                  |
-|                                                                                |
-| A candidate's seq is only compared against its own year's active release. 2023 |
-| and 2024 publish independently and can never move each other's pointer.        |
-+--------------------------------------------------------------------------------+
-                                        |                                         
-                                        v                                         
-+--------------------------------------------------------------------------------+
-| Readers: marts.v_salary_analytics | v_tech_adoption | v_ai_sentiment           |
-|                                                                                |
-| JOIN dwh.active_release ON (survey_year, release_id): both years' current      |
-| publish are visible at once, each independently protected. Never query         |
-| marts.mart_* directly for an official number.                                  |
-+--------------------------------------------------------------------------------+
-                                        |                                         
-                                        v                                         
-+--------------------------------------------------------------------------------+
-| render_dashboard (after publish): renders the static docs/site/index.html from |
-| marts.v_*.                                                                     |
-|                                                                                |
-| Failure fails only this task. It cannot unpublish or roll back a release       |
-| (regression-tested).                                                           |
-|                                                                                |
-+--------------------------------------------------------------------------------+
-```
 
-**Stack:** Apache Airflow 2.8 (orchestration), PostgreSQL 16 (warehouse), dbt (transformations), Python (ingest + DQ), Docker Compose (runtime)
+Every row carries a `release_id` and `survey_year`. `dwh.active_release` is
+tracked **per year**, so a candidate's sequence number is only ever compared
+against its own year's active release; 2023 and 2024 publish independently
+and can never move each other's pointer. Readers query
+`marts.v_salary_analytics`, `marts.v_tech_adoption`, and
+`marts.v_ai_sentiment`, joined to that per-year active release, never
+`marts.mart_*` directly, since that table can hold an unpublished candidate.
 
-**Engineering rigor, beyond the happy path:**
+**Stack:** Apache Airflow 2.8 (orchestration), PostgreSQL 16 (warehouse), dbt
+(transformations), Python (ingest + DQ), Docker Compose (runtime)
+
+### Engineering rigor, beyond the happy path
 
 | Area | What's actually there | Where |
 | --- | --- | --- |
@@ -82,16 +97,12 @@ This isn't just a pipeline that moves data from A to B. The engineering effort w
 | Known limitations, stated plainly | What CI doesn't cover, what raw-layer safety doesn't guarantee, on purpose, not a backlog dressed up as documentation | `docs/known_limitations.md` |
 | Engineering journal | Every real investigation across every phase, in question, hypothesis, experiment, result, decision, regression test, remaining limitation format, including the most significant bug in the project (`avg_job_satisfaction` silently NULL since Phase A) | `docs/engineering_journal.md` |
 
----
-
-## Prerequisites
+## <img src="assets/icons/terminal.svg" width="24" height="24" align="middle">&nbsp; Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
 - On Linux/Mac, optional: set `AIRFLOW_UID` (e.g. `export AIRFLOW_UID=$(id -u)`) so Airflow can write logs
 
----
-
-## Quick Start
+## <img src="assets/icons/bolt.svg" width="24" height="24" align="middle">&nbsp; Quick Start
 
 1. **Start Postgres and Airflow (first time: init DB + create admin user)**
 
@@ -118,9 +129,7 @@ This isn't just a pipeline that moves data from A to B. The engineering effort w
    - Connect to Postgres (host `localhost`, port `5432`, user `airflow`, password `airflow`).
    - Database `survey_db` contains schemas `raw`, `staging`, `intermediate`, `marts`, and `dwh`.
 
----
-
-## Project Structure
+## <img src="assets/icons/book-open.svg" width="24" height="24" align="middle">&nbsp; Project Structure
 
 ```
 stackoverflow-pipeline/
@@ -159,9 +168,7 @@ stackoverflow-pipeline/
 └── PROJECT_SUMMARY_REPORT.md              # Full write-up: what, why, how, and what was actually found
 ```
 
----
-
-## Pipeline Tasks
+## <img src="assets/icons/shield.svg" width="24" height="24" align="middle">&nbsp; Pipeline Tasks
 
 | Task | Description |
 | --- | --- |
@@ -180,9 +187,7 @@ Readers query `marts.v_salary_analytics`, `marts.v_tech_adoption`, `marts.v_ai_s
 
 Trigger a 2023 run with DAG conf `{"survey_year": 2023}` or env `SURVEY_YEAR=2023`. Default is 2024.
 
----
-
-## Dashboard (static, not live)
+## <img src="assets/icons/bar-chart.svg" width="24" height="24" align="middle">&nbsp; Dashboard (static, not live)
 
 After `publish_release`, `render_dashboard` writes [docs/site/index.html](docs/site/index.html) from `marts.v_*`. The page is a plain-language story of the published years: languages, databases, pay, job satisfaction, and how the pipeline works. Bars are inline CSS: no client-side JS, no external CDN, every number is readable in the generated HTML. The snapshot date is the latest `published_at`. If a question was not asked in a published year, the story says so. It does not draw a 0% bar for a missing question. Year-over-year sections appear only when two or more years are published.
 
@@ -194,9 +199,7 @@ A new pipeline run updates the file on disk (Compose mounts `./docs`). GitHub Pa
 
 The committed snapshot is dated 2026-09-18, before historical ECB conversion was added (PR #8). Running and publishing the pipeline again regenerates the story page from the live published marts.
 
----
-
-## Data Model (dbt)
+## <img src="assets/icons/database.svg" width="24" height="24" align="middle">&nbsp; Data Model (dbt)
 
 - **Staging:** `stg_survey_responses`, one row per `(survey_year, response_id)`; numeric casting for `years_code`, `years_code_pro`, `comp_total_raw` (local currency as entered) plus `comp_total_usd_converted` from historical ECB rates in `fx_rates_to_usd.csv`; unmapped currencies stay NULL.
 - **Intermediate:** `int_languages_exploded`, `int_databases_exploded`: one row per (response, language) or (response, database); includes `wants_to_continue` from "want to work with" fields.
@@ -205,16 +208,12 @@ The committed snapshot is dated 2026-09-18, before historical ECB conversion was
   - **mart_tech_adoption**: languages and databases: total users, want-to-continue count, retention %; usage rank by tech type; filters e.g. at least 100 users.
   - **mart_ai_sentiment**: by country and dev type: AI tool usage/sentiment; respondent count, optional job satisfaction and % seeing AI as threat; minimum 3 respondents. `avg_job_satisfaction` and `pct_see_ai_as_threat` are explicitly NULL (not `0.0`) when a cell has no answers to average, see `docs/data_contracts.md`.
 
----
-
-## Data Source
+## <img src="assets/icons/git-branch.svg" width="24" height="24" align="middle">&nbsp; Data Source
 
 - **Survey:** [Stack Overflow Developer Survey 2024](https://survey.stackoverflow.co/2024/) and [2023](https://survey.stackoverflow.co/2023/)
 - **2024 dataset:** public extract (114 columns, 65,437 real rows confirmed via live ingest). **2023 dataset:** public extract (84 columns, 89,184 real rows confirmed via live ingest). `AIThreat`/`JobSat` are genuinely absent from the 2023 schema, confirmed by comparing the two real headers directly; the marts store NULL for those years, never a fabricated `0.0`.
 
----
-
-## Environment Variables (optional)
+## <img src="assets/icons/test-tube.svg" width="24" height="24" align="middle">&nbsp; Environment Variables (optional)
 
 For ingest and DQ scripts (defaults work with Docker Compose):
 
@@ -227,8 +226,16 @@ For ingest and DQ scripts (defaults work with Docker Compose):
 | `SURVEY_DB_PASSWORD` | `airflow`  | Database password  |
 | `SURVEY_YEAR`        | `2024`     | Which survey year `ingest_raw_survey`/`publish_release` operate on |
 
----
-
-## More Detail
+## <img src="assets/icons/alert.svg" width="24" height="24" align="middle">&nbsp; More Detail
 
 For the full write-up, why this was built, the approach, the dataset, the data quality checks, and an honest account of every real bug found and fixed along the way, see **[PROJECT_SUMMARY_REPORT.md](PROJECT_SUMMARY_REPORT.md)**. For the investigation-by-investigation detail behind those bugs, question, hypothesis, experiment, result, decision, regression test, remaining limitation, see **[docs/engineering_journal.md](docs/engineering_journal.md)**.
+
+## <img src="assets/icons/scale.svg" width="24" height="24" align="middle">&nbsp; License
+
+MIT. See [LICENSE](LICENSE).
+
+## <img src="assets/icons/user.svg" width="24" height="24" align="middle">&nbsp; Author
+
+Swagat Subhash Kalita built and runs this pipeline.
+
+[GitHub](https://github.com/swagatskalita092) &nbsp;|&nbsp; [LinkedIn](https://linkedin.com/in/swagat-s-kalita)
