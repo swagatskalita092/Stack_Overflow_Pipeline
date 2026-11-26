@@ -57,9 +57,9 @@ scheduler was tested.
 `comp_total_usd_converted` and the `*_salary_usd` mart columns use real
 European Central Bank reference rates (via the Frankfurter API), which
 covers the 30 non-EUR currencies the ECB publishes daily plus EUR and USD
-themselves — see `seeds/fx_rates_to_usd.csv`. A respondent whose currency is
+themselves. See `seeds/fx_rates_to_usd.csv`. A respondent whose currency is
 not one of those (the ECB does not publish daily rates for every world
-currency — for example several are excluded from official ECB publication
+currency: for example several are excluded from official ECB publication
 for sanctions or data-availability reasons) gets `comp_total_usd_converted
 = NULL`. That respondent still counts in `respondent_count` and in the raw
 `avg_salary` / `median_salary` / etc.; they are simply excluded from the

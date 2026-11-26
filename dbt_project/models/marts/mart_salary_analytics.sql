@@ -16,7 +16,7 @@
 --
 -- Raw aggregates (avg_salary, median_salary, p25/p75/min/max_salary) are of
 -- comp_total_raw (self-reported CompTotal in the respondent's own
--- currency) — unchanged from before, still mixed currencies, still here so
+-- currency). This is unchanged from before, still mixed currencies, still here so
 -- a reader who wants the untouched self-reported number always has it.
 --
 -- USD aggregates (avg_salary_usd, median_salary_usd, p25/p75/min/max_salary_usd)

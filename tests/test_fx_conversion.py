@@ -6,7 +6,7 @@ actually converted anything). This adds comp_total_usd_converted, computed
 from a real ECB-sourced FX rate for a single fixed date per survey year (the
 same fixed-date approach Stack Overflow's own methodology uses). A currency
 with no row in seeds/fx_rates_to_usd.csv must come out NULL, never a guessed
-or default rate — that is the property this file exists to protect.
+or default rate. That is the property this file exists to protect.
 """
 
 from __future__ import annotations
